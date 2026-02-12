@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🪟 Window System + Taskbar - Windows 13</title>
+
+<style>
+:root {
+  --neon: #00ff41;
+  --yellow: #ffe600;
+  --bg: #000;
+  --panel-bg: rgba(0, 15, 5, 0.96);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #000;
+  color: var(--neon);
+  font-family: 'Courier New', monospace;
+  height: 100vh;
+  overflow: hidden;
+  background-image: 
+    linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+/* ===== DESKTOP ===== */
+#desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 60px; /* Space for taskbar */
+}
+
+/* ===== FLOATING WINDOW ===== */
+.window {
+  position: absolute;
+  background: var(--panel-bg);
+  border: 3px solid var(--neon);
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0,255,65,0.2);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  resize: both;
+  min-width: 400px;
+  min-height: 300px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.window.minimized {
+  display: none;
+}
+
+.window.maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: calc(100% - 60px) !important;
+  border-radius: 0;
+  resize: none;
+}
+
+.window.active {
+  z-index: 1000;
+  border-color: var(--yellow);
+  box-shadow: 0 0 60px rgba(255,230,0,0.4);
+}
+
+/* ===== WINDOW HEADER ===== */
+.window-header {
+  background: rgba(0,255,65,0.15);
+  padding: 12px 16px;
+  cursor: move;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,255,65,0.3);
+  user-select: none;
+}
+
+.window-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--neon);
+  text-shadow: 0 0 8px var(--neon);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.window-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--neon);
+  background: rgba(0,0,0,0.5);
+  color: var(--neon);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.window-btn:hover {
+  background: var(--neon);
+  color: #000;
+  transform: scale(1.1);
+}
+
+.window-btn.close:hover {
+  background: #f00;
+  border-color: #f00;
+  color: #fff;
+}
+
+/* ===== WINDOW CONTENT ===== */
+.window-content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+.window-content.no-padding {
+  padding: 0;
+}
+
+/* ===== TASKBAR ===== */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to top, #010, #020);
+  border-top: 3px solid var(--neon);
+  box-shadow: 0 0 20px var(--neon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  z-index: 10000;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.taskbar-item {
+  background: #020;
+  color: var(--neon);
+  border: 2px solid var(--neon);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 0 10px var(--neon);
+  transition: all 0.3s;
+  min-width: 150px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.taskbar-item:hover {
+  background: var(--neon);
+  color: #000;
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px var(--neon);
+}
+
+.taskbar-item.active {
+  background: rgba(0,255,65,0.2);
+  box-shadow: 0 0 15px var(--neon), inset 0 0 10px rgba(0,255,65,0.3);
+}
+
+/* ===== IFRAME STYLING ===== */
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0 0 8px 8px;
+}
+
+/* ===== SCROLLBAR ===== */
+.window-content::-webkit-scrollbar,
+#taskbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.window-content::-webkit-scrollbar-track,
+#taskbar::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.window-content::-webkit-scrollbar-thumb,
+#taskbar::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 4px;
+}
+
+/* ===== DEMO CONTENT ===== */
+.demo-content {
+  color: var(--neon);
+  line-height: 1.6;
+}
+
+.demo-content h2 {
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+
+.demo-content p {
+  margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="desktop">
+  
+  <!-- EXAMPLE WINDOWS (will be dynamically created) -->
+  
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+  <div style="color: var(--yellow); font-weight: bold; margin-right: 20px;">WINDOWS 13</div>
+  <!-- Taskbar items will be added here dynamically -->
+</div>
+
+<script>
+/* ===== WINDOW MANAGER ===== */
+const WindowManager = {
+  windows: {},
+  zIndex: 100,
+  dragState: { active: false, windowId: null, offsetX: 0, offsetY: 0 },
+  
+  createWindow(options) {
+    const id = options.id || 'win_' + Date.now();
+    const win = document.createElement('div');
+    win.className = 'window';
+    win.id = id;
+    win.style.left = (options.x || 100) + 'px';
+    win.style.top = (options.y || 100) + 'px';
+    win.style.width = (options.width || 600) + 'px';
+    win.style.height = (options.height || 400) + 'px';
+    
+    // Special styling for ChemVentur
+    const isChemVentur = options.title && options.title.includes('ChemVentur');
+    const titleStyle = isChemVentur ? 'color: #ff0; text-shadow: 0 0 10px #ff0;' : '';
+    const headerStyle = isChemVentur ? 'background: linear-gradient(90deg, rgba(136,136,0,0.3), rgba(255,255,0,0.2));' : '';
+    
+    win.innerHTML = `
+      <div class="window-header" style="${headerStyle}">
+        <div class="window-title" style="${titleStyle}">
+          ${options.icon || '🪟'} ${options.title || 'Window'}
+        </div>
+        <div class="window-controls">
+          <div class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
+          <div class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
+          <div class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
+        </div>
+      </div>
+      <div class="window-content ${options.noPadding ? 'no-padding' : ''}">
+        ${options.content || ''}
+      </div>
+    `;
+    
+    document.getElementById('desktop').appendChild(win);
+    
+    // Add to manager
+    this.windows[id] = {
+      element: win,
+      title: options.title,
+      icon: options.icon,
+      minimized: false,
+      maximized: false
+    };
+    
+    // Setup drag
+    const header = win.querySelector('.window-header');
+    header.addEventListener('mousedown', (e) => this.startDrag(e, id));
+    
+    // Bring to front on click
+    win.addEventListener('mousedown', () => this.bringToFront(id));
+    
+    // Add to taskbar
+    this.addToTaskbar(id);
+    
+    // Make active
+    this.bringToFront(id);
+    
+    return id;
+  },
+  
+  minimize(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    
+    win.element.classList.add('minimized');
+    win.minimized = true;
+    this.updateTaskbar();
+  },
+  
+  restore(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    
+    win.element.classList.remove('minimized');
+    win.minimized = false;
+    this.bringToFront(id);
+    this.updateTaskbar();
+  },
+  
+  toggleMaximize(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    
+    if (win.maximized) {
+      win.element.classList.remove('maximized');
+      win.maximized = false;
+    } else {
+      win.element.classList.add('maximized');
+      win.maximized = true;
+    }
+  },
+  
+  close(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    
+    win.element.remove();
+    delete this.windows[id];
+    this.updateTaskbar();
+  },
+  
+  bringToFront(id) {
+    // Remove active from all
+    Object.values(this.windows).forEach(w => w.element.classList.remove('active'));
+    
+    // Set active
+    const win = this.windows[id];
+    if (win && !win.minimized) {
+      this.zIndex++;
+      win.element.style.zIndex = this.zIndex;
+      win.element.classList.add('active');
+    }
+  },
+  
+  startDrag(e, id) {
+    const win = this.windows[id];
+    if (!win || win.maximized) return;
+    
+    this.dragState.active = true;
+    this.dragState.windowId = id;
+    this.dragState.offsetX = e.clientX - win.element.offsetLeft;
+    this.dragState.offsetY = e.clientY - win.element.offsetTop;
+    
+    document.addEventListener('mousemove', this.onDrag);
+    document.addEventListener('mouseup', this.stopDrag);
+    
+    e.preventDefault();
+  },
+  
+  onDrag(e) {
+    if (!WindowManager.dragState.active) return;
+    
+    const id = WindowManager.dragState.windowId;
+    const win = WindowManager.windows[id];
+    if (!win) return;
+    
+    win.element.style.left = (e.clientX - WindowManager.dragState.offsetX) + 'px';
+    win.element.style.top = (e.clientY - WindowManager.dragState.offsetY) + 'px';
+  },
+  
+  stopDrag() {
+    WindowManager.dragState.active = false;
+    document.removeEventListener('mousemove', WindowManager.onDrag);
+    document.removeEventListener('mouseup', WindowManager.stopDrag);
+  },
+  
+  addToTaskbar(id) {
+    this.updateTaskbar();
+  },
+  
+  updateTaskbar() {
+    const taskbar = document.getElementById('taskbar');
+    const existingItems = taskbar.querySelectorAll('.taskbar-item');
+    existingItems.forEach(item => item.remove());
+    
+    Object.entries(this.windows).forEach(([id, win]) => {
+      const item = document.createElement('div');
+      item.className = 'taskbar-item';
+      if (!win.minimized) item.classList.add('active');
+      item.innerHTML = `${win.icon || '🪟'} ${win.title || 'Window'}`;
+      item.onclick = () => {
+        if (win.minimized) {
+          this.restore(id);
+        } else {
+          this.bringToFront(id);
+        }
+      };
+      taskbar.appendChild(item);
+    });
+  }
+};
+
+/* ===== CREATE DEMO WINDOWS ===== */
+
+// ChemVentur Window
+WindowManager.createWindow({
+  id: 'chemventur',
+  title: '☢️ ChemVentur',
+  icon: '☢️',
+  x: 50,
+  y: 50,
+  width: 900,
+  height: 700,
+  noPadding: true,
+  content: '<iframe src="https://rudventur.github.io/ChemVentur/" allowfullscreen></iframe>'
+});
+
+// useRbox Window
+WindowManager.createWindow({
+  id: 'userbox',
+  title: '👤 useRbox',
+  icon: '👤',
+  x: 200,
+  y: 150,
+  width: 400,
+  height: 600,
+  content: `
+    <div class="demo-content">
+      <h2>⚡ useRbox v2.0</h2>
+      <p>This would contain your useRbox interface with:</p>
+      <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Username field</li>
+        <li>GPS bookmarks</li>
+        <li>P.S. signature</li>
+        <li>Live clock</li>
+      </ul>
+      <p style="margin-top: 15px; color: var(--yellow);">
+        📝 Replace this content with your actual useRbox HTML!
+      </p>
+    </div>
+  `
+});
+
+// Global Chat Window
+WindowManager.createWindow({
+  id: 'chat',
+  title: '💬 Global Chat',
+  icon: '💬',
+  x: 300,
+  y: 200,
+  width: 450,
+  height: 550,
+  content: `
+    <div class="demo-content">
+      <h2>💬 Global Chat</h2>
+      <p>Channel: <strong style="color: var(--yellow);">main</strong></p>
+      <p style="margin-top: 15px; opacity: 0.7;">No messages yet. Say hi! 👋</p>
+      <p style="margin-top: 15px; color: var(--yellow);">
+        📝 Replace with your actual chat interface!
+      </p>
+    </div>
+  `
+});
+
+// Keyboard Window
+WindowManager.createWindow({
+  id: 'keyboard',
+  title: '⌨️ Keyboards',
+  icon: '⌨️',
+  x: 400,
+  y: 100,
+  width: 850,
+  height: 500,
+  noPadding: true,
+  content: '<iframe src="keyboard-realistic.html" style="width:100%; height:100%; border:none;"></iframe>'
+});
+
+// Popcorn Hub Window
+WindowManager.createWindow({
+  id: 'popcorn',
+  title: '🍿 Popcorn Hub',
+  icon: '🍿',
+  x: 500,
+  y: 80,
+  width: 550,
+  height: 700,
+  content: `
+    <div class="demo-content">
+      <h2>🍿 Popcorn Hub</h2>
+      <p>Accessibility descriptions, cookies inspector, and Popcoin mining!</p>
+      <p style="margin-top: 15px; color: var(--yellow);">
+        📝 Replace with your actual Popcorn Hub interface!
+      </p>
+    </div>
+  `
+});
+
+/* ===== KEYBOARD SHORTCUTS ===== */
+document.addEventListener('keydown', (e) => {
+  // Alt+W to close active window
+  if (e.altKey && e.key === 'w') {
+    const activeWin = Object.entries(WindowManager.windows)
+      .find(([id, win]) => win.element.classList.contains('active'));
+    if (activeWin) WindowManager.close(activeWin[0]);
+  }
+  
+  // Alt+M to minimize active window
+  if (e.altKey && e.key === 'm') {
+    const activeWin = Object.entries(WindowManager.windows)
+      .find(([id, win]) => win.element.classList.contains('active'));
+    if (activeWin) WindowManager.minimize(activeWin[0]);
+  }
+});
+
+console.log('🎃 WINDOWS 13 - Window System Loaded!');
+console.log('Keyboard shortcuts:');
+console.log('  Alt+W - Close active window');
+console.log('  Alt+M - Minimize active window');
+</script>
+
+</body>
+</html>

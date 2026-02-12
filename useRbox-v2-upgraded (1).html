@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>useRbox v2.0 - UPGRADED</title>
+
+<style>
+:root {
+  --neon: #00ff41;
+  --yellow: #ffe600;
+  --bg: #000;
+  --panel-bg: rgba(0, 15, 5, 0.96);
+}
+
+/* ===== ROOT CONTAINER ===== */
+#topRightUser {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 9999;
+  font-family: 'Courier New', monospace;
+  color: var(--neon);
+}
+
+/* ===== CAPITAL R ===== */
+#Rcircle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 3px solid var(--neon);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,255,65,0.45);
+  user-select: none;
+  transition: all 0.3s;
+}
+
+#Rcircle:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 35px rgba(0,255,65,0.7);
+}
+
+/* ===== ROLLING ICONS ===== */
+#Ricons {
+  position: absolute;
+  top: 8px;
+  right: 68px;
+  display: flex;
+  gap: 12px;
+  opacity: 0;
+  transform: translateX(24px);
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+
+#topRightUser.open #Ricons {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.Ricon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--neon);
+  color: var(--neon);
+  font-size: 20px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+}
+
+.Ricon:hover {
+  background: var(--neon);
+  color: #000;
+  transform: scale(1.1);
+}
+
+/* ===== useRbox ===== */
+#useRbox {
+  position: absolute;
+  top: 74px;
+  right: 0;
+  width: 380px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  border: 3px solid var(--neon);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 0 36px rgba(0,255,65,0.25);
+  backdrop-filter: blur(12px);
+}
+
+.hidden { display: none !important; }
+
+/* ===== HEADER ===== */
+.useRbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0,255,65,0.2);
+}
+
+.useRbox-header strong {
+  font-size: 1.1rem;
+  text-shadow: 0 0 8px var(--neon);
+}
+
+.useRbox-header button {
+  background: none;
+  border: 1px solid var(--neon);
+  color: var(--neon);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.useRbox-header button:hover {
+  background: var(--neon);
+  color: #000;
+}
+
+/* ===== AVATAR ===== */
+.avatar-wrap {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+#avatarHalftone {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  border: 2px dashed var(--yellow);
+  background:
+    radial-gradient(circle, #000 22%, transparent 23%) 0 0 / 8px 8px,
+    var(--neon);
+  filter: contrast(3.2) brightness(1.1);
+}
+
+.avatar-wrap small {
+  opacity: 0.6;
+  font-size: 0.75rem;
+}
+
+/* ===== CLOCK ===== */
+#liveClock {
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--yellow);
+  font-weight: bold;
+  margin-bottom: 14px;
+  padding: 8px;
+  background: rgba(255,230,0,0.05);
+  border: 1px solid rgba(255,230,0,0.3);
+  border-radius: 6px;
+  text-shadow: 0 0 10px var(--yellow);
+}
+
+/* ===== FIELDS ===== */
+label {
+  display: block;
+  margin: 10px 0 4px;
+  font-size: 0.8rem;
+  color: rgba(0,255,65,0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  background: #000;
+  color: var(--neon);
+  border: 1px solid var(--neon);
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  box-shadow: 0 0 12px rgba(0,255,65,0.3);
+  border-color: var(--yellow);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+input[type="text"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #111;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  background: #000;
+  color: var(--neon);
+  border: 1px solid var(--neon);
+  padding: 6px 12px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--neon);
+  color: #000;
+  transform: scale(1.05);
+}
+
+.btn-small {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+/* ===== GPS LOCATIONS LIST ===== */
+.gps-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(0,255,65,0.2);
+}
+
+#gpsList {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(0,255,65,0.2);
+  border-radius: 4px;
+}
+
+.gps-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  background: #000;
+  border: 1px solid rgba(0,255,65,0.3);
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.gps-item-name {
+  font-weight: bold;
+  color: var(--yellow);
+}
+
+.gps-item-coords {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.gps-item-delete {
+  background: none;
+  border: none;
+  color: #ff2a6d;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 4px;
+}
+
+/* ===== SAVE BUTTON ===== */
+#saveUser {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--neon);
+  color: #000;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(0,255,65,0.3);
+}
+
+#saveUser:hover {
+  box-shadow: 0 0 30px var(--neon);
+  transform: scale(1.02);
+}
+
+/* ===== TOGGLE ===== */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* ===== SCROLLBAR ===== */
+#useRbox::-webkit-scrollbar,
+#gpsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+#useRbox::-webkit-scrollbar-track,
+#gpsList::-webkit-scrollbar-track {
+  background: #000;
+}
+
+#useRbox::-webkit-scrollbar-thumb,
+#gpsList::-webkit-scrollbar-thumb {
+  background: var(--neon);
+  border-radius: 4px;
+}
+</style>
+</head>
+
+<body style="background: #000; min-height: 100vh;">
+
+<div id="topRightUser">
+
+  <!-- Capital R -->
+  <div id="Rcircle" title="useR">R</div>
+
+  <!-- Rolling icons -->
+  <div id="Ricons">
+    <div class="Ricon" id="iconTranslator" title="Translator">🌐</div>
+    <div class="Ricon" id="iconUser" title="useRbox">👤</div>
+  </div>
+
+  <!-- useRbox -->
+  <div id="useRbox" class="hidden">
+    <div class="useRbox-header">
+      <strong>⚡ useRbox v2.0</strong>
+      <button id="closeUser">✖</button>
+    </div>
+
+    <!-- Live Clock -->
+    <div id="liveClock">--:--:--</div>
+
+    <!-- Avatar -->
+    <div class="avatar-wrap">
+      <div id="avatarHalftone"></div>
+      <small>pure CSS halftone signature</small>
+    </div>
+
+    <!-- Username with Refresh -->
+    <label>👤 Username</label>
+    <div class="field-row">
+      <input type="text" id="username" value="Rudy" style="flex: 1;">
+      <button class="btn btn-small" onclick="loadUser()">🔄 Refresh</button>
+    </div>
+
+    <!-- Channel (read-only) -->
+    <label>📡 Channel</label>
+    <div class="field-row">
+      <input type="text" id="channel" value="main" disabled style="flex: 1;">
+      <button class="btn btn-small" onclick="alert('Channel set on login!')">ℹ️</button>
+    </div>
+
+    <!-- P.S. Personal Signature -->
+    <label>📝 P.S. (Personal Signature)</label>
+    <textarea id="psignature" placeholder="Your personal motto, signature, or note..."></textarea>
+
+    <!-- Current Location -->
+    <label>📍 Current Location</label>
+    <div class="field-row">
+      <input type="text" id="currentLoc" placeholder="???" style="flex: 1;">
+      <button class="btn btn-small" onclick="getCurrentGPS()">📍 GPS</button>
+    </div>
+
+    <!-- Coordinates -->
+    <div style="display: flex; gap: 8px; margin-top: 8px;">
+      <div style="flex: 1;">
+        <label style="margin: 0 0 4px;">Lat</label>
+        <input type="text" id="lat" placeholder="0.000000">
+      </div>
+      <div style="flex: 1;">
+        <label style="margin: 0 0 4px;">Lon</label>
+        <input type="text" id="lon" placeholder="0.000000">
+      </div>
+    </div>
+
+    <!-- GPS Locations List -->
+    <div class="gps-section">
+      <label>📌 Saved GPS Locations</label>
+      <div class="field-row" style="margin-top: 8px;">
+        <input type="text" id="gpsName" placeholder="Location name..." style="flex: 1;">
+        <button class="btn btn-small" onclick="saveCurrentGPS()">💾 Save</button>
+      </div>
+      <div id="gpsList"></div>
+    </div>
+
+    <!-- Options -->
+    <label class="toggle">
+      <input type="checkbox" id="saveMessages" checked>
+      <span>Save my messages</span>
+    </label>
+
+    <!-- Save Button -->
+    <button id="saveUser">💾 SAVE PROFILE</button>
+  </div>
+
+</div>
+
+<script>
+/* ===== GLOBALS ===== */
+let savedLocations = [];
+
+/* ===== TOGGLES ===== */
+const root = document.getElementById('topRightUser');
+const Rcircle = document.getElementById('Rcircle');
+const useRbox = document.getElementById('useRbox');
+
+Rcircle.onclick = () => {
+  root.classList.toggle('open');
+};
+
+document.getElementById('iconUser').onclick = () => {
+  useRbox.classList.toggle('hidden');
+};
+
+document.getElementById('closeUser').onclick = () => {
+  useRbox.classList.add('hidden');
+  root.classList.remove('open');
+};
+
+/* ===== LIVE CLOCK ===== */
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
+  document.getElementById('liveClock').textContent = timeStr;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ===== GPS FUNCTIONS ===== */
+function getCurrentGPS() {
+  if (!navigator.geolocation) {
+    alert('GPS not supported by your browser!');
+    return;
+  }
+
+  const btn = event.target;
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude.toFixed(6);
+      const lon = position.coords.longitude.toFixed(6);
+      document.getElementById('lat').value = lat;
+      document.getElementById('lon').value = lon;
+      document.getElementById('currentLoc').value = `${lat}, ${lon}`;
+      btn.textContent = '✅ GPS';
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = '📍 GPS'; }, 2000);
+    },
+    error => {
+      alert('GPS Error: ' + error.message);
+      btn.textContent = '❌ GPS';
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = '📍 GPS'; }, 2000);
+    }
+  );
+}
+
+function saveCurrentGPS() {
+  const name = document.getElementById('gpsName').value.trim();
+  const lat = document.getElementById('lat').value.trim();
+  const lon = document.getElementById('lon').value.trim();
+
+  if (!name) {
+    alert('Please enter a location name!');
+    return;
+  }
+
+  if (!lat || !lon) {
+    alert('Please get GPS coordinates first!');
+    return;
+  }
+
+  const location = {
+    id: Date.now(),
+    name: name,
+    lat: lat,
+    lon: lon
+  };
+
+  savedLocations.push(location);
+  document.getElementById('gpsName').value = '';
+  renderGPSList();
+  saveToLocalStorage();
+}
+
+function deleteGPS(id) {
+  if (!confirm('Delete this location?')) return;
+  savedLocations = savedLocations.filter(loc => loc.id !== id);
+  renderGPSList();
+  saveToLocalStorage();
+}
+
+function renderGPSList() {
+  const list = document.getElementById('gpsList');
+  
+  if (savedLocations.length === 0) {
+    list.innerHTML = '<div style="text-align:center; opacity:0.5; padding:10px;">No saved locations</div>';
+    return;
+  }
+
+  list.innerHTML = savedLocations.map(loc => `
+    <div class="gps-item">
+      <div>
+        <div class="gps-item-name">${escapeHtml(loc.name)}</div>
+        <div class="gps-item-coords">${loc.lat}, ${loc.lon}</div>
+      </div>
+      <button class="gps-item-delete" onclick="deleteGPS(${loc.id})">🗑️</button>
+    </div>
+  `).join('');
+}
+
+/* ===== SAVE / LOAD USER DATA ===== */
+function saveUser() {
+  const userData = {
+    username: document.getElementById('username').value,
+    channel: document.getElementById('channel').value,
+    psignature: document.getElementById('psignature').value,
+    currentLoc: document.getElementById('currentLoc').value,
+    lat: document.getElementById('lat').value,
+    lon: document.getElementById('lon').value,
+    saveMessages: document.getElementById('saveMessages').checked,
+    savedLocations: savedLocations
+  };
+
+  localStorage.setItem('rud_useRbox_v2', JSON.stringify(userData));
+  
+  // Visual feedback
+  const btn = document.getElementById('saveUser');
+  const oldText = btn.textContent;
+  btn.textContent = '✅ SAVED!';
+  btn.style.background = '#00ff41';
+  setTimeout(() => {
+    btn.textContent = oldText;
+    btn.style.background = '';
+  }, 2000);
+}
+
+function loadUser() {
+  const data = localStorage.getItem('rud_useRbox_v2');
+  if (!data) {
+    console.log('No saved user data found');
+    return;
+  }
+
+  const u = JSON.parse(data);
+  document.getElementById('username').value = u.username || 'Rudy';
+  document.getElementById('channel').value = u.channel || 'main';
+  document.getElementById('psignature').value = u.psignature || '';
+  document.getElementById('currentLoc').value = u.currentLoc || '';
+  document.getElementById('lat').value = u.lat || '';
+  document.getElementById('lon').value = u.lon || '';
+  document.getElementById('saveMessages').checked = u.saveMessages !== false;
+  savedLocations = u.savedLocations || [];
+  
+  renderGPSList();
+}
+
+function saveToLocalStorage() {
+  const userData = {
+    username: document.getElementById('username').value,
+    channel: document.getElementById('channel').value,
+    psignature: document.getElementById('psignature').value,
+    currentLoc: document.getElementById('currentLoc').value,
+    lat: document.getElementById('lat').value,
+    lon: document.getElementById('lon').value,
+    saveMessages: document.getElementById('saveMessages').checked,
+    savedLocations: savedLocations
+  };
+  localStorage.setItem('rud_useRbox_v2', JSON.stringify(userData));
+}
+
+/* ===== UTILITY ===== */
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/* ===== TRANSLATOR HOOK ===== */
+document.getElementById('iconTranslator').onclick = () => {
+  alert('Translator module coming next! 🌐');
+};
+
+/* ===== SAVE BUTTON ===== */
+document.getElementById('saveUser').onclick = saveUser;
+
+/* ===== INIT ===== */
+loadUser();
+</script>
+
+</body>
+</html>

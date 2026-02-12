@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RUDVENTUR Notch Menu</title>
+  <style>
+    :root {
+      --bg: #000;
+      --neon: #0f0;
+      --panel: #001100;
+      --dash: #0a0;
+      --electric: #ff0;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      height: 100vh;
+      background: var(--bg);
+      color: var(--neon);
+      font-family: monospace;
+      overflow: hidden;
+    }
+
+    /* Notch */
+    #notch {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: var(--neon);
+      color: #000;
+      padding: 12px 24px;
+      font-weight: 900;
+      font-size: 1.4rem;
+      box-shadow: 0 0 30px rgba(0,255,0,0.3);
+      cursor: pointer;
+      border-radius: 0 0 16px 0;
+      z-index: 9999;
+      user-select: none;
+    }
+
+    /* Dash border around notch when closed */
+    #notch::before {
+      content: "---------------------";
+      position: absolute;
+      top: -10px;
+      left: 0;
+      color: var(--dash);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Menu container */
+    #notch-menu {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      background: var(--panel);
+      border: 4px solid var(--neon);
+      border-top: none;
+      width: 340px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 16px;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 0 40px rgba(0,255,0,0.15);
+      display: none;
+      z-index: 9998;
+    }
+
+    /* Dash surround when menu is open */
+    #notch-menu.open {
+      border-image: repeating-linear-gradient(
+        to right,
+        var(--dash) 0,
+        var(--dash) 6px,
+        transparent 6px,
+        transparent 12px
+      ) 30 stretch;
+    }
+
+    .menu-item {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #000;
+      border: 2px solid var(--neon);
+      color: var(--neon);
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .menu-item:hover {
+      background: var(--neon);
+      color: #000;
+      box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    }
+
+    /* Special styling for electricity/donation button */
+    .menu-item.electric {
+      background: linear-gradient(90deg, #330, #550);
+      border-color: var(--electric);
+      color: var(--electric);
+      animation: electricPulse 2s ease-in-out infinite;
+    }
+
+    .menu-item.electric:hover {
+      background: var(--electric);
+      color: #000;
+      box-shadow: 0 0 30px rgba(255,255,0,0.7);
+    }
+
+    @keyframes electricPulse {
+      0%, 100% { box-shadow: 0 0 5px rgba(255,255,0,0.3); }
+      50% { box-shadow: 0 0 20px rgba(255,255,0,0.6); }
+    }
+
+    /* ChemVentur special styling */
+    .menu-item.chemventur {
+      background: linear-gradient(90deg, #330, #550);
+      border-color: #ff0;
+      color: #ff0;
+    }
+
+    .menu-item.chemventur:hover {
+      background: #ff0;
+      color: #000;
+      box-shadow: 0 0 30px rgba(255,255,0,0.7);
+    }
+
+    .sub-menu {
+      margin-left: 20px;
+      padding-left: 12px;
+      border-left: 3px dashed var(--dash);
+      display: none;
+    }
+
+    .sub-item {
+      padding: 8px;
+      color: #0a0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sub-item:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* Tiny dash decoration under menu */
+    #notch-menu::after {
+      content: "------------------------------------";
+      display: block;
+      text-align: center;
+      color: var(--dash);
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+<div id="notch" onclick="toggleMenu()">RUDVENTUR</div>
+
+<div id="notch-menu">
+  <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
+  <div class="sub-menu">
+    <div class="sub-item">Ventusky</div>
+    <div class="sub-item">Windy</div>
+    <div class="sub-item">Blitzortung</div>
+    <div class="sub-item">Nullschool</div>
+    <div class="sub-item">Zoom Earth</div>
+    <div class="sub-item">Google Earth</div>
+  </div>
+
+  <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
+  <div class="sub-menu">
+    <div class="sub-item">Map Merger</div>
+    <div class="sub-item">AI Chats</div>
+    <div class="sub-item">Translator</div>
+    <div class="sub-item">Global Chat</div>
+  </div>
+
+  <div class="menu-item" onclick="toggleSub(this)">📻 RADIO</div>
+  <div class="sub-menu">
+    <div class="sub-item">Radio Garden</div>
+  </div>
+
+  <div class="menu-item chemventur" onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
+  <div class="sub-menu">
+    <div class="sub-item" onclick="launchChemVentur('fullscreen')">🖥️ Full Screen</div>
+    <div class="sub-item" onclick="launchChemVentur('window')">🪟 Window</div>
+    <div class="sub-item" onclick="launchChemVentur('tab')">🔗 New Tab</div>
+    <div class="sub-item" onclick="window.open('https://github.com/rudventur/ChemVentur', '_blank')">📂 GitHub Source</div>
+  </div>
+
+  <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
+
+  <div class="menu-item">🌐 CUSTOM URL</div>
+</div>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById("notch-menu");
+  menu.classList.toggle("open");
+  menu.style.display = menu.classList.contains("open") ? "block" : "none";
+}
+
+function toggleSub(el) {
+  const sub = el.nextElementSibling;
+  if (sub && sub.classList.contains("sub-menu")) {
+    sub.style.display = sub.style.display === "block" ? "none" : "block";
+  }
+}
+
+// Close menu when clicking outside
+document.addEventListener("click", e => {
+  const notch = document.getElementById("notch");
+  const menu = document.getElementById("notch-menu");
+  if (!notch.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.remove("open");
+    menu.style.display = "none";
+  }
+});
+
+// ChemVentur Launcher
+function launchChemVentur(mode) {
+  const gameUrl = "https://rudventur.github.io/ChemVentur/";
+  
+  if (mode === 'fullscreen') {
+    // Open in new tab and request fullscreen
+    const win = window.open(gameUrl, '_blank');
+    // Try to go fullscreen after a short delay
+    setTimeout(() => {
+      if (win && win.document && win.document.documentElement) {
+        try {
+          win.document.documentElement.requestFullscreen();
+        } catch(e) {
+          console.log("Fullscreen not supported or blocked");
+        }
+      }
+    }, 1000);
+  } else if (mode === 'window') {
+    // Open in popup window
+    const width = 1200;
+    const height = 800;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    window.open(
+      gameUrl, 
+      'ChemVentur', 
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+  } else if (mode === 'tab') {
+    // Open in new tab
+    window.open(gameUrl, '_blank');
+  }
+}
+
+// Ko-fi Donation
+function buyElectricity() {
+  // TODO: Replace with your actual Ko-fi link when ready!
+  const kofiUrl = "https://ko-fi.com/rudventur"; // <-- UPDATE THIS!
+  window.open(kofiUrl, '_blank');
+}
+</script>
+
+</body>
+</html>

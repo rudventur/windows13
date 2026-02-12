@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDOWS 13 🎃 RUDVENTUR</title>
+<style>
+:root {
+  --bg: #000;
+  --neon: #00ff41;
+  --panel: #001100;
+  --dash: #0a0;
+  --yellow: #ffe600;
+  --gold: #ffd700;
+  --panel-bg: rgba(0, 15, 5, 0.96);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--neon);
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  background-image: 
+    linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+/* ===== LOGIN SCREEN ===== */
+#login {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  background: #000;
+  z-index: 99999;
+}
+
+#login h1 {
+  font-size: 3.5rem;
+  text-shadow: 0 0 80px var(--neon);
+  animation: glowPulse 3s infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { text-shadow: 0 0 80px var(--neon); }
+  50% { text-shadow: 0 0 120px var(--neon), 0 0 40px var(--neon); }
+}
+
+#channelInput {
+  padding: 14px 20px;
+  width: 440px;
+  max-width: 90%;
+  font-size: 1.2rem;
+  background: #000;
+  color: var(--neon);
+  border: 4px solid var(--neon);
+  outline: none;
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+#enterBtn {
+  padding: 14px 50px;
+  font-size: 1.2rem;
+  background: var(--neon);
+  color: #000;
+  border: none;
+  font-weight: 900;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+#enterBtn:hover {
+  box-shadow: 0 0 40px var(--neon);
+  transform: scale(1.05);
+}
+
+/* ===== DESKTOP ===== */
+#desktop {
+  display: none;
+  height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* ===== NOTCH (TOP-LEFT) ===== */
+#notch {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--neon);
+  color: #000;
+  padding: 12px 24px;
+  font-weight: 900;
+  font-size: 1.4rem;
+  box-shadow: 0 0 30px rgba(0,255,65,0.3);
+  cursor: pointer;
+  border-radius: 0 0 16px 0;
+  z-index: 9999;
+  user-select: none;
+}
+
+#notchMenu {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  background: var(--panel);
+  border: 4px solid var(--neon);
+  border-top: none;
+  width: 340px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 16px;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 0 40px rgba(0,255,65,0.15);
+  display: none;
+  z-index: 9998;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  margin: 8px 0;
+  background: #000;
+  border: 2px solid var(--neon);
+  color: var(--neon);
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.menu-item:hover {
+  background: var(--neon);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0,255,65,0.5);
+}
+
+.menu-item.electric {
+  background: linear-gradient(90deg, #330, #550);
+  border-color: var(--yellow);
+  color: var(--yellow);
+  animation: electricPulse 2s ease-in-out infinite;
+}
+
+@keyframes electricPulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(255,255,0,0.3); }
+  50% { box-shadow: 0 0 20px rgba(255,255,0,0.6); }
+}
+
+.menu-item.chemventur {
+  background: linear-gradient(90deg, #330, #550);
+  border-color: #ff0;
+  color: #ff0;
+}
+
+.sub-menu {
+  margin-left: 20px;
+  padding-left: 12px;
+  border-left: 3px dashed var(--dash);
+  display: none;
+}
+
+.sub-item {
+  padding: 8px;
+  color: #0a0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sub-item:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ===== R CIRCLE (TOP-RIGHT) ===== */
+#Rcircle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: var(--neon);
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(0,255,65,0.4);
+  z-index: 9999;
+  user-select: none;
+  transition: all 0.3s;
+}
+
+#Rcircle:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 50px rgba(0,255,65,0.7);
+}
+
+/* ===== BOTTOM BUTTONS ===== */
+#bottomButtons {
+  position: fixed;
+  bottom: 70px;
+  left: 20px;
+  display: flex;
+  gap: 12px;
+  z-index: 9999;
+}
+
+.bottom-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 3px solid var(--neon);
+  color: var(--neon);
+  font-size: 26px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 20px rgba(0,255,65,0.3);
+  transition: all 0.3s;
+  user-select: none;
+}
+
+.bottom-btn:hover {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 0 35px var(--neon);
+}
+
+/* ===== POPCORN BUTTON (BOTTOM-RIGHT) ===== */
+#popcornBtn {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #001a00;
+  border: 2.5px solid var(--neon);
+  color: var(--neon);
+  font-size: 2.2rem;
+  cursor: pointer;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: breathe 4s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); box-shadow: 0 0 30px var(--neon); }
+}
+
+/* ===== TASKBAR (BOTTOM-MIDDLE) ===== */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to top, #010, #020);
+  border-top: 3px solid var(--neon);
+  box-shadow: 0 0 20px var(--neon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  z-index: 10000;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.taskbar-item {
+  background: #020;
+  color: var(--neon);
+  border: 2px solid var(--neon);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 0 10px var(--neon);
+  transition: all 0.3s;
+  min-width: 150px;
+  text-align: center;
+}
+
+.taskbar-item:hover {
+  background: var(--neon);
+  color: #000;
+  transform: translateY(-4px);
+}
+
+.taskbar-item.active {
+  background: rgba(0,255,65,0.2);
+  box-shadow: 0 0 15px var(--neon);
+}
+
+/* ===== WINDOWS ===== */
+.window {
+  position: absolute;
+  background: var(--panel-bg);
+  border: 3px solid var(--neon);
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0,255,65,0.2);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  resize: both;
+  min-width: 400px;
+  min-height: 300px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.window.minimized { display: none; }
+
+.window.maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: calc(100% - 60px) !important;
+  border-radius: 0;
+  resize: none;
+}
+
+.window.active {
+  z-index: 1000;
+  border-color: var(--yellow);
+  box-shadow: 0 0 60px rgba(255,230,0,0.4);
+}
+
+.window-header {
+  background: rgba(0,255,65,0.15);
+  padding: 12px 16px;
+  cursor: move;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,255,65,0.3);
+  user-select: none;
+}
+
+.window-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--neon);
+  text-shadow: 0 0 8px var(--neon);
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.window-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--neon);
+  background: rgba(0,0,0,0.5);
+  color: var(--neon);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.window-btn:hover {
+  background: var(--neon);
+  color: #000;
+}
+
+.window-btn.close:hover {
+  background: #f00;
+  border-color: #f00;
+  color: #fff;
+}
+
+.window-content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+.window-content.no-padding {
+  padding: 0;
+}
+
+.window-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ===== TOAST ===== */
+#toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: rgba(0,20,0,0.97);
+  border: 2px solid var(--neon);
+  color: var(--neon);
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(0,255,65,0.35);
+  transition: all 0.45s;
+  opacity: 0;
+  z-index: 100000;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+#toast.gold {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 4px; }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login">
+  <h1>WINDOWS 13 🎃</h1>
+  <input id="channelInput" placeholder="Enter channel name..." />
+  <button id="enterBtn" onclick="login()">ENTER RUDVENTUR</button>
+  <div style="color: var(--dash); font-size: 0.9rem; margin-top: 10px;">
+    Powered by PumpkinG 🎃 (Claude + Grok)
+  </div>
+</div>
+
+<!-- DESKTOP -->
+<div id="desktop">
+  
+  <!-- TOP-LEFT: NOTCH MENU -->
+  <div id="notch" onclick="toggleNotch()">RUDVENTUR</div>
+  <div id="notchMenu">
+    <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
+    <div class="sub-menu">
+      <div class="sub-item">Ventusky</div>
+      <div class="sub-item">Windy</div>
+      <div class="sub-item">Blitzortung</div>
+    </div>
+
+    <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
+    <div class="sub-menu">
+      <div class="sub-item">Map Merger</div>
+      <div class="sub-item">Translator</div>
+      <div class="sub-item">AI Chats</div>
+    </div>
+
+    <div class="menu-item chemventur" onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
+    <div class="sub-menu">
+      <div class="sub-item" onclick="openChemVentur('fullscreen')">🖥️ Full Screen</div>
+      <div class="sub-item" onclick="openChemVentur('window')">🪟 Window</div>
+      <div class="sub-item" onclick="openChemVentur('tab')">🔗 New Tab</div>
+      <div class="sub-item" onclick="window.open('https://github.com/rudventur/ChemVentur','_blank')">📂 GitHub</div>
+    </div>
+
+    <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
+  </div>
+
+  <!-- TOP-RIGHT: R CIRCLE -->
+  <div id="Rcircle" onclick="openWindow('userbox')">R</div>
+
+  <!-- BOTTOM-LEFT: BUTTONS -->
+  <div id="bottomButtons">
+    <div class="bottom-btn" onclick="openWindow('keyboard')" title="Keyboards">⌨️</div>
+    <div class="bottom-btn" onclick="openWindow('chat')" title="Global Chat">💬</div>
+  </div>
+
+  <!-- BOTTOM-RIGHT: POPCORN -->
+  <div id="popcornBtn" onclick="openWindow('popcorn')" title="Popcorn Hub">🍿</div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+    <div style="color: var(--yellow); font-weight: bold; margin-right: 20px;">WINDOWS 13</div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+/* ===== GLOBAL STATE ===== */
+let currentChannel = 'main';
+let currentUser = 'Traveler';
+
+/* ===== LOGIN ===== */
+function login() {
+  const channel = document.getElementById('channelInput').value.trim();
+  if (!channel) {
+    alert('Please enter a channel name!');
+    return;
+  }
+  
+  currentChannel = channel;
+  localStorage.setItem('rudventur_channel', channel);
+  
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('desktop').style.display = 'block';
+  
+  showToast(`Welcome to channel: ${channel}! 🎃`, 'gold');
+  
+  // Load saved username if exists
+  const savedUser = localStorage.getItem('rud_useRbox_v2');
+  if (savedUser) {
+    const data = JSON.parse(savedUser);
+    currentUser = data.username || 'Traveler';
+  }
+}
+
+/* ===== NOTCH MENU ===== */
+function toggleNotch() {
+  const menu = document.getElementById('notchMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+function toggleSub(el) {
+  const sub = el.nextElementSibling;
+  if (sub && sub.classList.contains('sub-menu')) {
+    sub.style.display = sub.style.display === 'block' ? 'none' : 'block';
+  }
+}
+
+/* ===== CHEMVENTUR LAUNCHER ===== */
+function openChemVentur(mode) {
+  const url = 'https://rudventur.github.io/ChemVentur/';
+  
+  if (mode === 'fullscreen') {
+    const win = window.open(url, '_blank');
+    setTimeout(() => {
+      if (win && win.document && win.document.documentElement) {
+        try { win.document.documentElement.requestFullscreen(); } 
+        catch(e) { console.log('Fullscreen not supported'); }
+      }
+    }, 1000);
+  } else if (mode === 'window') {
+    WindowManager.createWindow({
+      id: 'chemventur_' + Date.now(),
+      title: '☢️ ChemVentur',
+      icon: '☢️',
+      x: 100,
+      y: 50,
+      width: 900,
+      height: 700,
+      noPadding: true,
+      content: `<iframe src="${url}" allowfullscreen></iframe>`
+    });
+  } else if (mode === 'tab') {
+    window.open(url, '_blank');
+  }
+}
+
+/* ===== KO-FI ===== */
+function buyElectricity() {
+  const kofiUrl = 'https://ko-fi.com/rudventur'; // UPDATE THIS!
+  window.open(kofiUrl, '_blank');
+}
+
+/* ===== WINDOW MANAGER ===== */
+const WindowManager = {
+  windows: {},
+  zIndex: 100,
+  dragState: { active: false, windowId: null, offsetX: 0, offsetY: 0 },
+  
+  createWindow(options) {
+    const id = options.id || 'win_' + Date.now();
+    const win = document.createElement('div');
+    win.className = 'window';
+    win.id = id;
+    win.style.left = (options.x || 100) + 'px';
+    win.style.top = (options.y || 100) + 'px';
+    win.style.width = (options.width || 600) + 'px';
+    win.style.height = (options.height || 400) + 'px';
+    
+    const isChemVentur = options.title && options.title.includes('ChemVentur');
+    const titleStyle = isChemVentur ? 'color: #ff0; text-shadow: 0 0 10px #ff0;' : '';
+    
+    win.innerHTML = `
+      <div class="window-header">
+        <div class="window-title" style="${titleStyle}">
+          ${options.icon || '🪟'} ${options.title || 'Window'}
+        </div>
+        <div class="window-controls">
+          <div class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
+          <div class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
+          <div class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
+        </div>
+      </div>
+      <div class="window-content ${options.noPadding ? 'no-padding' : ''}">
+        ${options.content || ''}
+      </div>
+    `;
+    
+    document.getElementById('desktop').appendChild(win);
+    
+    this.windows[id] = {
+      element: win,
+      title: options.title,
+      icon: options.icon,
+      minimized: false,
+      maximized: false
+    };
+    
+    const header = win.querySelector('.window-header');
+    header.addEventListener('mousedown', (e) => this.startDrag(e, id));
+    win.addEventListener('mousedown', () => this.bringToFront(id));
+    
+    this.updateTaskbar();
+    this.bringToFront(id);
+    
+    return id;
+  },
+  
+  minimize(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    win.element.classList.add('minimized');
+    win.minimized = true;
+    this.updateTaskbar();
+  },
+  
+  restore(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    win.element.classList.remove('minimized');
+    win.minimized = false;
+    this.bringToFront(id);
+    this.updateTaskbar();
+  },
+  
+  toggleMaximize(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    if (win.maximized) {
+      win.element.classList.remove('maximized');
+      win.maximized = false;
+    } else {
+      win.element.classList.add('maximized');
+      win.maximized = true;
+    }
+  },
+  
+  close(id) {
+    const win = this.windows[id];
+    if (!win) return;
+    win.element.remove();
+    delete this.windows[id];
+    this.updateTaskbar();
+  },
+  
+  bringToFront(id) {
+    Object.values(this.windows).forEach(w => w.element.classList.remove('active'));
+    const win = this.windows[id];
+    if (win && !win.minimized) {
+      this.zIndex++;
+      win.element.style.zIndex = this.zIndex;
+      win.element.classList.add('active');
+    }
+  },
+  
+  startDrag(e, id) {
+    const win = this.windows[id];
+    if (!win || win.maximized) return;
+    this.dragState.active = true;
+    this.dragState.windowId = id;
+    this.dragState.offsetX = e.clientX - win.element.offsetLeft;
+    this.dragState.offsetY = e.clientY - win.element.offsetTop;
+    document.addEventListener('mousemove', this.onDrag);
+    document.addEventListener('mouseup', this.stopDrag);
+    e.preventDefault();
+  },
+  
+  onDrag(e) {
+    if (!WindowManager.dragState.active) return;
+    const id = WindowManager.dragState.windowId;
+    const win = WindowManager.windows[id];
+    if (!win) return;
+    win.element.style.left = (e.clientX - WindowManager.dragState.offsetX) + 'px';
+    win.element.style.top = (e.clientY - WindowManager.dragState.offsetY) + 'px';
+  },
+  
+  stopDrag() {
+    WindowManager.dragState.active = false;
+    document.removeEventListener('mousemove', WindowManager.onDrag);
+    document.removeEventListener('mouseup', WindowManager.stopDrag);
+  },
+  
+  updateTaskbar() {
+    const taskbar = document.getElementById('taskbar');
+    const items = taskbar.querySelectorAll('.taskbar-item');
+    items.forEach(item => item.remove());
+    
+    Object.entries(this.windows).forEach(([id, win]) => {
+      const item = document.createElement('div');
+      item.className = 'taskbar-item';
+      if (!win.minimized) item.classList.add('active');
+      item.innerHTML = `${win.icon || '🪟'} ${win.title || 'Window'}`;
+      item.onclick = () => {
+        if (win.minimized) this.restore(id);
+        else this.bringToFront(id);
+      };
+      taskbar.appendChild(item);
+    });
+  }
+};
+
+/* ===== OPEN WINDOW SHORTCUTS ===== */
+function openWindow(type) {
+  const windows = {
+    userbox: {
+      id: 'userbox',
+      title: '👤 useRbox v2.0',
+      icon: '👤',
+      x: 200,
+      y: 100,
+      width: 400,
+      height: 650,
+      content: '<div style="padding: 20px; color: var(--neon);"><h2>👤 useRbox v2.0</h2><p>Replace this with your useRbox component!</p></div>'
+    },
+    keyboard: {
+      id: 'keyboard',
+      title: '⌨️ World Keyboards',
+      icon: '⌨️',
+      x: 300,
+      y: 150,
+      width: 850,
+      height: 550,
+      content: '<div style="padding: 20px; color: var(--neon);"><h2>⌨️ Keyboards</h2><p>UK 🇬🇧 | Polish 🇵🇱 | German 🇩🇪 | French 🇫🇷 | Spanish 🇪🇸<br>Japanese 🇯🇵 | Korean 🇰🇷 | Arabic 🇸🇦 | Emoji 😀</p><p style="margin-top: 15px;">Replace with keyboard component!</p></div>'
+    },
+    chat: {
+      id: 'chat',
+      title: '💬 Global Chat',
+      icon: '💬',
+      x: 400,
+      y: 200,
+      width: 450,
+      height: 550,
+      content: `<div style="padding: 20px; color: var(--neon);"><h2>💬 Global Chat</h2><p>Channel: <strong style="color: var(--yellow);">${currentChannel}</strong></p><p style="margin-top: 15px;">Firebase-ready! Replace with chat component!</p></div>`
+    },
+    popcorn: {
+      id: 'popcorn',
+      title: '🍿 Popcorn Hub',
+      icon: '🍿',
+      x: 150,
+      y: 80,
+      width: 550,
+      height: 700,
+      content: '<div style="padding: 20px; color: var(--neon);"><h2>🍿 Popcorn Hub</h2><p>🍿 Accessibility Descriptions<br>🍪 Cookies Inspector<br>💰 Popcoin Mining</p><p style="margin-top: 15px;">Replace with Popcorn Hub component!</p></div>'
+    }
+  };
+  
+  const config = windows[type];
+  if (config) WindowManager.createWindow(config);
+}
+
+/* ===== TOAST ===== */
+function showToast(msg, type = 'normal') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = '';
+  if (type === 'gold') toast.classList.add('gold');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+/* ===== AUTO-LOAD LAST CHANNEL ===== */
+window.addEventListener('load', () => {
+  const lastChannel = localStorage.getItem('rudventur_channel');
+  if (lastChannel) {
+    document.getElementById('channelInput').value = lastChannel;
+  }
+  
+  // Enter key on login
+  document.getElementById('channelInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') login();
+  });
+});
+
+/* ===== KEYBOARD SHORTCUTS ===== */
+document.addEventListener('keydown', (e) => {
+  if (e.altKey && e.key === 'w') {
+    const activeWin = Object.entries(WindowManager.windows)
+      .find(([id, win]) => win.element.classList.contains('active'));
+    if (activeWin) WindowManager.close(activeWin[0]);
+  }
+  
+  if (e.altKey && e.key === 'm') {
+    const activeWin = Object.entries(WindowManager.windows)
+      .find(([id, win]) => win.element.classList.contains('active'));
+    if (activeWin) WindowManager.minimize(activeWin[0]);
+  }
+});
+
+console.log('🎃 WINDOWS 13 - READY!');
+console.log('Powered by PumpkinG (Claude + Grok)');
+</script>
+
+</body>
+</html>

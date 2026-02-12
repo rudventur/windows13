@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🍿 Popcorn Hub - Accessibility + Cookies + Popcoin</title>
+
+<style>
+:root {
+  --bg-dark: #000502;
+  --bg-panel: rgba(0, 15, 5, 0.96);
+  --text-main: #e0ffe0;
+  --text-muted: #448855;
+  --neon-green: #00ff41;
+  --neon-dim: rgba(0, 255, 65, 0.18);
+  --gold: #ffd700;
+  --gold-dim: rgba(255, 215, 0, 0.22);
+  --danger: #ff2a6d;
+  --font: 'Courier New', monospace;
+  --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  background: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font);
+  min-height:100vh;
+  background-image: 
+    linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+/* ===== FLOATING TRIGGER ===== */
+#popcorn-trigger {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #001a00;
+  border: 2.5px solid var(--neon-green);
+  box-shadow: 0 0 18px var(--neon-dim), inset 0 0 12px var(--neon-dim);
+  color: var(--neon-green);
+  font-size: 2.4rem;
+  cursor: pointer;
+  z-index: 999999;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  transition: all 0.4s var(--ease);
+  animation: pulse 6.2s infinite ease-in-out;
+  user-select: none;
+}
+
+#popcorn-trigger:hover {
+  transform: scale(1.16) rotate(-12deg);
+  box-shadow: 0 0 36px var(--neon-green);
+}
+
+@keyframes pulse {
+  0%,100% { transform: translateY(0); box-shadow: 0 0 18px var(--neon-dim); }
+  50% { transform: translateY(-10px); box-shadow: 0 0 32px rgba(0,255,65,0.45); }
+}
+
+/* ===== MAIN PANEL ===== */
+#popcorn-panel {
+  position: fixed;
+  bottom: 128px;
+  right: 32px;
+  width: 500px;
+  max-width: 94vw;
+  height: 680px;
+  max-height: 88vh;
+  background: var(--bg-panel);
+  border: 1px solid var(--neon-green);
+  border-radius: 16px;
+  box-shadow: 0 0 55px rgba(0,0,0,0.85), 0 0 24px rgba(0,255,65,0.25);
+  display: flex;
+  flex-direction:column;
+  opacity: 0;
+  transform: translateY(60px) scale(0.88);
+  pointer-events: none;
+  transition: all 0.45s var(--ease);
+  z-index: 999998;
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+}
+
+#popcorn-panel.active {
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+/* ===== HEADER ===== */
+.pp-header {
+  padding: 1.1rem 1.6rem;
+  border-bottom: 1px solid var(--neon-green);
+  display: flex;
+  justify-content:space-between;
+  align-items:center;
+  background: rgba(0,50,20,0.35);
+}
+
+.pp-title {
+  font-size:1.15rem;
+  text-shadow:0 0 9px var(--neon-green);
+  letter-spacing:1.2px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.pp-close {
+  background:none;
+  border:none;
+  color:var(--text-muted);
+  font-size:2rem;
+  cursor:pointer;
+  transition: all 0.2s;
+}
+
+.pp-close:hover {
+  color:var(--danger);
+  transform: rotate(90deg);
+}
+
+/* ===== TABS ===== */
+.pp-tabs {
+  display:flex;
+  border-bottom:1px dashed rgba(0,255,65,0.35);
+}
+
+.pp-tab {
+  flex:1;
+  padding:1rem;
+  text-align:center;
+  cursor:pointer;
+  color:var(--text-muted);
+  font-weight:bold;
+  transition:0.3s;
+  font-size: 0.85rem;
+}
+
+.pp-tab:hover {
+  background:rgba(0,255,65,0.06);
+  color:var(--text-main);
+}
+
+.pp-tab.active {
+  color:var(--neon-green);
+  background:rgba(0,255,65,0.12);
+  border-bottom:2.5px solid var(--neon-green);
+}
+
+/* ===== CONTENT AREA ===== */
+.pp-content-area {
+  flex:1;
+  position:relative;
+  overflow:hidden;
+}
+
+.tab-view {
+  position:absolute;
+  inset:0;
+  padding:1.2rem;
+  overflow-y:auto;
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(24px);
+  transition:0.35s ease;
+}
+
+.tab-view.active-view {
+  opacity:1;
+  pointer-events:auto;
+  transform:translateX(0);
+}
+
+/* ===== SHARED ELEMENTS ===== */
+.pp-input {
+  width: 100%;
+  background:rgba(0,10,0,0.82);
+  border:1px solid #336633;
+  color:var(--neon-green);
+  padding:0.65rem 1.1rem;
+  border-radius:5px;
+  font-family:inherit;
+  outline:none;
+  margin-bottom: 12px;
+}
+
+.pp-input:focus {
+  border-color:var(--neon-green);
+  box-shadow:0 0 10px rgba(0,255,65,0.3);
+}
+
+.pp-btn {
+  background:rgba(0,255,65,0.12);
+  border:1px solid var(--neon-green);
+  color:var(--neon-green);
+  padding:0.7rem 1.4rem;
+  border-radius:5px;
+  cursor:pointer;
+  font-weight:bold;
+  text-transform:uppercase;
+  font-size:0.85rem;
+  transition:all 0.2s;
+  width: 100%;
+}
+
+.pp-btn:hover {
+  background:var(--neon-green);
+  color:#000;
+  box-shadow:0 0 16px var(--neon-green);
+}
+
+.pp-btn.mining {
+  background:var(--gold-dim);
+  color:var(--gold);
+  cursor:not-allowed;
+  animation:miningPulse 1.5s infinite;
+}
+
+@keyframes miningPulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.7; }
+}
+
+/* ===== POPCORN MAKER TAB ===== */
+.popcorn-display {
+  background: rgba(0,0,0,0.5);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.popcorn-count {
+  font-size: 3rem;
+  color: var(--gold);
+  font-weight: 900;
+  text-shadow: 0 0 20px var(--gold);
+  margin: 10px 0;
+}
+
+.popcorn-visual {
+  font-size: 2rem;
+  margin: 15px 0;
+  line-height: 1.4;
+  min-height: 80px;
+}
+
+.description-box {
+  width: 100%;
+  min-height: 120px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--neon-green);
+  color: var(--text-main);
+  padding: 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+.saved-descriptions {
+  margin-top: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.desc-item {
+  background: rgba(0,20,0,0.6);
+  border-left: 3px solid var(--neon-green);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.desc-url {
+  color: var(--gold);
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.desc-text {
+  color: var(--text-main);
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+/* ===== COOKIES TAB ===== */
+.cookie-card {
+  background:rgba(0,20,0,0.65);
+  border-left:3.5px solid var(--text-muted);
+  padding:1rem;
+  margin-bottom:1rem;
+  border-radius:0 6px 6px 0;
+  transition:all 0.22s;
+}
+
+.cookie-card:hover {
+  background:rgba(0,45,0,0.85);
+  border-left-color:var(--neon-green);
+  transform:translateX(6px);
+}
+
+.cookie-name {
+  color:var(--neon-green);
+  font-weight:bold;
+  font-size:0.95rem;
+}
+
+.cookie-value {
+  font-size:0.85rem;
+  color:#aaddbb;
+  word-break:break-all;
+  margin:5px 0;
+  display:block;
+}
+
+/* ===== POPCOIN WALLET ===== */
+.wallet-hero {
+  background:linear-gradient(135deg, rgba(0,20,0,0.85), rgba(30,50,0,0.85));
+  border:1.5px solid var(--gold-dim);
+  border-radius:14px;
+  padding:1.8rem;
+  text-align:center;
+  margin-bottom:1.8rem;
+  position:relative;
+  overflow:hidden;
+}
+
+.wallet-hero::before {
+  content:'';
+  position:absolute;
+  inset:-50%;
+  background:radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 65%);
+  animation:rotateGold 14s linear infinite;
+}
+
+@keyframes rotateGold {
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+.popcoin-balance {
+  font-size:3.2rem;
+  color:var(--gold);
+  text-shadow:0 0 18px rgba(255,215,0,0.7);
+  font-weight:900;
+  margin:12px 0;
+  letter-spacing:1px;
+  position: relative;
+  z-index: 1;
+}
+
+.currency-label {
+  color:var(--text-muted);
+  font-size:1rem;
+  text-transform:uppercase;
+  letter-spacing:2.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.mining-status {
+  margin-top:1rem;
+  padding:0.8rem;
+  background:rgba(0,0,0,0.5);
+  border:1px dashed var(--neon-green);
+  border-radius:8px;
+  font-size:0.9rem;
+  color:var(--gold);
+  text-align:center;
+  display:none;
+}
+
+.progress-bar {
+  height:10px;
+  background:#112211;
+  border-radius:5px;
+  overflow:hidden;
+  margin-top:0.8rem;
+}
+
+.progress-fill {
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--neon-green), var(--gold));
+  transition:width 0.3s ease;
+}
+
+/* ===== TOAST ===== */
+#toast {
+  position:fixed;
+  bottom:40px;
+  left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:rgba(0,20,0,0.97);
+  border:1.5px solid var(--neon-green);
+  color:var(--neon-green);
+  padding:1rem 2.4rem;
+  border-radius:999px;
+  font-size:1rem;
+  box-shadow:0 0 24px rgba(0,255,65,0.35);
+  transition:all 0.45s var(--ease);
+  opacity:0;
+  z-index:1000000;
+  white-space:nowrap;
+}
+
+#toast.show {
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+#toast.gold {
+  border-color:var(--gold);
+  color:var(--gold);
+  box-shadow:0 0 24px rgba(255,215,0,0.4);
+}
+
+/* ===== SCROLLBAR ===== */
+.tab-view::-webkit-scrollbar,
+.saved-descriptions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tab-view::-webkit-scrollbar-track,
+.saved-descriptions::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.tab-view::-webkit-scrollbar-thumb,
+.saved-descriptions::-webkit-scrollbar-thumb {
+  background: var(--neon-green);
+  border-radius: 4px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TRIGGER BUTTON -->
+<button id="popcorn-trigger" title="Popcorn Accessibility Hub">🍿</button>
+
+<!-- MAIN PANEL -->
+<div id="popcorn-panel">
+  <div class="pp-header">
+    <div class="pp-title">🍿 POPCORN HUB</div>
+    <button class="pp-close" id="pp-close">×</button>
+  </div>
+
+  <div class="pp-tabs">
+    <div class="pp-tab active" data-tab="maker">🍿 MAKER</div>
+    <div class="pp-tab" data-tab="cookies">🍪 COOKIES</div>
+    <div class="pp-tab" data-tab="wallet">💰 POPCOIN</div>
+  </div>
+
+  <div class="pp-content-area">
+    
+    <!-- POPCORN MAKER TAB -->
+    <div class="tab-view active-view" id="view-maker">
+      <h3 style="color: var(--gold); margin-bottom: 16px;">🌐 Accessibility Description Maker</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+        Make content accessible for everyone: blind, deaf, non-readers, bots, AIs, and more!
+      </p>
+
+      <input type="text" class="pp-input" id="url-input" placeholder="Paste URL here...">
+      
+      <div class="popcorn-display">
+        <div class="currency-label">POPCORN GENERATED</div>
+        <div class="popcorn-count" id="popcorn-count">0</div>
+        <div class="popcorn-visual" id="popcorn-visual">🍿</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          1 character = 1 popcorn kernel 🍿
+        </div>
+      </div>
+
+      <label style="color: var(--neon-green); margin-bottom: 8px; display: block; font-size: 0.9rem;">
+        📝 Describe this content (for accessibility):
+      </label>
+      <textarea class="description-box" id="description-input" 
+        placeholder="Describe what's in the video/image/website...
+Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D animations.'"></textarea>
+
+      <button class="pp-btn" onclick="saveDescription()">💾 SAVE DESCRIPTION</button>
+
+      <div class="saved-descriptions" id="saved-descriptions"></div>
+    </div>
+
+    <!-- COOKIES TAB -->
+    <div class="tab-view" id="view-cookies">
+      <h3 style="color: var(--neon-green); margin-bottom: 16px;">🍪 Cookies & Storage Inspector</h3>
+      
+      <button class="pp-btn" onclick="inspectCookies()" style="margin-bottom: 16px;">
+        🔍 INSPECT COOKIES
+      </button>
+      
+      <button class="pp-btn" onclick="clearAllCookies()" 
+        style="background: rgba(255,42,109,0.12); border-color: var(--danger); color: var(--danger); margin-bottom: 20px;">
+        🗑️ CLEAR ALL COOKIES
+      </button>
+
+      <div id="cookies-list"></div>
+    </div>
+
+    <!-- POPCOIN WALLET TAB -->
+    <div class="tab-view" id="view-wallet">
+      <div class="wallet-hero">
+        <div class="currency-label">YOUR BALANCE</div>
+        <div class="popcoin-balance" id="wallet-balance">0.00</div>
+        <div style="font-size: 1.8rem; position: relative; z-index: 1;">🍿 POPCOIN</div>
+        <div style="font-size: 0.85rem; color: #88aa88; margin-top: 12px; position: relative; z-index: 1;">
+          Value = Average of ~180 world currencies ÷ currency count<br>
+          Mined via SHA-256 Proof-of-Work
+        </div>
+      </div>
+
+      <button class="pp-btn" id="mine-btn" onclick="startMining()">
+        ⛏️ START MINING POPCOIN
+      </button>
+
+      <div id="mining-status" class="mining-status">
+        Mining in progress... Target: 4 leading zeros<br>
+        Nonce: <span id="current-nonce">0</span> | Hash attempts: <span id="attempts">0</span><br>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+
+      <div style="text-align:center; color:var(--text-muted); margin-top: 20px; font-size:0.9rem;">
+        Mining multiplier: <span id="multiplier">1.0×</span><br>
+        Last block hash: <span id="last-hash" style="font-family: monospace; font-size: 0.75rem;">0000...</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast"></div>
+
+<script>
+/* ===== GLOBAL STATE ===== */
+const State = {
+  descriptions: JSON.parse(localStorage.getItem('rudventur_descriptions') || '[]'),
+  balance: parseFloat(localStorage.getItem('rudventur_popcoin_balance') || '0'),
+  multiplier: parseFloat(localStorage.getItem('rudventur_multiplier') || '1'),
+  lastHash: localStorage.getItem('rudventur_last_hash') || '0000',
+  mining: false
+};
+
+/* ===== PANEL TOGGLE ===== */
+document.getElementById('popcorn-trigger').onclick = () => {
+  document.getElementById('popcorn-panel').classList.toggle('active');
+};
+
+document.getElementById('pp-close').onclick = () => {
+  document.getElementById('popcorn-panel').classList.remove('active');
+};
+
+/* ===== TAB SWITCHING ===== */
+document.querySelectorAll('.pp-tab').forEach(tab => {
+  tab.onclick = function() {
+    const tabName = this.dataset.tab;
+    
+    // Update active tab
+    document.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    
+    // Update active view
+    document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active-view'));
+    document.getElementById(`view-${tabName}`).classList.add('active-view');
+  };
+});
+
+/* ===== POPCORN MAKER ===== */
+document.getElementById('url-input').addEventListener('input', function() {
+  const url = this.value;
+  const count = url.length;
+  const popcornAmount = Math.min(count, 100); // Cap at 100 for display
+  
+  document.getElementById('popcorn-count').textContent = count;
+  document.getElementById('popcorn-visual').textContent = '🍿'.repeat(Math.ceil(popcornAmount / 5));
+});
+
+function saveDescription() {
+  const url = document.getElementById('url-input').value.trim();
+  const desc = document.getElementById('description-input').value.trim();
+  
+  if (!url || !desc) {
+    showToast('Please enter both URL and description!', 'normal');
+    return;
+  }
+  
+  const description = {
+    id: Date.now(),
+    url: url,
+    description: desc,
+    popcorn: url.length,
+    timestamp: Date.now()
+  };
+  
+  State.descriptions.unshift(description);
+  localStorage.setItem('rudventur_descriptions', JSON.stringify(State.descriptions));
+  
+  // Clear inputs
+  document.getElementById('url-input').value = '';
+  document.getElementById('description-input').value = '';
+  document.getElementById('popcorn-count').textContent = '0';
+  document.getElementById('popcorn-visual').textContent = '🍿';
+  
+  renderDescriptions();
+  showToast('✅ Description saved! Accessibility +100!', 'gold');
+}
+
+function renderDescriptions() {
+  const container = document.getElementById('saved-descriptions');
+  
+  if (State.descriptions.length === 0) {
+    container.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px;">No descriptions yet. Start making content accessible! 🌐</div>';
+    return;
+  }
+  
+  container.innerHTML = '<h4 style="color: var(--neon-green); margin: 20px 0 12px;">📚 Saved Descriptions:</h4>' +
+    State.descriptions.slice(0, 10).map(desc => `
+      <div class="desc-item">
+        <div class="desc-url">🍿 ${desc.popcorn} kernels | ${desc.url}</div>
+        <div class="desc-text">${escapeHtml(desc.description)}</div>
+      </div>
+    `).join('');
+}
+
+/* ===== COOKIES INSPECTOR ===== */
+function inspectCookies() {
+  const container = document.getElementById('cookies-list');
+  const cookies = document.cookie.split(';').filter(c => c.trim());
+  const storage = Object.keys(localStorage);
+  
+  let html = '<h4 style="color: var(--neon-green); margin-bottom: 12px;">🍪 Cookies:</h4>';
+  
+  if (cookies.length === 0) {
+    html += '<div style="color: var(--text-muted); padding: 10px;">No cookies found</div>';
+  } else {
+    cookies.forEach(cookie => {
+      const [name, ...valueParts] = cookie.split('=');
+      const value = valueParts.join('=');
+      html += `
+        <div class="cookie-card">
+          <div class="cookie-name">${escapeHtml(name.trim())}</div>
+          <div class="cookie-value">${escapeHtml(value.trim())}</div>
+        </div>
+      `;
+    });
+  }
+  
+  html += '<h4 style="color: var(--neon-green); margin: 20px 0 12px;">💾 LocalStorage:</h4>';
+  
+  if (storage.length === 0) {
+    html += '<div style="color: var(--text-muted); padding: 10px;">No localStorage items</div>';
+  } else {
+    storage.slice(0, 20).forEach(key => {
+      const value = localStorage.getItem(key);
+      const displayValue = value.length > 100 ? value.substring(0, 100) + '...' : value;
+      html += `
+        <div class="cookie-card">
+          <div class="cookie-name">${escapeHtml(key)}</div>
+          <div class="cookie-value">${escapeHtml(displayValue)}</div>
+        </div>
+      `;
+    });
+    if (storage.length > 20) {
+      html += `<div style="text-align: center; color: var(--text-muted); padding: 10px;">...and ${storage.length - 20} more items</div>`;
+    }
+  }
+  
+  container.innerHTML = html;
+  showToast('🔍 Cookies inspected!', 'normal');
+}
+
+function clearAllCookies() {
+  if (!confirm('Clear ALL cookies and localStorage? This cannot be undone!')) return;
+  
+  // Clear cookies
+  document.cookie.split(';').forEach(cookie => {
+    const name = cookie.split('=')[0].trim();
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+  });
+  
+  // Clear localStorage (except our game data)
+  const keep = ['rudventur_descriptions', 'rudventur_popcoin_balance', 'rudventur_multiplier', 'rudventur_last_hash'];
+  Object.keys(localStorage).forEach(key => {
+    if (!keep.includes(key)) {
+      localStorage.removeItem(key);
+    }
+  });
+  
+  document.getElementById('cookies-list').innerHTML = '';
+  showToast('🗑️ Cookies cleared!', 'normal');
+}
+
+/* ===== POPCOIN MINING ===== */
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function startMining() {
+  if (State.mining) return;
+  
+  State.mining = true;
+  const btn = document.getElementById('mine-btn');
+  const statusDiv = document.getElementById('mining-status');
+  const progressBar = document.getElementById('progress-fill');
+  
+  btn.classList.add('mining');
+  btn.textContent = '⛏️ MINING...';
+  statusDiv.style.display = 'block';
+  
+  let nonce = 0;
+  let attempts = 0;
+  const target = '0000'; // 4 leading zeros
+  const maxAttempts = 100000;
+  
+  const mineStep = async () => {
+    for (let i = 0; i < 1000 && attempts < maxAttempts; i++) {
+      const data = `${Date.now()}_${nonce}_rudventur_popcoin`;
+      const hash = await sha256(data);
+      attempts++;
+      
+      document.getElementById('current-nonce').textContent = nonce;
+      document.getElementById('attempts').textContent = attempts;
+      progressBar.style.width = ((attempts / maxAttempts) * 100) + '%';
+      
+      if (hash.startsWith(target)) {
+        // SUCCESS!
+        const reward = 0.1 * State.multiplier;
+        State.balance += reward;
+        State.lastHash = hash;
+        State.multiplier += 0.1;
+        
+        localStorage.setItem('rudventur_popcoin_balance', State.balance.toFixed(4));
+        localStorage.setItem('rudventur_last_hash', hash);
+        localStorage.setItem('rudventur_multiplier', State.multiplier.toFixed(2));
+        
+        document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
+        document.getElementById('multiplier').textContent = State.multiplier.toFixed(2) + '×';
+        document.getElementById('last-hash').textContent = hash.substring(0, 12) + '...';
+        
+        btn.classList.remove('mining');
+        btn.textContent = '⛏️ START MINING POPCOIN';
+        statusDiv.style.display = 'none';
+        progressBar.style.width = '0%';
+        State.mining = false;
+        
+        showToast(`💰 MINED! +${reward.toFixed(4)} POPCOIN!`, 'gold');
+        return;
+      }
+      
+      nonce++;
+    }
+    
+    if (attempts < maxAttempts) {
+      setTimeout(mineStep, 0);
+    } else {
+      btn.classList.remove('mining');
+      btn.textContent = '⛏️ START MINING POPCOIN';
+      statusDiv.style.display = 'none';
+      progressBar.style.width = '0%';
+      State.mining = false;
+      showToast('⛏️ Mining timeout. Try again!', 'normal');
+    }
+  };
+  
+  setTimeout(mineStep, 100);
+}
+
+/* ===== TOAST ===== */
+function showToast(msg, type = 'normal') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = '';
+  if (type === 'gold') toast.classList.add('gold');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+/* ===== UTILITY ===== */
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/* ===== INIT ===== */
+renderDescriptions();
+document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
+document.getElementById('multiplier').textContent = State.multiplier.toFixed(2) + '×';
+document.getElementById('last-hash').textContent = State.lastHash.substring(0, 12) + '...';
+</script>
+
+</body>
+</html>

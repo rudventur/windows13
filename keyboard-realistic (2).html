@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>⌨️ Realistic Keyboards - World Style</title>
+
+<style>
+:root {
+  --neon: #00ff41;
+  --yellow: #ffe600;
+  --bg: #000;
+  --panel-bg: rgba(0, 15, 5, 0.96);
+  --key-bg: #1a1a1a;
+  --key-hover: #2a2a2a;
+  --key-active: var(--neon);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #000;
+  color: var(--neon);
+  font-family: 'Courier New', monospace;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* ===== KEYBOARD CONTAINER ===== */
+.keyboard-window {
+  background: var(--panel-bg);
+  border: 3px solid var(--neon);
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 0 40px rgba(0,255,65,0.2);
+  backdrop-filter: blur(12px);
+}
+
+/* ===== HEADER ===== */
+.kb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0,255,65,0.3);
+}
+
+.kb-title {
+  font-size: 1.3rem;
+  color: var(--yellow);
+  text-shadow: 0 0 10px var(--yellow);
+}
+
+/* ===== CONTROLS ===== */
+.kb-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.kb-select {
+  flex: 1;
+  min-width: 200px;
+  background: #000;
+  color: var(--neon);
+  border: 2px solid var(--neon);
+  padding: 10px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.95rem;
+}
+
+.kb-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0,255,65,0.1);
+  border: 1px solid var(--neon);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.kb-toggle:hover {
+  background: rgba(0,255,65,0.2);
+}
+
+.kb-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.kb-btn {
+  background: #000;
+  color: var(--neon);
+  border: 2px solid var(--neon);
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.kb-btn:hover {
+  background: var(--neon);
+  color: #000;
+}
+
+/* ===== OUTPUT DISPLAY ===== */
+.kb-output {
+  background: #000;
+  border: 2px solid var(--neon);
+  border-radius: 8px;
+  padding: 15px;
+  min-height: 80px;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  color: var(--neon);
+  word-wrap: break-word;
+  position: relative;
+}
+
+.kb-output-label {
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: var(--panel-bg);
+  padding: 0 8px;
+  font-size: 0.75rem;
+  color: var(--yellow);
+}
+
+/* ===== AUTOCOMPLETE SUGGESTIONS ===== */
+.autocomplete-bar {
+  display: none;
+  background: rgba(0,0,0,0.8);
+  border: 1px solid var(--neon);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 12px;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.autocomplete-bar.active {
+  display: flex;
+}
+
+.suggestion {
+  background: rgba(0,255,65,0.15);
+  border: 1px solid var(--neon);
+  color: var(--neon);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.suggestion:hover {
+  background: var(--neon);
+  color: #000;
+}
+
+/* ===== KEYBOARD LAYOUT ===== */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 15px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12px;
+}
+
+.kb-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+/* ===== KEY STYLES ===== */
+.key {
+  background: var(--key-bg);
+  border: 2px solid var(--neon);
+  border-radius: 6px;
+  color: var(--neon);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  min-width: 45px;
+  height: 50px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.key:hover {
+  background: var(--key-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,255,65,0.3);
+}
+
+.key:active {
+  transform: translateY(0);
+  background: var(--key-active);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon);
+}
+
+/* ===== SPECIAL KEY SIZES ===== */
+.key.tab { min-width: 70px; }
+.key.caps { min-width: 85px; }
+.key.shift { min-width: 100px; }
+.key.ctrl { min-width: 70px; }
+.key.alt { min-width: 60px; }
+.key.space { min-width: 300px; }
+.key.enter { min-width: 90px; }
+.key.backspace { min-width: 90px; }
+
+/* ===== SPECIAL KEY COLORS ===== */
+.key.special {
+  background: rgba(255,230,0,0.15);
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.key.special:hover {
+  background: rgba(255,230,0,0.25);
+}
+
+.key.special:active {
+  background: var(--yellow);
+  color: #000;
+}
+
+.key.modifier {
+  background: rgba(0,100,255,0.15);
+  border-color: #0af;
+  color: #0af;
+  font-size: 0.85rem;
+}
+
+/* ===== ROW OFFSETS (STAGGERED LAYOUT) ===== */
+.kb-row:nth-child(2) { padding-left: 25px; }
+.kb-row:nth-child(3) { padding-left: 40px; }
+.kb-row:nth-child(4) { padding-left: 60px; }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .key {
+    min-width: 35px;
+    height: 45px;
+    font-size: 0.95rem;
+    padding: 10px 6px;
+  }
+  
+  .key.tab { min-width: 55px; }
+  .key.caps { min-width: 65px; }
+  .key.shift { min-width: 75px; }
+  .key.space { min-width: 200px; }
+  .key.enter { min-width: 70px; }
+  .key.backspace { min-width: 70px; }
+  
+  .kb-row:nth-child(2) { padding-left: 15px; }
+  .kb-row:nth-child(3) { padding-left: 25px; }
+  .kb-row:nth-child(4) { padding-left: 35px; }
+}
+
+/* ===== COPY NOTIFICATION ===== */
+.copy-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: rgba(0,255,65,0.95);
+  color: #000;
+  padding: 20px 40px;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  box-shadow: 0 0 40px var(--neon);
+  z-index: 10000;
+  transition: all 0.3s;
+}
+
+.copy-notification.show {
+  transform: translate(-50%, -50%) scale(1);
+}
+</style>
+</head>
+
+<body>
+
+<div class="keyboard-window">
+  
+  <!-- HEADER -->
+  <div class="kb-header">
+    <div class="kb-title">⌨️ WORLD KEYBOARDS</div>
+    <div style="font-size: 0.85rem; color: var(--neon);">Realistic Layout • Display/Copy Mode</div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="kb-controls">
+    <select class="kb-select" id="layoutSelect" onchange="switchLayout()">
+      <optgroup label="🌍 Europe">
+        <option value="us">🇺🇸 US English (QWERTY)</option>
+        <option value="polish">🇵🇱 Polish</option>
+        <option value="german">🇩🇪 German</option>
+        <option value="french">🇫🇷 French</option>
+        <option value="spanish">🇪🇸 Spanish</option>
+      </optgroup>
+      <optgroup label="🌏 Asia">
+        <option value="japanese">🇯🇵 Japanese</option>
+        <option value="korean">🇰🇷 Korean</option>
+        <option value="arabic">🇸🇦 Arabic</option>
+      </optgroup>
+      <optgroup label="😀 Fun">
+        <option value="emoji">😀 Emoji</option>
+      </optgroup>
+    </select>
+
+    <label class="kb-toggle">
+      <input type="checkbox" id="autocompleteToggle" onchange="toggleAutocomplete()">
+      <span>Autocomplete</span>
+    </label>
+
+    <button class="kb-btn" onclick="copyText()">📋 Copy</button>
+    <button class="kb-btn" onclick="clearText()">🗑️ Clear</button>
+  </div>
+
+  <!-- AUTOCOMPLETE BAR -->
+  <div class="autocomplete-bar" id="autocompleteBar"></div>
+
+  <!-- OUTPUT DISPLAY -->
+  <div class="kb-output">
+    <div class="kb-output-label">OUTPUT</div>
+    <div id="output"></div>
+  </div>
+
+  <!-- KEYBOARD -->
+  <div class="keyboard" id="keyboard"></div>
+
+</div>
+
+<!-- COPY NOTIFICATION -->
+<div class="copy-notification" id="copyNotif">✅ COPIED!</div>
+
+<script>
+/* ===== STATE ===== */
+let currentText = '';
+let currentLayout = 'us';
+let autocompleteEnabled = false;
+
+/* ===== KEYBOARD LAYOUTS ===== */
+const LAYOUTS = {
+  us: [
+    ['`','1','2','3','4','5','6','7','8','9','0','-','=',{t:'⌫',c:'backspace special'}],
+    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Y','U','I','O','P','[',']','\\'],
+    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',';',"'",{t:'Enter',c:'enter special'}],
+    [{t:'Shift',c:'shift modifier'},'Z','X','C','V','B','N','M',',','.','/'],
+    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
+  ],
+  
+  polish: [
+    ['`','1','2','3','4','5','6','7','8','9','0','-','=',{t:'⌫',c:'backspace special'}],
+    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Y','U','I','O','P',{t:'Ą',c:'special'},{t:'Ć',c:'special'},'\\'],
+    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',{t:'Ł',c:'special'},{t:'Ę',c:'special'},{t:'Enter',c:'enter special'}],
+    [{t:'Shift',c:'shift modifier'},'Z','X','C','V','B','N','M',{t:'Ń',c:'special'},{t:'Ó',c:'special'},{t:'Ś',c:'special'},{t:'Ź',c:'special'},{t:'Ż',c:'special'}],
+    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
+  ],
+  
+  german: [
+    ['^','1','2','3','4','5','6','7','8','9','0','ß','´',{t:'⌫',c:'backspace special'}],
+    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Z','U','I','O','P',{t:'Ü',c:'special'},'+','#'],
+    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',{t:'Ö',c:'special'},{t:'Ä',c:'special'},{t:'Enter',c:'enter special'}],
+    [{t:'Shift',c:'shift modifier'},'Y','X','C','V','B','N','M',',','.','-'],
+    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
+  ],
+  
+  french: [
+    ['²','&','é','"',"'",'(','-','è','_','ç','à',')','=',{t:'⌫',c:'backspace special'}],
+    [{t:'Tab',c:'tab modifier'},'A','Z','E','R','T','Y','U','I','O','P','^','$','*'],
+    [{t:'Caps',c:'caps modifier'},'Q','S','D','F','G','H','J','K','L','M',{t:'Ù',c:'special'},{t:'Enter',c:'enter special'}],
+    [{t:'Shift',c:'shift modifier'},'W','X','C','V','B','N',',',';',':','!'],
+    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
+  ],
+  
+  spanish: [
+    ['º','1','2','3','4','5','6','7','8','9','0',"'",'¡',{t:'⌫',c:'backspace special'}],
+    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Y','U','I','O','P','`','+','ç'],
+    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',{t:'Ñ',c:'special'},'´',{t:'Enter',c:'enter special'}],
+    [{t:'Shift',c:'shift modifier'},'Z','X','C','V','B','N','M',',','.','-'],
+    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
+  ],
+  
+  japanese: [
+    ['あ','い','う','え','お','か','き','く','け','こ',{t:'⌫',c:'backspace special'}],
+    ['さ','し','す','せ','そ','た','ち','つ','て','と'],
+    ['な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ'],
+    ['ま','み','む','め','も','や','ゆ','よ'],
+    ['ら','り','る','れ','ろ','わ','を','ん',{t:'SPACE',c:'space'}]
+  ],
+  
+  korean: [
+    ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ',{t:'⌫',c:'backspace special'}],
+    ['ㅋ','ㅌ','ㅍ','ㅎ','ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ'],
+    ['ㅜ','ㅠ','ㅡ','ㅣ','가','나','다','라','마'],
+    ['바','사','아','자','차','카','타','파','하'],
+    [{t:'SPACE',c:'space'}]
+  ],
+  
+  arabic: [
+    ['١','٢','٣','٤','٥','٦','٧','٨','٩','٠',{t:'⌫',c:'backspace special'}],
+    ['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح'],
+    ['ش','س','ي','ب','ل','ا','ت','ن','م','ك'],
+    ['ظ','ط','ذ','د','ز','ر','و','ة','ى'],
+    [{t:'SPACE',c:'space'}]
+  ],
+  
+  emoji: [
+    ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃',{t:'⌫',c:'backspace special'}],
+    ['😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙'],
+    ['🎃','⚡','☢️','🌐','💬','⌨️','🗺️','🎮','💰','🍿'],
+    ['❤️','💚','💙','💛','🧡','💜','🖤','🤍','🤎'],
+    ['👍','👎','✌️','🤘','🙏','💪',{t:'SPACE',c:'space'}]
+  ]
+};
+
+/* ===== AUTOCOMPLETE WORDS ===== */
+const AUTOCOMPLETE_WORDS = {
+  'h': ['hello', 'how', 'help', 'here'],
+  'w': ['world', 'what', 'where', 'when', 'why'],
+  't': ['thank', 'the', 'this', 'that', 'they'],
+  'r': ['rudventur', 'really', 'right'],
+  'c': ['chemventur', 'can', 'could'],
+  'p': ['pumpkin', 'please', 'popcorn', 'popcoin']
+};
+
+/* ===== RENDER KEYBOARD ===== */
+function renderKeyboard() {
+  const keyboard = document.getElementById('keyboard');
+  const layout = LAYOUTS[currentLayout];
+  
+  keyboard.innerHTML = layout.map(row => {
+    return `<div class="kb-row">
+      ${row.map(key => {
+        if (typeof key === 'string') {
+          return `<div class="key" onclick="typeKey('${key}')">${key}</div>`;
+        } else {
+          const value = key.v || key.t;
+          return `<div class="key ${key.c || ''}" onclick="typeKey('${value}')">${key.t}</div>`;
+        }
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+/* ===== TYPE KEY ===== */
+function typeKey(char) {
+  if (char === '⌫') {
+    currentText = currentText.slice(0, -1);
+  } else if (char === 'SPACE') {
+    currentText += ' ';
+  } else if (['Tab','Caps','Shift','Ctrl','Alt','Enter'].includes(char)) {
+    // Modifier keys - visual feedback only
+    return;
+  } else {
+    currentText += char;
+  }
+  
+  updateOutput();
+  updateAutocomplete();
+}
+
+/* ===== UPDATE OUTPUT ===== */
+function updateOutput() {
+  document.getElementById('output').textContent = currentText || '';
+}
+
+/* ===== AUTOCOMPLETE ===== */
+function toggleAutocomplete() {
+  autocompleteEnabled = document.getElementById('autocompleteToggle').checked;
+  if (!autocompleteEnabled) {
+    document.getElementById('autocompleteBar').classList.remove('active');
+  } else {
+    updateAutocomplete();
+  }
+}
+
+function updateAutocomplete() {
+  if (!autocompleteEnabled) return;
+  
+  const words = currentText.toLowerCase().split(' ');
+  const lastWord = words[words.length - 1];
+  
+  if (!lastWord || lastWord.length === 0) {
+    document.getElementById('autocompleteBar').classList.remove('active');
+    return;
+  }
+  
+  const firstChar = lastWord[0];
+  const suggestions = AUTOCOMPLETE_WORDS[firstChar] || [];
+  const matching = suggestions.filter(s => s.startsWith(lastWord) && s !== lastWord);
+  
+  if (matching.length === 0) {
+    document.getElementById('autocompleteBar').classList.remove('active');
+    return;
+  }
+  
+  const bar = document.getElementById('autocompleteBar');
+  bar.innerHTML = matching.map(word => 
+    `<div class="suggestion" onclick="acceptSuggestion('${word}')">${word}</div>`
+  ).join('');
+  bar.classList.add('active');
+}
+
+function acceptSuggestion(word) {
+  const words = currentText.split(' ');
+  words[words.length - 1] = word;
+  currentText = words.join(' ');
+  updateOutput();
+  document.getElementById('autocompleteBar').classList.remove('active');
+}
+
+/* ===== COPY TEXT ===== */
+function copyText() {
+  if (!currentText) return;
+  
+  navigator.clipboard.writeText(currentText).then(() => {
+    const notif = document.getElementById('copyNotif');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 1500);
+  });
+}
+
+/* ===== CLEAR TEXT ===== */
+function clearText() {
+  currentText = '';
+  updateOutput();
+  document.getElementById('autocompleteBar').classList.remove('active');
+}
+
+/* ===== SWITCH LAYOUT ===== */
+function switchLayout() {
+  currentLayout = document.getElementById('layoutSelect').value;
+  renderKeyboard();
+}
+
+/* ===== INIT ===== */
+renderKeyboard();
+</script>
+
+</body>
+</html>
