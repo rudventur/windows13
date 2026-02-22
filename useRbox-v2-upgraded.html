@@ -290,6 +290,72 @@ input[type="text"]:disabled {
   padding: 0 4px;
 }
 
+/* ===== SOCIAL MEDIA SECTION ===== */
+.social-section {
+  margin: 24px 0;
+  padding: 16px;
+  background: rgba(0,0,0,0.3);
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+}
+
+.social-title {
+  text-align: center;
+  color: var(--yellow);
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+  text-shadow: 0 0 8px var(--yellow);
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 10px;
+}
+
+.social-icon {
+  width: 50px;
+  height: 50px;
+  background: #000;
+  border: 2px solid var(--neon);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: all 0.3s;
+  text-decoration: none;
+  color: var(--neon);
+}
+
+.social-icon:hover {
+  background: var(--neon);
+  color: #000;
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 0 20px var(--neon);
+}
+
+/* ===== CHECKBOX ===== */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  color: var(--neon);
+  cursor: pointer;
+}
+
+
 /* ===== SAVE BUTTON ===== */
 #saveUser {
   width: 100%;
@@ -309,6 +375,10 @@ input[type="text"]:disabled {
 #saveUser:hover {
   box-shadow: 0 0 30px var(--neon);
   transform: scale(1.02);
+}
+
+.save-btn:active {
+  transform: scale(0.98);
 }
 
 /* ===== TOGGLE ===== */
@@ -420,6 +490,31 @@ input[type="checkbox"] {
       </div>
       <div id="gpsList"></div>
     </div>
+
+  <!-- SOCIAL MEDIA -->
+  <div class="social-section">
+    <div class="social-title">🌐 SOCIAL MEDIA</div>
+    <div class="social-grid">
+      <a href="https://github.com/rudventur" target="_blank" class="social-icon" title="GitHub">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+      <a href="https://discord.gg/rudventur" target="_blank" class="social-icon" title="Discord">💬</a>
+      <a href="https://twitter.com/rudventur" target="_blank" class="social-icon" title="Twitter/X">𝕏</a>
+      <a href="https://instagram.com/rudventur" target="_blank" class="social-icon" title="Instagram">📷</a>
+      <a href="https://youtube.com/@rudventur" target="_blank" class="social-icon" title="YouTube">▶️</a>
+      <a href="https://ko-fi.com/rudventur" target="_blank" class="social-icon" title="Ko-fi">☕</a>
+      <a href="https://tiktok.com/@rudventur" target="_blank" class="social-icon" title="TikTok">🎵</a>
+      <a href="https://linkedin.com/in/rudventur" target="_blank" class="social-icon" title="LinkedIn">💼</a>
+      <a href="https://reddit.com/u/rudventur" target="_blank" class="social-icon" title="Reddit">🤖</a>
+      <a href="https://facebook.com/rudventur" target="_blank" class="social-icon" title="Facebook">📘</a>
+      <a href="https://twitch.tv/rudventur" target="_blank" class="social-icon" title="Twitch">🎮</a>
+      <a href="https://snapchat.com/add/rudventur" target="_blank" class="social-icon" title="Snapchat">👻</a>
+      <a href="https://pinterest.com/rudventur" target="_blank" class="social-icon" title="Pinterest">📌</a>
+      <a href="https://t.me/rudventur" target="_blank" class="social-icon" title="Telegram">✈️</a>
+      <a href="https://wa.me/447594923008" target="_blank" class="social-icon" title="WhatsApp">📱</a>
+      <a href="mailto:RudVentur@gmail.com" class="social-icon" title="Email">📧</a>
+    </div>
+  </div>
 
     <!-- Options -->
     <label class="toggle">
@@ -616,6 +711,12 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+/* ===== LOAD CHANNEL ===== */
+function loadChannel() {
+  const channel = localStorage.getItem('rudventur_channel') || 'main';
+  document.getElementById('channel').value = channel;
+}
+
 /* ===== TRANSLATOR HOOK ===== */
 document.getElementById('iconTranslator').onclick = () => {
   alert('Translator module coming next! 🌐');
@@ -626,6 +727,11 @@ document.getElementById('saveUser').onclick = saveUser;
 
 /* ===== INIT ===== */
 loadUser();
+loadProfile();
+loadChannel();
+
+console.log('👤 useRbox v2.0 - Ultimate Edition loaded!');
+console.log('All social media links ready! 🌐');
 </script>
 
 </body>
