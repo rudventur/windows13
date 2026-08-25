@@ -25,6 +25,8 @@
 
 /* ===== CAPITAL R ===== */
 #Rcircle {
+  position: relative;
+  z-index: 2;
   width: 58px;
   height: 58px;
   border-radius: 50%;
@@ -50,6 +52,7 @@
   position: absolute;
   top: 8px;
   right: 68px;
+  z-index: 2;
   display: flex;
   gap: 12px;
   opacity: 0;
@@ -84,20 +87,58 @@
   transform: scale(1.1);
 }
 
-/* ===== useRbox ===== */
+/* ===== useRbox (full-screen panel) ===== */
 #useRbox {
-  position: absolute;
-  top: 74px;
-  right: 0;
-  width: 380px;
-  max-height: 85vh;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   overflow-y: auto;
   background: var(--panel-bg);
-  border: 3px solid var(--neon);
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 0 36px rgba(0,255,65,0.25);
+  border: none;
+  border-left: 3px solid var(--neon);
+  border-radius: 0;
+  padding: 24px max(20px, calc(50% - 230px));
+  box-shadow: 0 0 60px rgba(0,255,65,0.25);
   backdrop-filter: blur(12px);
+  z-index: 1;
+  transition: transform 0.35s ease, background-color 0.3s ease;
+}
+
+/* Collapsed = slid off to the right, leaving only the notch tab visible */
+#useRbox.collapsed {
+  transform: translateX(calc(100% - 34px));
+}
+
+/* ===== NOTCH (drawer pull-tab) ===== */
+.useRbox-notch {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 84px;
+  background: var(--bg);
+  border: 2px solid var(--neon);
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  display: grid;
+  place-items: center;
+  color: var(--neon);
+  font-size: 18px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: -4px 0 16px rgba(0,255,65,0.25);
+  transition: background 0.2s;
+}
+
+.useRbox-notch:hover {
+  background: rgba(0,255,65,0.15);
+}
+
+#useRbox.collapsed .useRbox-notch {
+  border-radius: 8px 0 0 8px;
 }
 
 .hidden { display: none !important; }
@@ -131,6 +172,11 @@
 .useRbox-header button:hover {
   background: var(--neon);
   color: #000;
+}
+
+.useRbox-header-btns {
+  display: flex;
+  gap: 6px;
 }
 
 /* ===== AVATAR ===== */
@@ -430,9 +476,15 @@ input[type="checkbox"] {
 
   <!-- useRbox -->
   <div id="useRbox" class="hidden">
+    <div class="useRbox-notch" id="useRboxNotch" title="Collapse / Expand">⟨⟩</div>
+
     <div class="useRbox-header">
       <strong>⚡ useRbox v2.0</strong>
-      <button id="closeUser">✖</button>
+      <div class="useRbox-header-btns">
+        <button id="toggleTransparency" title="Toggle transparency">🌑</button>
+        <button id="collapseUser" title="Collapse to notch">⤢</button>
+        <button id="closeUser" title="Close">✖</button>
+      </div>
     </div>
 
     <!-- Live Clock -->
@@ -549,6 +601,41 @@ document.getElementById('closeUser').onclick = () => {
   useRbox.classList.add('hidden');
   root.classList.remove('open');
 };
+
+/* ===== COLLAPSE / NOTCH (lighter minimize state, distinct from close) ===== */
+const useRboxNotch = document.getElementById('useRboxNotch');
+
+function setCollapsed(collapsed) {
+  useRbox.classList.toggle('collapsed', collapsed);
+  localStorage.setItem('rud_useRbox_collapsed', collapsed ? '1' : '0');
+}
+
+document.getElementById('collapseUser').onclick = () => setCollapsed(true);
+useRboxNotch.onclick = () => setCollapsed(!useRbox.classList.contains('collapsed'));
+
+if (localStorage.getItem('rud_useRbox_collapsed') === '1') {
+  useRbox.classList.add('collapsed');
+}
+
+/* ===== TRANSPARENCY TOGGLE ===== */
+const PANEL_BG_SOLID = 'rgba(0, 15, 5, 0.96)';
+const PANEL_BG_TRANSPARENT = 'rgba(0, 15, 5, 0.35)';
+let panelTransparent = localStorage.getItem('rud_useRbox_transparent') === '1';
+
+function applyTransparency() {
+  document.documentElement.style.setProperty('--panel-bg', panelTransparent ? PANEL_BG_TRANSPARENT : PANEL_BG_SOLID);
+  const btn = document.getElementById('toggleTransparency');
+  btn.textContent = panelTransparent ? '👻' : '🌑';
+  btn.title = panelTransparent ? 'Switch to solid background' : 'Switch to see-through background';
+}
+
+document.getElementById('toggleTransparency').onclick = () => {
+  panelTransparent = !panelTransparent;
+  localStorage.setItem('rud_useRbox_transparent', panelTransparent ? '1' : '0');
+  applyTransparency();
+};
+
+applyTransparency();
 
 /* ===== LIVE CLOCK ===== */
 function updateClock() {
@@ -717,9 +804,32 @@ function loadChannel() {
   document.getElementById('channel').value = channel;
 }
 
+/* ===== SHARED VIEW MODE (fullscreen/orientation state carried between windows) =====
+   Same key + URL param convention as translator_v7.html's goTo() so that
+   opening the translator (or any other rvventur page) keeps the current
+   screen mode instead of resetting to normal. */
+const VIEW_MODE_KEY = 'rvViewMode';
+
+function currentViewMode() {
+  return localStorage.getItem(VIEW_MODE_KEY) || '';
+}
+
+function setViewMode(mode) {
+  localStorage.setItem(VIEW_MODE_KEY, mode);
+}
+
+// Adjust to match the translator's actual deployed path.
+const TRANSLATOR_URL = 'translator_v7.html';
+
+function goTo(url) {
+  const mode = currentViewMode();
+  const qs = mode && mode !== 'normal' ? '?view=' + encodeURIComponent(mode) : '';
+  window.open(url + qs, '_blank', 'noopener');
+}
+
 /* ===== TRANSLATOR HOOK ===== */
 document.getElementById('iconTranslator').onclick = () => {
-  alert('Translator module coming next! 🌐');
+  goTo(TRANSLATOR_URL);
 };
 
 /* ===== SAVE BUTTON ===== */
@@ -727,7 +837,6 @@ document.getElementById('saveUser').onclick = saveUser;
 
 /* ===== INIT ===== */
 loadUser();
-loadProfile();
 loadChannel();
 
 console.log('👤 useRbox v2.0 - Ultimate Edition loaded!');
