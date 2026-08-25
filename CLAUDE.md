@@ -40,3 +40,20 @@ lost:
 - The current `embed/useRbox.js` already externalizes the translator URL
   via `window.RUDVENTUR_TRANSLATOR_URL`, so it's a reasonable base to build
   the multi-site version from once the above is settled.
+
+## Planned: translator voice + subtitle features
+
+Flagged by Rudy (2026-08-25), for `map-merger-venti/translator_v7.html` —
+**not built, not scoped yet**. Rudy said he'll follow up with the exact
+options before this gets built, so treat this as a heads-up, not a spec:
+
+- **Speech-to-text** — "type from speaking": voice input transcribed into
+  the text field.
+- **Text-to-speech with accents** — "speak from typing": typed text read
+  aloud, with a selectable accent per language (not just one default
+  voice).
+- **Dual-language subtitles, with options** — captions/subtitles shown in
+  two languages at once, configurable — Rudy explicitly said the exact
+  options are still to come ("I will tell you what options").
+
+Do not start implementing until Rudy sends the options he mentioned.
