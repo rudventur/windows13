@@ -464,14 +464,15 @@ html, body {
   <div id="notchMenu">
     <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
     <div class="sub-menu">
-      <div class="sub-item">Ventusky</div>
-      <div class="sub-item">Windy</div>
-      <div class="sub-item">Blitzortung</div>
+      <div class="sub-item" onclick="openMapMerger('fullscreen')">🖥️ Full Screen</div>
+      <div class="sub-item" onclick="openMapMerger('window')">🪟 Window</div>
+      <div class="sub-item" onclick="openMapMerger('tab')">🔗 New Tab</div>
+      <div class="sub-item" onclick="window.open('https://github.com/rudventur/map-merger-venti','_blank')">📂 GitHub</div>
     </div>
 
     <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
     <div class="sub-menu">
-      <div class="sub-item">Map Merger</div>
+      <div class="sub-item" onclick="openMapMerger('tab')">Map Merger</div>
       <div class="sub-item">Translator</div>
       <div class="sub-item">AI Chats</div>
     </div>
@@ -568,6 +569,35 @@ function openChemVentur(mode) {
       id: 'chemventur_' + Date.now(),
       title: '☢️ ChemVentur',
       icon: '☢️',
+      x: 100,
+      y: 50,
+      width: 900,
+      height: 700,
+      noPadding: true,
+      content: `<iframe src="${url}" allowfullscreen></iframe>`
+    });
+  } else if (mode === 'tab') {
+    window.open(url, '_blank');
+  }
+}
+
+/* ===== MAP MERGER LAUNCHER ===== */
+function openMapMerger(mode) {
+  const url = 'https://rudventur.github.io/map-merger-venti/';
+
+  if (mode === 'fullscreen') {
+    const win = window.open(url, '_blank');
+    setTimeout(() => {
+      if (win && win.document && win.document.documentElement) {
+        try { win.document.documentElement.requestFullscreen(); }
+        catch(e) { console.log('Fullscreen not supported'); }
+      }
+    }, 1000);
+  } else if (mode === 'window') {
+    WindowManager.createWindow({
+      id: 'mapmerger_' + Date.now(),
+      title: '🗺️ Map Merger',
+      icon: '🗺️',
       x: 100,
       y: 50,
       width: 900,

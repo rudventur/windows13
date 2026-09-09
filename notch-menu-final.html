@@ -176,17 +176,15 @@
 <div id="notch-menu">
   <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
   <div class="sub-menu">
-    <div class="sub-item">Ventusky</div>
-    <div class="sub-item">Windy</div>
-    <div class="sub-item">Blitzortung</div>
-    <div class="sub-item">Nullschool</div>
-    <div class="sub-item">Zoom Earth</div>
-    <div class="sub-item">Google Earth</div>
+    <div class="sub-item" onclick="launchMapMerger('fullscreen')">🖥️ Full Screen</div>
+    <div class="sub-item" onclick="launchMapMerger('window')">🪟 Window</div>
+    <div class="sub-item" onclick="launchMapMerger('tab')">🔗 New Tab</div>
+    <div class="sub-item" onclick="window.open('https://github.com/rudventur/map-merger-venti', '_blank')">📂 GitHub Source</div>
   </div>
 
   <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
   <div class="sub-menu">
-    <div class="sub-item">Map Merger</div>
+    <div class="sub-item" onclick="launchMapMerger('tab')">Map Merger</div>
     <div class="sub-item">AI Chats</div>
     <div class="sub-item">Translator</div>
     <div class="sub-item">Global Chat</div>
@@ -265,6 +263,40 @@ function launchChemVentur(mode) {
   } else if (mode === 'tab') {
     // Open in new tab
     window.open(gameUrl, '_blank');
+  }
+}
+
+// Map Merger Launcher
+function launchMapMerger(mode) {
+  const mapUrl = "https://rudventur.github.io/map-merger-venti/";
+
+  if (mode === 'fullscreen') {
+    // Open in new tab and request fullscreen
+    const win = window.open(mapUrl, '_blank');
+    // Try to go fullscreen after a short delay
+    setTimeout(() => {
+      if (win && win.document && win.document.documentElement) {
+        try {
+          win.document.documentElement.requestFullscreen();
+        } catch(e) {
+          console.log("Fullscreen not supported or blocked");
+        }
+      }
+    }, 1000);
+  } else if (mode === 'window') {
+    // Open in popup window
+    const width = 1200;
+    const height = 800;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    window.open(
+      mapUrl,
+      'MapMerger',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+  } else if (mode === 'tab') {
+    // Open in new tab
+    window.open(mapUrl, '_blank');
   }
 }
 
