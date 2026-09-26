@@ -34,13 +34,17 @@ html, body {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
+  align-items: center;
   gap: 20px;
+  padding: 5vh 16px;
+  overflow-y: auto;
   background: #000;
   z-index: 99999;
 }
+
+#login > h1 { margin-top: auto; text-align: center; }
+#login > .login-foot { margin-bottom: auto; }
 
 #login h1 {
   font-size: 3.5rem;
@@ -53,36 +57,109 @@ html, body {
   50% { text-shadow: 0 0 120px var(--neon), 0 0 40px var(--neon); }
 }
 
-#channelInput {
-  padding: 14px 20px;
+.login-card {
   width: 440px;
-  max-width: 90%;
-  font-size: 1.2rem;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-label {
+  font-size: 0.8rem;
+  color: rgba(0,255,65,0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-input {
+  padding: 14px 20px;
+  width: 100%;
+  font-size: 1.1rem;
   background: #000;
   color: var(--neon);
-  border: 4px solid var(--neon);
+  border: 3px solid var(--neon);
   outline: none;
   border-radius: 8px;
   text-align: center;
   font-family: 'Courier New', monospace;
 }
 
-#enterBtn {
-  padding: 14px 50px;
-  font-size: 1.2rem;
+.login-input:focus { border-color: var(--yellow); box-shadow: 0 0 16px rgba(255,230,0,0.25); }
+
+#channelInput { border-width: 4px; font-size: 1.2rem; }
+
+.login-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.login-tab {
+  padding: 10px 4px;
+  background: #000;
+  color: var(--neon);
+  border: 2px solid var(--dash);
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.login-tab.active { border-color: var(--neon); background: rgba(0,255,65,0.15); box-shadow: 0 0 14px rgba(0,255,65,0.3); }
+
+.login-pane { display: flex; flex-direction: column; gap: 10px; }
+
+.login-note { font-size: 0.8rem; color: var(--dash); text-align: center; line-height: 1.5; }
+
+.login-btn, #enterBtn {
+  padding: 14px 30px;
+  font-size: 1.1rem;
   background: var(--neon);
   color: #000;
   border: none;
   font-weight: 900;
+  font-family: 'Courier New', monospace;
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.3s;
 }
 
-#enterBtn:hover {
-  box-shadow: 0 0 40px var(--neon);
-  transform: scale(1.05);
+.login-btn:hover:not(:disabled) { box-shadow: 0 0 40px var(--neon); transform: scale(1.03); }
+.login-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.login-msg { min-height: 1.2em; text-align: center; font-size: 0.9rem; color: var(--yellow); line-height: 1.5; }
+.login-msg.err { color: #ff2a6d; }
+
+.login-link {
+  background: none;
+  border: none;
+  color: var(--dash);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: center;
 }
+
+.login-link:hover { color: var(--neon); }
+
+#knownAccounts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+.known-acc {
+  padding: 8px 14px;
+  background: #000;
+  color: var(--yellow);
+  border: 2px solid var(--yellow);
+  border-radius: 999px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.known-acc:hover { background: var(--yellow); color: #000; }
 
 /* ===== DESKTOP ===== */
 #desktop {
@@ -116,6 +193,7 @@ html, body {
   border: 4px solid var(--neon);
   border-top: none;
   width: 340px;
+  max-width: 100vw;
   max-height: 80vh;
   overflow-y: auto;
   padding: 16px;
@@ -183,13 +261,46 @@ html, body {
   text-decoration: underline;
 }
 
+/* ===== SOCIAL MEDIA + R MENU ROWS (TOP-LEFT MENU) ===== */
+.social-row, .check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 0.9rem;
+}
+
+.social-row a {
+  flex: 1;
+  color: var(--neon);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.social-row a:hover { color: #fff; text-decoration: underline; }
+
+.social-row label, .check-row { color: #0a0; cursor: pointer; white-space: nowrap; font-size: 0.8rem; }
+.social-row input, .check-row input { accent-color: var(--neon); width: 16px; height: 16px; cursor: pointer; }
+
+.social-edit {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.social-edit:hover { opacity: 1; }
+
 /* ===== R CIRCLE (TOP-RIGHT) ===== */
 #Rcircle {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
+  top: 12px;
+  right: 12px;
+  width: 56px;
+  height: 56px;
   background: var(--neon);
   color: #000;
   border-radius: 50%;
@@ -200,7 +311,7 @@ html, body {
   font-weight: 900;
   cursor: pointer;
   box-shadow: 0 0 30px rgba(0,255,65,0.4);
-  z-index: 9999;
+  z-index: 10000;
   user-select: none;
   transition: all 0.3s;
 }
@@ -209,6 +320,286 @@ html, body {
   transform: scale(1.1) rotate(5deg);
   box-shadow: 0 0 50px rgba(0,255,65,0.7);
 }
+
+#Rcircle.open { box-shadow: 0 0 0 3px #000, 0 0 30px rgba(0,255,65,0.6); }
+
+/* R notch: slides down from the top-right edge when the capital R opens.
+   It only wraps its own content (no full-width stripe) and never reaches
+   down to the popcorn button. */
+#Rnotch {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 80px;
+  max-width: 100vw;
+  padding: 0 80px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--neon);
+  color: #000;
+  border-radius: 0 0 0 18px;
+  box-shadow: 0 0 30px rgba(0,255,65,0.3);
+  z-index: 9999;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+#Rnotch.open { transform: translateY(0); pointer-events: auto; }
+
+.Ricon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #000;
+  border: 2px solid #000;
+  color: var(--neon);
+  font-size: 20px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+}
+
+.Ricon:hover { background: #020; transform: scale(1.1); box-shadow: 0 0 12px #000; }
+.Ricon.coins { color: var(--gold); border-color: var(--gold); }
+
+#rnName {
+  min-width: 0;
+  max-width: 30vw;
+  font-weight: 900;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rn-refresh {
+  flex: none;
+  background: none;
+  border: 2px solid #000;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.rn-refresh:hover { background: #000; }
+
+/* phones: keep the R notch clear of the RUDVENTUR notch (name stays in the useRbox) */
+@media (max-width: 480px) {
+  #Rnotch { gap: 6px; padding-left: 10px; padding-right: 74px; }
+  .Ricon { width: 36px; height: 36px; font-size: 17px; }
+  #rnName { display: none; }
+}
+
+/* ===== useRbox ===== */
+/* Everything inside is sized in em, so the whole box (text, buttons, icons)
+   scales with the box's font-size — used by the mobile maximized mode. */
+#useRbox {
+  position: fixed;
+  top: 92px;
+  right: 12px;
+  width: min(27em, calc(100vw - 24px));
+  /* stop well above the popcorn button (bottom: 70px + 70px tall) */
+  max-height: calc(100vh - 92px - 160px);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border: 3px solid var(--neon);
+  border-radius: 14px;
+  box-shadow: 0 0 36px rgba(0,255,65,0.25);
+  backdrop-filter: blur(12px);
+  z-index: 9990;
+}
+
+#useRbox.maximized {
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border-radius: 0;
+  border-width: 0;
+  z-index: 10001;
+  font-size: clamp(14px, 3.7vw, 22px);
+}
+
+#useRbox.maximized .ubx-body { width: 100%; max-width: 44em; margin: 0 auto; }
+
+.ubx-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8em 1em;
+  border-bottom: 1px solid rgba(0,255,65,0.25);
+}
+
+.ubx-head strong { font-size: 1.15em; text-shadow: 0 0 8px var(--neon); }
+
+.ubx-head-btns { display: flex; gap: 0.5em; }
+
+.ubx-btn {
+  background: #000;
+  color: var(--neon);
+  border: 1px solid var(--neon);
+  padding: 0.4em 0.8em;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  border-radius: 0.3em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.ubx-btn:hover { background: var(--neon); color: #000; }
+.ubx-btn.primary { background: var(--neon); color: #000; font-weight: bold; }
+.ubx-btn.primary:hover { box-shadow: 0 0 1.4em var(--neon); }
+.ubx-btn.gold { border-color: var(--yellow); color: var(--yellow); }
+.ubx-btn.gold:hover { background: var(--yellow); color: #000; }
+.ubx-btn.danger { border-color: #ff2a6d; color: #ff2a6d; }
+.ubx-btn.danger:hover { background: #ff2a6d; color: #000; }
+.ubx-btn.wide { width: 100%; padding: 0.8em; font-size: 1em; }
+
+.ubx-body { flex: 1; overflow-y: auto; padding: 1em; }
+
+.ubx-account {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  margin-bottom: 1em;
+}
+
+.ubx-avatar {
+  flex: none;
+  width: 4.4em;
+  height: 4.4em;
+  border-radius: 50%;
+  border: 2px dashed var(--yellow);
+  background:
+    radial-gradient(circle, #000 22%, transparent 23%) 0 0 / 0.6em 0.6em,
+    var(--neon);
+  display: grid;
+  place-items: center;
+  font-size: 1em;
+}
+
+.ubx-avatar span { font-size: 2em; filter: drop-shadow(0 0 0.2em #000); }
+
+.ubx-who { min-width: 0; flex: 1; }
+.ubx-who .name { font-size: 1.2em; font-weight: bold; color: var(--yellow); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ubx-badges { display: flex; flex-wrap: wrap; gap: 0.4em; margin-top: 0.4em; }
+
+.ubx-badge {
+  font-size: 0.75em;
+  padding: 0.2em 0.6em;
+  border: 1px solid var(--neon);
+  border-radius: 999px;
+  background: none;
+  color: var(--neon);
+  font-family: 'Courier New', monospace;
+}
+
+button.ubx-badge { cursor: pointer; }
+button.ubx-badge:hover { background: var(--neon); color: #000; }
+
+.ubx-row { display: flex; gap: 0.5em; align-items: center; flex-wrap: wrap; }
+
+#ubxClock {
+  text-align: center;
+  font-size: 1.3em;
+  color: var(--yellow);
+  font-weight: bold;
+  margin: 0.2em 0 0.8em;
+  padding: 0.5em;
+  background: rgba(255,230,0,0.05);
+  border: 1px solid rgba(255,230,0,0.3);
+  border-radius: 0.4em;
+  text-shadow: 0 0 0.6em var(--yellow);
+}
+
+.ubx-section {
+  margin-top: 1em;
+  padding-top: 1em;
+  border-top: 1px dashed rgba(0,255,65,0.25);
+}
+
+.ubx-section h3 { font-size: 1em; color: var(--yellow); margin-bottom: 0.6em; }
+
+.ubx-label {
+  display: block;
+  margin: 0.7em 0 0.3em;
+  font-size: 0.8em;
+  color: rgba(0,255,65,0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ubx-input {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  background: #000;
+  color: var(--neon);
+  border: 1px solid var(--neon);
+  padding: 0.55em;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95em;
+  border-radius: 0.3em;
+  outline: none;
+}
+
+.ubx-input:focus { border-color: var(--yellow); box-shadow: 0 0 0.8em rgba(0,255,65,0.3); }
+.ubx-input:disabled { opacity: 0.5; background: #111; }
+textarea.ubx-input { resize: vertical; min-height: 4.3em; }
+
+.ubx-social {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.4em, 1fr));
+  gap: 0.6em;
+}
+
+.ubx-social a {
+  height: 3.4em;
+  display: grid;
+  place-items: center;
+  font-size: 1em;
+  background: #000;
+  border: 2px solid var(--neon);
+  border-radius: 0.5em;
+  color: var(--neon);
+  text-decoration: none;
+  transition: all 0.25s;
+}
+
+.ubx-social a span { font-size: 1.6em; }
+.ubx-social a:hover { background: var(--neon); color: #000; transform: scale(1.1) rotate(5deg); }
+
+.ubx-hint { font-size: 0.8em; opacity: 0.65; line-height: 1.5; }
+
+.ubx-snap {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  background: #000;
+  border: 1px solid rgba(0,255,65,0.3);
+  border-radius: 0.3em;
+  font-size: 0.85em;
+}
+
+.ubx-snap .info { flex: 1; min-width: 0; }
+.ubx-snap .info b { display: block; color: var(--yellow); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ubx-snap .info small { opacity: 0.7; }
+.ubx-snap .ubx-btn { padding: 0.3em 0.5em; }
+
+.ubx-file { position: relative; overflow: hidden; }
+.ubx-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
 /* ===== BOTTOM BUTTONS ===== */
 #bottomButtons {
@@ -441,7 +832,7 @@ html, body {
 ::-webkit-scrollbar-track { background: #000; }
 ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 4px; }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
@@ -453,12 +844,52 @@ html, body {
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN SCREEN — 3 entry paths: Email/Phone (cloud), Local (anonymous), Passport (soon) -->
 <div id="login">
   <h1>WINDOWS 13 🎃</h1>
-  <input id="channelInput" placeholder="Enter channel name..." />
-  <button id="enterBtn" onclick="login()">ENTER RUDVENTUR</button>
-  <div style="color: var(--dash); font-size: 0.9rem; margin-top: 10px;">
+  <div class="login-card">
+    <label class="login-label" for="channelInput">📡 Channel</label>
+    <input id="channelInput" class="login-input" placeholder="Enter channel name..." />
+
+    <div id="knownAccounts"></div>
+
+    <div class="login-tabs" role="tablist">
+      <button class="login-tab active" data-path="cloud" role="tab" onclick="showLoginPath('cloud')">📧 Email / Phone</button>
+      <button class="login-tab" data-path="local" role="tab" onclick="showLoginPath('local')">🕶️ Local</button>
+      <button class="login-tab" data-path="passport" role="tab" onclick="showLoginPath('passport')">🛂 Passport</button>
+    </div>
+
+    <div class="login-pane" data-pane="cloud">
+      <p class="login-note">☁️ Cloud-backed · your useR file follows you to every device</p>
+      <input id="cloudContact" class="login-input" placeholder="email@example.com or +44 7..." autocomplete="username" />
+      <input id="cloudName" class="login-input" placeholder="Display name (new accounts)" />
+      <button id="sendCodeBtn" class="login-btn" onclick="cloudSendCode()">SEND CODE</button>
+      <div id="codeStep" class="login-pane hidden">
+        <input id="cloudCode" class="login-input" placeholder="6-digit code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+        <button class="login-btn" onclick="cloudVerify()">VERIFY &amp; ENTER</button>
+      </div>
+    </div>
+
+    <div class="login-pane hidden" data-pane="local">
+      <p class="login-note">🔒 Anonymous · just a name + password<br>Stays on this device only — no cloud sync</p>
+      <input id="localName" class="login-input" placeholder="Name" autocomplete="username" />
+      <input id="localPass" class="login-input" type="password" placeholder="Password" autocomplete="current-password" />
+      <button id="enterBtn" onclick="localLogin()">ENTER RUDVENTUR</button>
+    </div>
+
+    <div class="login-pane hidden" data-pane="passport">
+      <p class="login-note">🛂 Passport login is coming soon.<br>It will sync across devices just like Email / Phone.</p>
+      <button class="login-btn" disabled>COMING SOON</button>
+    </div>
+
+    <div id="loginMsg" class="login-msg" role="status"></div>
+
+    <label class="login-link">📥 Import a useR file from another device
+      <input type="file" accept=".json,application/json" hidden onchange="importUserFile(this)" />
+    </label>
+    <button id="loginCancel" class="login-link hidden" onclick="cancelAddAccount()">↩ Back to the desktop</button>
+  </div>
+  <div class="login-foot" style="color: var(--dash); font-size: 0.9rem; margin-top: 10px;">
     Powered by PumpkinG 🎃 (Claude + Grok)
   </div>
 </div>
@@ -491,11 +922,39 @@ html, body {
       <div class="sub-item" onclick="window.open('https://github.com/rudventur/ChemVentur','_blank')">📂 GitHub</div>
     </div>
 
+    <div class="menu-item" onclick="toggleSub(this)">🌐 SOCIAL MEDIA</div>
+    <div class="sub-menu" id="socialMenu"></div>
+
+    <div class="menu-item" onclick="toggleSub(this)">Ⓡ R MENU</div>
+    <div class="sub-menu">
+      <label class="check-row"><input type="checkbox" id="coinsToggle" onchange="setCoinsCircle(this.checked)"> 🪙 Coins circle</label>
+      <div class="sub-item" style="cursor: default; font-size: 0.75rem;">Shows next to the R once you've earned PopCOIN.</div>
+    </div>
+
     <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
   </div>
 
-  <!-- TOP-RIGHT: R CIRCLE -->
-  <div id="Rcircle" onclick="openWindow('userbox')">R</div>
+  <!-- TOP-RIGHT: R CIRCLE + R MENU NOTCH -->
+  <div id="Rnotch">
+    <button class="Ricon coins hidden" id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
+    <button class="Ricon" onclick="showToast('Translator module coming next! 🌐')" title="Translator">🌐</button>
+    <button class="Ricon" onclick="toggleUseRbox()" title="useRbox">👤</button>
+    <span id="rnName"></span>
+    <button class="rn-refresh" onclick="switchAccount()" title="Switch account">🔄</button>
+  </div>
+  <div id="Rcircle" onclick="toggleRMenu()" title="useR">R</div>
+
+  <!-- useRbox -->
+  <section id="useRbox" class="hidden" aria-label="useRbox">
+    <div class="ubx-head">
+      <strong>👤 useRbox</strong>
+      <div class="ubx-head-btns">
+        <button class="ubx-btn" id="ubxMaxBtn" onclick="toggleUseRboxMax()" title="Maximize">⤢</button>
+        <button class="ubx-btn" onclick="closeUseRbox()" title="Close">✖</button>
+      </div>
+    </div>
+    <div class="ubx-body" id="ubxBody"></div>
+  </section>
 
   <!-- BOTTOM-LEFT: BUTTONS -->
   <div id="bottomButtons">
@@ -521,27 +980,839 @@ html, body {
 let currentChannel = 'main';
 let currentUser = 'Traveler';
 
+/* ===== STORAGE HELPERS ===== */
+const Store = {
+  get(key, fallback = null) {
+    try { const v = localStorage.getItem(key); return v == null ? fallback : JSON.parse(v); }
+    catch (e) { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch (e) { showToast('⚠️ Could not save — browser storage is full or blocked'); return false; }
+  },
+  del(key) { try { localStorage.removeItem(key); } catch (e) {} }
+};
+
+function esc(text) {
+  return String(text == null ? '' : text).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function safeUrl(url) {
+  return /^(https?:\/\/|mailto:)/i.test(String(url || '').trim()) ? String(url).trim() : '';
+}
+
+function downloadJSON(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+function readJSONFile(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return Promise.reject(new Error('No file chosen'));
+  return file.text().then(text => {
+    try { return JSON.parse(text); }
+    catch (e) { throw new Error('That file is not valid JSON'); }
+  });
+}
+
+/* ===== PASSWORDS (PBKDF2 via WebCrypto — only the salted hash is stored) ===== */
+const Passwords = {
+  ITER: 150000,
+  b64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); },
+  unb64(s) { return Uint8Array.from(atob(s), c => c.charCodeAt(0)); },
+  async hash(password, saltB64, iter = this.ITER) {
+    if (!window.crypto || !crypto.subtle) throw new Error('Passwords need a secure page (https:// or localhost)');
+    const salt = saltB64 ? this.unb64(saltB64) : crypto.getRandomValues(new Uint8Array(16));
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iter }, key, 256);
+    return { alg: 'PBKDF2-SHA256', iter, salt: this.b64(salt), hash: this.b64(bits) };
+  },
+  async verify(password, auth) {
+    if (!auth || !auth.salt || !auth.hash) return false;
+    const h = await this.hash(password, auth.salt, auth.iter || this.ITER);
+    return h.hash === auth.hash;
+  }
+};
+
+/* ===== CLOUD (Email / Phone / Passport) =====
+   A real backend plugs in by defining window.RUD_CLOUD before this script with:
+     sendCode(contact, method) -> Promise<{}>
+     verifyCode(contact, code)  -> Promise<boolean>
+     pushUser(userFile)         -> Promise   (sync the useR file)
+     pullUser(accountId)        -> Promise<userFile|null>
+   Until then DemoCloud runs everything on this device and says so on screen. */
+const DemoCloud = {
+  demo: true,
+  pending: {},
+  async sendCode(contact) {
+    const code = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1000000).padStart(6, '0');
+    this.pending[contact] = code;
+    return { demoCode: code };
+  },
+  async verifyCode(contact, code) {
+    const ok = !!this.pending[contact] && this.pending[contact] === code;
+    if (ok) delete this.pending[contact];
+    return ok;
+  },
+  async pushUser() { return false; },
+  async pullUser() { return null; }
+};
+const Cloud = () => window.RUD_CLOUD || DemoCloud;
+
+/* ===== ACCOUNTS =====
+   Registry (this device): rud_accounts = [{ id, method, name, contact, cloud, auth, createdAt }]
+   Per account, two files:
+     account_${id}_user.json    — useR file: profile, identity, public/private, social, settings.
+                                  Synced to the cloud for Email/Phone/Passport accounts.
+     account_${id}_session.json — session file: state + saved snapshots. Never synced;
+                                  snapshots can be exported and gifted. */
+const Accounts = {
+  userKey: id => `account_${id}_user.json`,
+  sessionKey: id => `account_${id}_session.json`,
+  all() { return Store.get('rud_accounts', []); },
+  byId(id) { return this.all().find(a => a.id === id) || null; },
+  put(acc) {
+    const list = this.all().filter(a => a.id !== acc.id);
+    list.push(acc);
+    Store.set('rud_accounts', list);
+  },
+  newId() {
+    const r = crypto.getRandomValues(new Uint8Array(8));
+    return 'acc_' + Array.from(r, b => b.toString(16).padStart(2, '0')).join('');
+  },
+  signedIn() { return Store.get('rud_signed_in', []).filter(id => this.byId(id)); },
+  markSignedIn(id) {
+    const list = this.signedIn().filter(x => x !== id);
+    list.push(id);
+    Store.set('rud_signed_in', list);
+    Store.set('rud_active_account', id);
+  },
+  markSignedOut(id) { Store.set('rud_signed_in', this.signedIn().filter(x => x !== id)); }
+};
+
+const METHOD_LABEL = {
+  email: '☁️ Email', phone: '☁️ Phone', passport: '☁️ Passport', local: '🔒 Local only'
+};
+
+const SOCIALS = [
+  { id: 'github', name: 'GitHub', icon: '🐙', url: 'https://github.com/rudventur' },
+  { id: 'discord', name: 'Discord', icon: '💬', url: 'https://discord.gg/rudventur' },
+  { id: 'x', name: 'Twitter / X', icon: '𝕏', url: 'https://twitter.com/rudventur' },
+  { id: 'instagram', name: 'Instagram', icon: '📷', url: 'https://instagram.com/rudventur' },
+  { id: 'youtube', name: 'YouTube', icon: '▶️', url: 'https://youtube.com/@rudventur' },
+  { id: 'kofi', name: 'Ko-fi', icon: '☕', url: 'https://ko-fi.com/rudventur' },
+  { id: 'tiktok', name: 'TikTok', icon: '🎵', url: 'https://tiktok.com/@rudventur' },
+  { id: 'linkedin', name: 'LinkedIn', icon: '💼', url: 'https://linkedin.com/in/rudventur' },
+  { id: 'reddit', name: 'Reddit', icon: '🤖', url: 'https://reddit.com/u/rudventur' },
+  { id: 'facebook', name: 'Facebook', icon: '📘', url: 'https://facebook.com/rudventur' },
+  { id: 'twitch', name: 'Twitch', icon: '🎮', url: 'https://twitch.tv/rudventur' },
+  { id: 'snapchat', name: 'Snapchat', icon: '👻', url: 'https://snapchat.com/add/rudventur' },
+  { id: 'pinterest', name: 'Pinterest', icon: '📌', url: 'https://pinterest.com/rudventur' },
+  { id: 'telegram', name: 'Telegram', icon: '✈️', url: 'https://t.me/rudventur' },
+  { id: 'whatsapp', name: 'WhatsApp', icon: '📱', url: 'https://wa.me/447594923008' },
+  { id: 'email', name: 'Email', icon: '📧', url: 'mailto:RudVentur@gmail.com' }
+];
+const SOCIAL_DEFAULT_SHOWN = ['github', 'discord', 'x', 'instagram', 'youtube', 'kofi'];
+
+function newUserFile(acc) {
+  const now = new Date().toISOString();
+  const social = {};
+  SOCIALS.forEach(s => { social[s.id] = { url: s.url, show: SOCIAL_DEFAULT_SHOWN.includes(s.id) }; });
+  return {
+    type: 'rudventur-user', version: 1,
+    accountId: acc.id, method: acc.method, cloud: !!acc.cloud,
+    profile: { name: acc.name, avatar: '🎃', psignature: '', location: '' },
+    isPublic: false,
+    social,
+    settings: { showCoins: false },
+    createdAt: now, updatedAt: now
+  };
+}
+
+function newSessionFile(acc) {
+  return {
+    type: 'rudventur-session', version: 1,
+    accountId: acc.id,
+    state: {},
+    snapshots: [],
+    updatedAt: new Date().toISOString()
+  };
+}
+
+/* the active account and its two files */
+const Active = { acc: null, user: null, session: null };
+
+function loadAccount(id) {
+  const acc = Accounts.byId(id);
+  if (!acc) return false;
+  let user = Store.get(Accounts.userKey(id));
+  if (!user || user.type !== 'rudventur-user') user = newUserFile(acc);
+  // services added after this file was made start unticked
+  user.social = user.social || {};
+  SOCIALS.forEach(s => { if (!user.social[s.id]) user.social[s.id] = { url: s.url, show: false }; });
+  user.settings = Object.assign({ showCoins: false }, user.settings);
+  let session = Store.get(Accounts.sessionKey(id));
+  if (!session || session.type !== 'rudventur-session') session = newSessionFile(acc);
+  session.snapshots = session.snapshots || [];
+
+  Active.acc = acc;
+  Active.user = user;
+  Active.session = session;
+  currentUser = user.profile.name || acc.name || 'Traveler';
+  Store.set(Accounts.userKey(id), user);
+  Store.set(Accounts.sessionKey(id), session);
+  return true;
+}
+
+function saveUserFile() {
+  if (!Active.user) return;
+  Active.user.updatedAt = new Date().toISOString();
+  Store.set(Accounts.userKey(Active.acc.id), Active.user);
+  if (Active.acc.cloud) {
+    Promise.resolve(Cloud().pushUser(Active.user)).catch(err => console.warn('useR sync failed', err));
+  }
+}
+
+function saveSessionFile() {
+  if (!Active.session) return;
+  Active.session.state = captureState();
+  Active.session.updatedAt = new Date().toISOString();
+  Store.set(Accounts.sessionKey(Active.acc.id), Active.session);
+}
+
+/* what others would see online — null while the profile is private */
+function publicProfile(user = Active.user) {
+  if (!user || !user.isPublic) return null;
+  return {
+    name: user.profile.name,
+    avatar: user.profile.avatar,
+    psignature: user.profile.psignature,
+    social: SOCIALS.filter(s => user.social[s.id] && user.social[s.id].show)
+      .map(s => ({ id: s.id, url: user.social[s.id].url }))
+  };
+}
+
 /* ===== LOGIN ===== */
-function login() {
+let loginPath = 'cloud';
+let addingAccount = false;
+
+function loginMsg(text, isError = false) {
+  const el = document.getElementById('loginMsg');
+  el.textContent = text;
+  el.classList.toggle('err', isError);
+}
+
+function showLoginPath(path) {
+  loginPath = path;
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.toggle('active', t.dataset.path === path));
+  document.querySelectorAll('#login .login-card > .login-pane').forEach(p =>
+    p.classList.toggle('hidden', p.dataset.pane !== path));
+  loginMsg('');
+}
+
+function readChannel() {
   const channel = document.getElementById('channelInput').value.trim();
   if (!channel) {
-    alert('Please enter a channel name!');
+    loginMsg('Please enter a channel name!', true);
+    document.getElementById('channelInput').focus();
+    return null;
+  }
+  return channel;
+}
+
+function parseContact(raw) {
+  const v = String(raw || '').trim();
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return { method: 'email', contact: v.toLowerCase() };
+  if (/^\+?[0-9 ()-]{7,20}$/.test(v)) {
+    const digits = v.replace(/[^0-9]/g, '');
+    if (digits.length >= 7) return { method: 'phone', contact: (v.trim().startsWith('+') ? '+' : '') + digits };
+  }
+  return null;
+}
+
+async function cloudSendCode() {
+  if (!readChannel()) return;
+  const parsed = parseContact(document.getElementById('cloudContact').value);
+  if (!parsed) { loginMsg('Enter a valid email address or phone number', true); return; }
+  const btn = document.getElementById('sendCodeBtn');
+  btn.disabled = true;
+  try {
+    const res = await Cloud().sendCode(parsed.contact, parsed.method) || {};
+    document.getElementById('codeStep').classList.remove('hidden');
+    document.getElementById('cloudCode').focus();
+    loginMsg(res.demoCode
+      ? `Demo mode — no cloud server is connected yet, so no ${parsed.method === 'email' ? 'email' : 'SMS'} was sent. Your code: ${res.demoCode}`
+      : `Code sent to ${parsed.contact} ✉️`);
+  } catch (e) {
+    loginMsg('Could not send the code: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function cloudVerify() {
+  const channel = readChannel();
+  if (!channel) return;
+  const parsed = parseContact(document.getElementById('cloudContact').value);
+  const code = document.getElementById('cloudCode').value.trim();
+  if (!parsed) { loginMsg('Enter a valid email address or phone number', true); return; }
+  try {
+    if (!(await Cloud().verifyCode(parsed.contact, code))) { loginMsg('Wrong or expired code — try again', true); return; }
+  } catch (e) {
+    loginMsg('Verification failed: ' + e.message, true);
     return;
   }
-  
-  currentChannel = channel;
-  localStorage.setItem('rudventur_channel', channel);
-  
+  let acc = Accounts.all().find(a => a.cloud && a.contact === parsed.contact);
+  if (!acc) {
+    const name = document.getElementById('cloudName').value.trim() || parsed.contact.split('@')[0];
+    acc = { id: Accounts.newId(), method: parsed.method, name, contact: parsed.contact, cloud: true, createdAt: new Date().toISOString() };
+    Accounts.put(acc);
+    // a useR file already in the cloud (from another device) wins over a blank one
+    try {
+      const remote = await Cloud().pullUser(acc.id);
+      if (remote && remote.type === 'rudventur-user') Store.set(Accounts.userKey(acc.id), remote);
+    } catch (e) {}
+  }
+  document.getElementById('cloudCode').value = '';
+  document.getElementById('codeStep').classList.add('hidden');
+  enterDesktop(acc.id, channel);
+}
+
+async function localLogin() {
+  const channel = readChannel();
+  if (!channel) return;
+  const name = document.getElementById('localName').value.trim();
+  const pass = document.getElementById('localPass').value;
+  if (!name) { loginMsg('Enter a name', true); return; }
+  if (pass.length < 4) { loginMsg('Password needs at least 4 characters', true); return; }
+  const btn = document.getElementById('enterBtn');
+  btn.disabled = true;
+  try {
+    let acc = Accounts.all().find(a => a.method === 'local' && a.name.toLowerCase() === name.toLowerCase());
+    if (acc) {
+      if (!(await Passwords.verify(pass, acc.auth))) { loginMsg('Wrong password for ' + acc.name, true); return; }
+    } else {
+      if (!confirm(`No local account "${name}" on this device yet.\nCreate it? It stays on this device only (no cloud sync).`)) return;
+      acc = { id: Accounts.newId(), method: 'local', name, cloud: false, auth: await Passwords.hash(pass), createdAt: new Date().toISOString() };
+      Accounts.put(acc);
+    }
+    document.getElementById('localPass').value = '';
+    enterDesktop(acc.id, channel);
+  } catch (e) {
+    loginMsg(e.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function continueAs(id) {
+  const channel = readChannel();
+  if (channel) enterDesktop(id, channel);
+}
+
+function enterDesktop(accountId, channel) {
+  if (Active.acc) saveSessionFile();
+  const firstAccount = Accounts.all().length === 1 && !Store.get(Accounts.userKey(accountId));
+  if (!loadAccount(accountId)) { loginMsg('That account is missing on this device', true); return; }
+  if (firstAccount) adoptLegacyProfile();
+
+  currentChannel = channel || currentChannel;
+  localStorage.setItem('rudventur_channel', currentChannel);
+  Accounts.markSignedIn(accountId);
+
   document.getElementById('login').style.display = 'none';
   document.getElementById('desktop').style.display = 'block';
-  
-  showToast(`Welcome to channel: ${channel}! 🎃`, 'gold');
-  
-  // Load saved username if exists
-  const savedUser = localStorage.getItem('rud_useRbox_v2');
-  if (savedUser) {
-    const data = JSON.parse(savedUser);
-    currentUser = data.username || 'Traveler';
+  addingAccount = false;
+  document.getElementById('loginCancel').classList.add('hidden');
+  loginMsg('');
+
+  renderAccountUI();
+  showToast(`Welcome ${currentUser} to channel: ${currentChannel}! 🎃`, 'gold');
+}
+
+/* the old single-profile useRbox (rud_useRbox_v2) seeds the first account */
+function adoptLegacyProfile() {
+  const old = Store.get('rud_useRbox_v2');
+  if (!old) return;
+  const p = Active.user.profile;
+  p.psignature = p.psignature || old.psignature || '';
+  p.location = p.location || old.currentLoc || '';
+  saveUserFile();
+}
+
+function renderKnownAccounts() {
+  const box = document.getElementById('knownAccounts');
+  const ids = Accounts.signedIn().filter(id => !Active.acc || id !== Active.acc.id);
+  box.innerHTML = ids.map(id => {
+    const a = Accounts.byId(id);
+    return `<button class="known-acc" onclick="continueAs('${a.id}')">▶ ${esc(a.name)} <small>${a.cloud ? '☁️' : '🔒'}</small></button>`;
+  }).join('');
+}
+
+function showLogin(adding) {
+  addingAccount = !!adding;
+  document.getElementById('loginCancel').classList.toggle('hidden', !addingAccount);
+  document.getElementById('channelInput').value = currentChannel || localStorage.getItem('rudventur_channel') || '';
+  renderKnownAccounts();
+  loginMsg(adding ? 'Sign in with another account — you stay signed in to the others.' : '');
+  closeUseRbox();
+  document.getElementById('login').style.display = 'flex';
+}
+
+function cancelAddAccount() {
+  if (!Active.acc) return;
+  document.getElementById('login').style.display = 'none';
+  addingAccount = false;
+}
+
+/* ===== ACCOUNT SWITCHING (🔄 next to the account name) ===== */
+function switchAccount() {
+  const ids = Accounts.signedIn();
+  if (ids.length < 2) {
+    if (confirm('Only one account is signed in on this browser.\nSign in to another one?')) showLogin(true);
+    return;
+  }
+  saveSessionFile();
+  const next = ids[(ids.indexOf(Active.acc.id) + 1) % ids.length];
+  loadAccount(next);
+  Store.set('rud_active_account', next);
+  renderAccountUI();
+  showToast(`🔄 Switched to ${currentUser}`, 'gold');
+}
+
+function signOut() {
+  if (!confirm(`Sign ${currentUser} out of this browser?\nTheir useR + session files stay on this device.`)) return;
+  saveSessionFile();
+  const id = Active.acc.id;
+  Accounts.markSignedOut(id);
+  const rest = Accounts.signedIn();
+  if (rest.length) {
+    loadAccount(rest[rest.length - 1]);
+    Store.set('rud_active_account', Active.acc.id);
+    renderAccountUI();
+    showToast(`Signed out — now using ${currentUser}`);
+  } else {
+    Active.acc = Active.user = Active.session = null;
+    Store.del('rud_active_account');
+    toggleRMenu(false);
+    document.getElementById('desktop').style.display = 'none';
+    showLogin(false);
+  }
+}
+
+/* ===== R MENU (capital R, top-right) ===== */
+function toggleRMenu(force) {
+  const notch = document.getElementById('Rnotch');
+  const open = typeof force === 'boolean' ? force : !notch.classList.contains('open');
+  notch.classList.toggle('open', open);
+  document.getElementById('Rcircle').classList.toggle('open', open);
+  if (open) renderCoins();
+  else closeUseRbox();
+}
+
+function popcoinBalance() {
+  const n = parseFloat(localStorage.getItem('rudventur_popcoin_balance') || '0');
+  return isFinite(n) ? n : 0;
+}
+
+/* coins count as active once some PopCOIN is earned (subscription check hooks in here) */
+function coinsActive() { return popcoinBalance() > 0; }
+
+function renderCoins() {
+  const icon = document.getElementById('iconCoins');
+  const show = !!(Active.user && Active.user.settings.showCoins && coinsActive());
+  icon.classList.toggle('hidden', !show);
+  icon.title = `PopCOIN: ${popcoinBalance().toFixed(2)}`;
+}
+
+function setCoinsCircle(on) {
+  if (!Active.user) return;
+  Active.user.settings.showCoins = !!on;
+  saveUserFile();
+  renderCoins();
+  if (on && !coinsActive()) showToast('🪙 The coins circle appears once you earn PopCOIN in the 🍿 Popcorn Hub');
+}
+
+function showCoins() {
+  showToast(`🪙 PopCOIN balance: ${popcoinBalance().toFixed(2)}`, 'gold');
+}
+
+/* ===== TOP-LEFT MENU: SOCIAL MEDIA ===== */
+function renderSocialMenu() {
+  const menu = document.getElementById('socialMenu');
+  if (!Active.user) { menu.innerHTML = ''; return; }
+  menu.innerHTML = SOCIALS.map(s => {
+    const entry = Active.user.social[s.id];
+    const url = safeUrl(entry.url);
+    return `<div class="social-row">
+      <a ${url ? `href="${esc(url)}" target="_blank" rel="noopener"` : ''}>${s.icon} ${esc(s.name)}</a>
+      <button class="social-edit" onclick="editSocial('${s.id}')" title="Edit link">✏️</button>
+      <label title="Show in useRbox"><input type="checkbox" ${entry.show ? 'checked' : ''} onchange="setSocialShown('${s.id}', this.checked)"> useRbox</label>
+    </div>`;
+  }).join('') + '<div class="sub-item" style="cursor: default; font-size: 0.75rem;">☑ = shown in your useRbox</div>';
+  document.getElementById('coinsToggle').checked = !!Active.user.settings.showCoins;
+}
+
+function setSocialShown(id, show) {
+  Active.user.social[id].show = !!show;
+  saveUserFile();
+  renderUbxSocial();
+}
+
+function editSocial(id) {
+  const s = SOCIALS.find(x => x.id === id);
+  const current = Active.user.social[id].url;
+  const url = prompt(`Your ${s.name} link (https://… or mailto:…):`, current);
+  if (url === null) return;
+  if (!safeUrl(url)) { showToast('⚠️ Links must start with https://, http:// or mailto:'); return; }
+  Active.user.social[id].url = safeUrl(url);
+  saveUserFile();
+  renderSocialMenu();
+  renderUbxSocial();
+}
+
+/* ===== useRbox ===== */
+function toggleUseRbox() {
+  const box = document.getElementById('useRbox');
+  if (box.classList.contains('hidden')) { renderUseRbox(); box.classList.remove('hidden'); }
+  else closeUseRbox();
+}
+
+function closeUseRbox() {
+  document.getElementById('useRbox').classList.add('hidden');
+}
+
+function toggleUseRboxMax() {
+  const box = document.getElementById('useRbox');
+  const max = box.classList.toggle('maximized');
+  const btn = document.getElementById('ubxMaxBtn');
+  btn.textContent = max ? '⤡' : '⤢';
+  btn.title = max ? 'Restore' : 'Maximize';
+}
+
+function renderAccountUI() {
+  document.getElementById('rnName').textContent = currentUser;
+  document.querySelector('.rn-refresh').title = `Switch account (now: ${currentUser})`;
+  renderSocialMenu();
+  renderCoins();
+  if (!document.getElementById('useRbox').classList.contains('hidden')) renderUseRbox();
+}
+
+function renderUseRbox() {
+  if (!Active.user) return;
+  const u = Active.user, acc = Active.acc, p = u.profile;
+  const syncNote = acc.cloud
+    ? (Cloud().demo ? 'Cloud account · sync server not connected yet (saved on this device for now)' : 'Cloud account · your useR file syncs to your other devices')
+    : 'Local account · everything stays on this device';
+  document.getElementById('ubxBody').innerHTML = `
+    <div class="ubx-account">
+      <div class="ubx-avatar"><span>${esc(p.avatar || '🎃')}</span></div>
+      <div class="ubx-who">
+        <div class="name">${esc(p.name)}</div>
+        <div class="ubx-badges">
+          <span class="ubx-badge">${METHOD_LABEL[acc.method] || acc.method}</span>
+          <button class="ubx-badge" onclick="togglePublic()" title="Who can see your profile online">${u.isPublic ? '🌍 Public' : '🙈 Private'}</button>
+        </div>
+      </div>
+    </div>
+    <div class="ubx-row">
+      <button class="ubx-btn" onclick="switchAccount()" title="Switch account">🔄 Switch</button>
+      <button class="ubx-btn" onclick="showLogin(true)">➕ Add account</button>
+      <button class="ubx-btn danger" onclick="signOut()">🚪 Sign out</button>
+    </div>
+    <p class="ubx-hint" style="margin-top: 0.6em;">${esc(syncNote)}</p>
+
+    <div id="ubxClock" style="margin-top: 0.8em;">--:--:--</div>
+
+    <label class="ubx-label" for="ubxName">👤 Name</label>
+    <div class="ubx-row">
+      <input class="ubx-input" id="ubxAvatar" value="${esc(p.avatar || '🎃')}" maxlength="4" style="flex: none; width: 3.2em; text-align: center;" title="Avatar emoji">
+      <input class="ubx-input" id="ubxName" value="${esc(p.name)}" maxlength="40">
+    </div>
+
+    <label class="ubx-label">📡 Channel</label>
+    <input class="ubx-input" value="${esc(currentChannel)}" disabled>
+
+    <label class="ubx-label" for="ubxSig">📝 P.S. (Personal Signature)</label>
+    <textarea class="ubx-input" id="ubxSig" maxlength="500" placeholder="Your personal motto, signature, or note...">${esc(p.psignature)}</textarea>
+
+    <label class="ubx-label" for="ubxLoc">📍 Location</label>
+    <div class="ubx-row">
+      <input class="ubx-input" id="ubxLoc" value="${esc(p.location)}" placeholder="???">
+      <button class="ubx-btn" onclick="ubxGPS(this)">📍 GPS</button>
+    </div>
+
+    <button class="ubx-btn primary wide" style="margin-top: 1em;" onclick="saveProfile()">💾 SAVE PROFILE</button>
+
+    <div class="ubx-section">
+      <h3>🌐 Social media</h3>
+      <div class="ubx-social" id="ubxSocial"></div>
+    </div>
+
+    <div class="ubx-section">
+      <h3>🎁 Sessions</h3>
+      <p class="ubx-hint">Snapshots of your channel + open windows. They stay on this device — export one to share or gift it.</p>
+      <div class="ubx-row" style="margin-top: 0.6em;">
+        <button class="ubx-btn gold" onclick="saveSessionSnapshot()">💾 Save session</button>
+        <label class="ubx-btn ubx-file">📥 Import<input type="file" accept=".json,application/json" onchange="importSessionFile(this)"></label>
+        <button class="ubx-btn" onclick="exportSessionFile()" title="Export the whole session file">📤 All</button>
+      </div>
+      <div id="ubxSnaps"></div>
+    </div>
+
+    <div class="ubx-section">
+      <h3>🗂️ useR file</h3>
+      <p class="ubx-hint">Your portable identity. ${acc.cloud ? 'Cloud accounts sync it automatically.' : 'Export it to carry this local account to another device — the password still protects it.'}</p>
+      <div class="ubx-row" style="margin-top: 0.6em;">
+        <button class="ubx-btn" onclick="exportUserFile()">📤 Export useR</button>
+        <label class="ubx-btn ubx-file">📥 Import useR<input type="file" accept=".json,application/json" onchange="importUserFile(this)"></label>
+      </div>
+    </div>
+  `;
+  renderUbxSocial();
+  renderSnapshots();
+  updateUbxClock();
+}
+
+function renderUbxSocial() {
+  const grid = document.getElementById('ubxSocial');
+  if (!grid || !Active.user) return;
+  const shown = SOCIALS.filter(s => Active.user.social[s.id].show && safeUrl(Active.user.social[s.id].url));
+  grid.innerHTML = shown.length
+    ? shown.map(s => `<a href="${esc(safeUrl(Active.user.social[s.id].url))}" target="_blank" rel="noopener" title="${esc(s.name)}"><span>${s.icon}</span></a>`).join('')
+    : '<p class="ubx-hint" style="grid-column: 1 / -1;">None ticked yet — pick them in ☰ RUDVENTUR › 🌐 SOCIAL MEDIA (top left).</p>';
+}
+
+function updateUbxClock() {
+  const el = document.getElementById('ubxClock');
+  if (el) el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
+}
+setInterval(updateUbxClock, 1000);
+
+function ubxGPS(btn) {
+  if (!navigator.geolocation) { showToast('GPS not supported by your browser!'); return; }
+  btn.textContent = '⏳...';
+  navigator.geolocation.getCurrentPosition(pos => {
+    document.getElementById('ubxLoc').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+    btn.textContent = '✅ GPS';
+    setTimeout(() => { btn.textContent = '📍 GPS'; }, 2000);
+  }, err => {
+    showToast('GPS Error: ' + err.message);
+    btn.textContent = '📍 GPS';
+  });
+}
+
+function saveProfile() {
+  const p = Active.user.profile;
+  p.name = document.getElementById('ubxName').value.trim() || p.name;
+  p.avatar = document.getElementById('ubxAvatar').value.trim() || '🎃';
+  p.psignature = document.getElementById('ubxSig').value;
+  p.location = document.getElementById('ubxLoc').value.trim();
+  Active.acc.name = p.name;
+  Accounts.put(Active.acc);
+  currentUser = p.name;
+  saveUserFile();
+  renderAccountUI();
+  renderUseRbox();
+  showToast('✅ Profile saved', 'gold');
+}
+
+function togglePublic() {
+  Active.user.isPublic = !Active.user.isPublic;
+  saveUserFile();
+  renderUseRbox();
+  showToast(Active.user.isPublic ? '🌍 Profile is public — others can see it online' : '🙈 Profile is private — only you can see it');
+}
+
+/* ===== SESSIONS: snapshots, export, import (gift) ===== */
+function captureState() {
+  return {
+    channel: currentChannel,
+    windows: Object.keys(WindowManager.windows).filter(id => WINDOW_TYPES.includes(id)),
+    useRboxMaximized: document.getElementById('useRbox').classList.contains('maximized')
+  };
+}
+
+function restoreState(state) {
+  if (!state) return;
+  if (state.channel) {
+    currentChannel = String(state.channel);
+    localStorage.setItem('rudventur_channel', currentChannel);
+  }
+  (state.windows || []).filter(t => WINDOW_TYPES.includes(t)).forEach(openWindow);
+  const box = document.getElementById('useRbox');
+  if (!!state.useRboxMaximized !== box.classList.contains('maximized')) toggleUseRboxMax();
+}
+
+function saveSessionSnapshot() {
+  const name = prompt('Name this session snapshot:', `${currentChannel} · ${new Date().toLocaleString('en-GB')}`);
+  if (name === null) return;
+  Active.session.snapshots.unshift({
+    id: 'snap_' + Date.now(),
+    name: name.trim() || 'Session',
+    createdAt: new Date().toISOString(),
+    from: null,
+    state: captureState()
+  });
+  saveSessionFile();
+  renderSnapshots();
+  showToast('💾 Session saved', 'gold');
+}
+
+function renderSnapshots() {
+  const list = document.getElementById('ubxSnaps');
+  if (!list) return;
+  const snaps = Active.session.snapshots;
+  list.innerHTML = snaps.length ? snaps.map(s => `
+    <div class="ubx-snap">
+      <div class="info">
+        <b>${esc(s.name)}</b>
+        <small>${s.from ? '🎁 from ' + esc(s.from) + ' · ' : ''}📡 ${esc(s.state && s.state.channel)} · ${new Date(s.createdAt).toLocaleDateString('en-GB')}</small>
+      </div>
+      <button class="ubx-btn" onclick="restoreSnapshot('${esc(s.id)}')" title="Restore">▶</button>
+      <button class="ubx-btn" onclick="exportSnapshot('${esc(s.id)}')" title="Export to share / gift">📤</button>
+      <button class="ubx-btn danger" onclick="deleteSnapshot('${esc(s.id)}')" title="Delete">🗑</button>
+    </div>`).join('') : '<p class="ubx-hint" style="margin-top: 0.6em;">No saved sessions yet.</p>';
+}
+
+function findSnapshot(id) { return Active.session.snapshots.find(s => s.id === id); }
+
+function restoreSnapshot(id) {
+  const s = findSnapshot(id);
+  if (!s) return;
+  restoreState(s.state);
+  saveSessionFile();
+  renderUseRbox();
+  showToast(`▶ Restored "${s.name}"`, 'gold');
+}
+
+function deleteSnapshot(id) {
+  if (!confirm('Delete this saved session?')) return;
+  Active.session.snapshots = Active.session.snapshots.filter(s => s.id !== id);
+  saveSessionFile();
+  renderSnapshots();
+}
+
+function slug(text) { return String(text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'session'; }
+
+/* a gift carries the snapshot only — no account id, no profile */
+function exportSnapshot(id) {
+  const s = findSnapshot(id);
+  if (!s) return;
+  downloadJSON(`rudventur_session_${slug(s.name)}.json`, {
+    type: 'rudventur-session-gift', version: 1,
+    from: Active.user.profile.name,
+    name: s.name, createdAt: s.createdAt, state: s.state
+  });
+}
+
+function exportSessionFile() {
+  saveSessionFile();
+  downloadJSON(Accounts.sessionKey(Active.acc.id), Active.session);
+}
+
+function cleanState(state) {
+  state = state || {};
+  return {
+    channel: String(state.channel || currentChannel).slice(0, 80),
+    windows: Array.isArray(state.windows) ? state.windows.filter(t => WINDOW_TYPES.includes(t)) : [],
+    useRboxMaximized: !!state.useRboxMaximized
+  };
+}
+
+async function importSessionFile(input) {
+  try {
+    const data = await readJSONFile(input);
+    let incoming = [];
+    if (data.type === 'rudventur-session-gift') {
+      incoming = [{ name: data.name, createdAt: data.createdAt, from: data.from, state: data.state }];
+    } else if (data.type === 'rudventur-session' && Array.isArray(data.snapshots)) {
+      const own = data.accountId === Active.acc.id;
+      incoming = data.snapshots.map(s => Object.assign({}, s, { from: own ? s.from : (s.from || 'a shared session file') }));
+    } else {
+      throw new Error('That is not a RUDVENTUR session file');
+    }
+    incoming.forEach((s, i) => {
+      Active.session.snapshots.unshift({
+        id: 'snap_' + Date.now() + '_' + i,
+        name: String(s.name || 'Imported session').slice(0, 80),
+        createdAt: s.createdAt || new Date().toISOString(),
+        from: s.from ? String(s.from).slice(0, 40) : null,
+        state: cleanState(s.state)
+      });
+    });
+    saveSessionFile();
+    renderSnapshots();
+    showToast(`🎁 Imported ${incoming.length} session${incoming.length === 1 ? '' : 's'} — press ▶ to use it`, 'gold');
+  } catch (e) {
+    showToast('⚠️ ' + e.message);
+  }
+}
+
+/* ===== useR FILE: export / import (portable identity) ===== */
+function exportUserFile() {
+  saveUserFile();
+  const file = Object.assign({}, Active.user);
+  // local accounts carry their salted password hash so the password still guards them on the new device
+  if (Active.acc.method === 'local') file.auth = Active.acc.auth;
+  if (Active.acc.contact) file.contact = Active.acc.contact;
+  downloadJSON(Accounts.userKey(Active.acc.id), file);
+}
+
+async function importUserFile(input) {
+  const say = (text, err) => (Active.acc && document.getElementById('login').style.display === 'none')
+    ? showToast((err ? '⚠️ ' : '') + text) : loginMsg(text, err);
+  try {
+    const data = await readJSONFile(input);
+    if (data.type !== 'rudventur-user' || !/^acc_[0-9a-f]{8,32}$/.test(data.accountId || '') || !data.profile) {
+      throw new Error('That is not a RUDVENTUR useR file');
+    }
+    const method = ['email', 'phone', 'passport', 'local'].includes(data.method) ? data.method : 'local';
+    if (method === 'local' && !(data.auth && data.auth.salt && data.auth.hash)) {
+      throw new Error('This local useR file has no password in it — export it again from the old device');
+    }
+    const existing = Accounts.byId(data.accountId);
+    if (existing && !confirm(`Replace the profile of "${existing.name}" on this device with the imported file?`)) return;
+
+    const acc = existing || {
+      id: data.accountId, method, cloud: method !== 'local',
+      name: String(data.profile.name || 'Traveler').slice(0, 40),
+      createdAt: data.createdAt || new Date().toISOString()
+    };
+    if (method === 'local') acc.auth = data.auth;
+    if (data.contact && method !== 'local') acc.contact = String(data.contact);
+    Accounts.put(acc);
+
+    const user = Object.assign({}, data);
+    delete user.auth;
+    delete user.contact;
+    Store.set(Accounts.userKey(acc.id), user);
+
+    if (Active.acc && Active.acc.id === acc.id) {
+      loadAccount(acc.id);
+      renderAccountUI();
+      renderUseRbox();
+      say('📥 useR file imported');
+    } else {
+      say(method === 'local'
+        ? `📥 Imported "${acc.name}" — sign in on the 🕶️ Local tab with its password`
+        : `📥 Imported "${acc.name}" — verify ${acc.contact || 'your email / phone'} on the 📧 tab to sign in`);
+      if (!Active.acc || document.getElementById('login').style.display !== 'none') {
+        showLoginPath(method === 'local' ? 'local' : 'cloud');
+        if (method === 'local') document.getElementById('localName').value = acc.name;
+        else if (acc.contact) document.getElementById('cloudContact').value = acc.contact;
+        loginMsg(method === 'local' ? `📥 Imported "${acc.name}" — enter its password` : `📥 Imported "${acc.name}" — send a code to sign in`);
+      }
+    }
+  } catch (e) {
+    say(e.message, true);
   }
 }
 
@@ -683,6 +1954,7 @@ const WindowManager = {
     win.element.remove();
     delete this.windows[id];
     this.updateTaskbar();
+    if (Active.acc && WINDOW_TYPES.includes(id)) saveSessionFile();
   },
   
   bringToFront(id) {
@@ -742,18 +2014,14 @@ const WindowManager = {
 };
 
 /* ===== OPEN WINDOW SHORTCUTS ===== */
+const WINDOW_TYPES = ['keyboard', 'chat', 'popcorn'];
+
 function openWindow(type) {
+  if (WindowManager.windows[type]) {
+    WindowManager.restore(type);
+    return;
+  }
   const windows = {
-    userbox: {
-      id: 'userbox',
-      title: '👤 useRbox v2.0',
-      icon: '👤',
-      x: 200,
-      y: 100,
-      width: 400,
-      height: 650,
-      content: '<div style="padding: 20px; color: var(--neon);"><h2>👤 useRbox v2.0</h2><p>Replace this with your useRbox component!</p></div>'
-    },
     keyboard: {
       id: 'keyboard',
       title: '⌨️ World Keyboards',
@@ -788,6 +2056,7 @@ function openWindow(type) {
   
   const config = windows[type];
   if (config) WindowManager.createWindow(config);
+  if (Active.acc) saveSessionFile();
 }
 
 /* ===== TOAST ===== */
@@ -800,17 +2069,34 @@ function showToast(msg, type = 'normal') {
   setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
-/* ===== AUTO-LOAD LAST CHANNEL ===== */
+/* ===== AUTO-LOAD LAST CHANNEL + SIGNED-IN ACCOUNTS ===== */
 window.addEventListener('load', () => {
   const lastChannel = localStorage.getItem('rudventur_channel');
   if (lastChannel) {
     document.getElementById('channelInput').value = lastChannel;
   }
-  
+  renderKnownAccounts();
+
   // Enter key on login
-  document.getElementById('channelInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') login();
+  const onEnter = (id, fn) => document.getElementById(id).addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') fn();
   });
+  onEnter('channelInput', () => {
+    const last = Store.get('rud_active_account');
+    if (last && Accounts.signedIn().includes(last)) continueAs(last);
+    else document.querySelector('#login .login-pane:not(.hidden) .login-input')?.focus();
+  });
+  onEnter('cloudContact', cloudSendCode);
+  onEnter('cloudCode', cloudVerify);
+  onEnter('localName', () => document.getElementById('localPass').focus());
+  onEnter('localPass', localLogin);
+});
+
+window.addEventListener('beforeunload', () => { if (Active.acc) saveSessionFile(); });
+
+// PopCOIN mined in another tab / the Popcorn Hub
+window.addEventListener('storage', (e) => {
+  if (e.key === 'rudventur_popcoin_balance') renderCoins();
 });
 
 /* ===== KEYBOARD SHORTCUTS ===== */
