@@ -483,6 +483,13 @@ html, body {
       <div class="sub-item">AI Chats</div>
     </div>
 
+    <div class="menu-item" onclick="toggleSub(this)">🎮 GAMES</div>
+    <div class="sub-menu">
+      <div class="sub-item" onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
+      <div class="sub-item" onclick="openChemVentur('tab')">☢️ ChemVentur</div>
+      <div class="sub-item" onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
+    </div>
+
     <div class="menu-item chemventur" onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
     <div class="sub-menu">
       <div class="sub-item" onclick="openChemVentur('fullscreen')">🖥️ Full Screen</div>
@@ -782,7 +789,7 @@ function openWindow(type) {
       y: 80,
       width: 550,
       height: 700,
-      content: '<div style="padding: 20px; color: var(--neon);"><h2>🍿 Popcorn Hub</h2><p>🍿 Accessibility Descriptions<br>🍪 Cookies Inspector<br>💰 Popcoin Mining</p><p style="margin-top: 15px;">Replace with Popcorn Hub component!</p></div>'
+      content: '<div style="padding: 20px; color: var(--neon);"><h2>🍿 Popcorn Hub</h2><p>🍿 Accessibility Descriptions<br>🍪 Cookies Inspector<br>💰 Popcoin Mining</p><h3 style="margin-top: 15px;">🎮 Games</h3><p><a href="https://rudventur.github.io/cheese-ouiji-empire/" target="_blank" rel="noopener" style="color: var(--yellow);">🧀 Cheese Ouiji Empire</a><br><a href="https://rudventur.github.io/ChemVentur/" target="_blank" rel="noopener" style="color: var(--yellow);">☢️ ChemVentur</a><br><a href="https://www.soldat.pl" target="_blank" rel="noopener" style="color: var(--yellow);">🔫 Soldat.pl</a></p><p style="margin-top: 15px;">Replace with Popcorn Hub component!</p></div>'
     }
   };
   
