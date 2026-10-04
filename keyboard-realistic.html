@@ -257,13 +257,13 @@ const LAYOUTS = {
     name: "Japanese JIS",
     group: "Asia / Middle East",
     alphabet: "hiragana",
-    note: "JIS key order. Corner mark is the latin key. かな toggles the alphabet.",
+    note: "JIS order. Keys are printed in hiragana, as on a real board. カタカナ is the same keys, other alphabet.",
     rows: [
       [{id:"CapsLock", label:"半/全", cls:"modifier", action:"caps"}, ["1","ぬ"], ["2","ふ"], ["3","あ"], ["4","う"], ["5","え"], ["6","お"], ["7","や"], ["8","ゆ"], ["9","よ"], ["0","わ"], ["-","ほ"], ["^","へ"], ["¥","ー"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
       [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","た"], ["w","て"], ["e","い"], ["r","す"], ["t","か"], ["y","ん"], ["u","な"], ["i","に"], ["o","ら"], ["p","せ"], ["@","゛"], ["[","゜"]],
       [{id:"Eisu", label:"英数", cls:"modifier w15", action:"eisu"}, ["a","ち"], ["s","と"], ["d","し"], ["f","は"], ["g","き"], ["h","く"], ["j","ま"], ["k","の"], ["l","り"], [";","れ"], [":","け"], ["]","む"], {id:"Enter", label:"Enter", cls:"special w15", action:"enter"}],
       [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["z","つ"], ["x","さ"], ["c","そ"], ["v","ひ"], ["b","こ"], ["n","み"], ["m","も"], [",","ね"], [".","る"], ["/","め"], ["\\","ろ"], {id:"ShiftR", label:"Shift", cls:"modifier w17", action:"shift"}],
-      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Win", label:"Win", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Muhenkan", label:"無変換", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"Henkan", label:"変換", cls:"modifier", action:"noop"}, {id:"Kana", label:"かな", cls:"modifier", action:"kana"}, {id:"AltR", label:"Alt", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Win", label:"Win", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Muhenkan", label:"無変換", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"Henkan", label:"変換", cls:"modifier", action:"noop"}, {id:"Kana", label:"かな", cls:"modifier", action:"kana"}, {id:"Kata", label:"カタカナ", cls:"modifier", action:"kata"}, {id:"AltR", label:"Alt", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
     ]
   },
   korean: {
@@ -322,6 +322,7 @@ const state = {
   shift: false,
   caps: false,
   kana: true,
+  script: "hira",
   auto: localStorage.getItem("w13kb-auto") === "1",
   follow: localStorage.getItem("w13kb-follow") !== "0"
 };
@@ -333,12 +334,23 @@ const statusEl = document.getElementById("status");
 const bar = document.getElementById("autocompleteBar");
 const select = document.getElementById("layoutSelect");
 
+function toKata(ch) {
+  return Array.from(ch).map(c => {
+    const n = c.codePointAt(0);
+    if (n >= 0x3041 && n <= 0x3096) return String.fromCodePoint(n + 0x60);
+    if (c === "゛") return "゛";
+    if (c === "゜") return "゜";
+    return c;
+  }).join("");
+}
+
 function glyph(key) {
   if (key.action) return key.label;
   const base = key[0];
   const shifted = key[1] || key[0];
   if (state.layout === "japanese") {
-    if (state.kana) return state.shift ? base : shifted;
+    if (state.script === "hira") return state.shift ? base : shifted;
+    if (state.script === "kata") return state.shift ? base : toKata(shifted);
     return state.shift ? base.toUpperCase() : base;
   }
   const letter = base.toLowerCase() !== base.toUpperCase() && base.toLowerCase() === base;
@@ -380,7 +392,9 @@ function renderKeyboard() {
       el.className = "key " + (key.cls || "");
       if (key.action === "shift" && state.shift) el.classList.add("latched");
       if (key.action === "caps" && state.caps) el.classList.add("latched");
-      if (key.action === "kana" && state.kana) el.classList.add("latched");
+      if (key.action === "kana" && state.script === "hira") el.classList.add("latched");
+      if (key.action === "kata" && state.script === "kata") el.classList.add("latched");
+      if (key.action === "eisu" && state.script === "latin") el.classList.add("latched");
       if (key.id) el.dataset.id = key.id;
       const shown = glyph(key);
       if (!key.action && key[1] && key[1] !== key[0]) {
@@ -398,7 +412,9 @@ function renderKeyboard() {
   const alphabet = layout.alphabet || (layout.rtl ? "arabic" : "latin");
   const note = layout.note ? " · " + layout.note : "";
   const alt = layout.alt ? " · AltGr diacritics on a c e l n o s x z" : "";
-  const kana = state.layout === "japanese" ? (state.kana ? " · alphabet hiragana" : " · alphabet latin") : " · alphabet " + alphabet;
+  const kana = state.layout === "japanese"
+    ? (state.script === "kata" ? " · alphabet katakana" : state.script === "latin" ? " · alphabet latin" : " · alphabet hiragana")
+    : " · alphabet " + alphabet;
   statusEl.textContent = layout.name + (state.caps ? " · CAPS" : "") + (state.shift ? " · SHIFT" : "") + kana + note + alt;
   document.getElementById("deviceLine").textContent = "Device " + locale + " → " + LAYOUTS[layoutForLocale(locale)].name + (state.follow ? " · following" : " · manual");
 }
@@ -416,8 +432,9 @@ function press(key) {
   else if (key.action === "tab") insert("\t");
   else if (key.action === "shift") state.shift = !state.shift;
   else if (key.action === "caps") state.caps = !state.caps;
-  else if (key.action === "kana") state.kana = true;
-  else if (key.action === "eisu") state.kana = false;
+  else if (key.action === "kana") state.script = "hira";
+  else if (key.action === "kata") state.script = "kata";
+  else if (key.action === "eisu") state.script = "latin";
   else if (key.action === "char") insert(key.ch);
   else if (key.action === "noop") return;
   else insert(glyph(key));
