@@ -139,10 +139,29 @@ body {
   z-index: 20; transition: transform 0.2s;
 }
 .copy-notification.show { transform: translate(-50%, -50%) scale(1); }
+.minimap {
+  margin: 0 0 12px;
+  border: 1px solid rgba(0,255,65,0.45);
+  border-radius: 10px;
+  background: #020804;
+  overflow: hidden;
+  cursor: pointer;
+}
+.minimap-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 10px; font-size: 0.75rem; color: var(--yellow);
+}
+.minimap svg { width: 100%; height: 72px; display: block; }
+.minimap.open svg { height: 320px; }
+.minimap text { font-family: "Courier New", monospace; }
+.land { fill: #063; stroke: var(--neon); stroke-width: 1; }
+.tree { stroke: rgba(255,230,0,0.7); stroke-width: 1.4; fill: none; }
+.node { cursor: pointer; }
 @media (max-width: 760px) {
   .key { min-width: 28px; height: 40px; font-size: 0.78rem; }
   .key.space { min-width: 120px; }
   .key.w23 { min-width: 64px; }
+  .minimap.open svg { height: 240px; }
 }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
@@ -162,6 +181,10 @@ body {
     <label class="kb-toggle"><input type="checkbox" id="followDevice" checked> Device language</label>
     <button class="kb-btn" id="copyBtn" type="button">Copy</button>
     <button class="kb-btn" id="clearBtn" type="button">Clear</button>
+  </div>
+  <div class="minimap" id="minimap">
+    <div class="minimap-bar"><span>LANGUAGE MINIMAP</span><span id="mapHint">click to open the translator tree</span></div>
+    <svg id="langMap" viewBox="0 0 1000 460"></svg>
   </div>
   <div class="autocomplete-bar" id="autocompleteBar"></div>
   <div class="kb-output" id="outputBox">
@@ -527,6 +550,551 @@ document.getElementById("clearBtn").addEventListener("click", () => { state.text
 if (state.follow) state.layout = layoutForLocale(deviceLocale());
 renderSelect();
 persist();
+
+const MAP_TREE = {"families": [{"name": "Indo-European", "lat": 43.696236559139784, "lng": 13.424731182795696, "n": 93, "branches": [{"name": "Germanic", "lat": 49.284000000000006, "lng": 3.22, "n": 25, "leaves": [{"code": "en", "layout": "uk", "name": "English", "lat": 53.0, "lng": -1.5}, {"code": "de", "layout": "german", "name": "German", "lat": 51.0, "lng": 10.5}, {"code": "en-US", "layout": "us", "name": "American English", "lat": 38.9, "lng": -77.0}]}, {"name": "Romance", "lat": 39.72592592592592, "lng": -4.3740740740740724, "n": 27, "leaves": [{"code": "fr", "layout": "french", "name": "French", "lat": 46.6, "lng": 2.3}, {"code": "es", "layout": "spanish", "name": "Spanish", "lat": 40.4, "lng": -2.0}]}, {"name": "Slavic", "lat": 48.51842105263159, "lng": 20.42105263157895, "n": 19, "leaves": [{"code": "pl", "layout": "polish", "name": "Polish", "lat": 52.0, "lng": 19.5}]}, {"name": "Celtic", "lat": 52.61666666666667, "lng": -4.883333333333334, "n": 6, "leaves": []}, {"name": "Baltic", "lat": 55.95, "lng": 24.25, "n": 2, "leaves": []}, {"name": "Hellenic", "lat": 39.0, "lng": 22.9, "n": 1, "leaves": []}, {"name": "Indo-Aryan", "lat": 23.275000000000002, "lng": 78.1875, "n": 8, "leaves": []}, {"name": "Iranian", "lat": 34.36666666666667, "lng": 55.300000000000004, "n": 3, "leaves": []}, {"name": "Albanian", "lat": 41.1, "lng": 20.1, "n": 1, "leaves": []}, {"name": "Armenian", "lat": 40.2, "lng": 44.5, "n": 1, "leaves": []}]}, {"name": "Uralic", "lat": 60.74444444444445, "lng": 23.51111111111111, "n": 9, "branches": [{"name": "Finnic", "lat": 59.980000000000004, "lng": 26.380000000000003, "n": 5, "leaves": []}, {"name": "Ugric", "lat": 47.1, "lng": 19.5, "n": 1, "leaves": []}, {"name": "Sami", "lat": 66.56666666666666, "lng": 20.066666666666666, "n": 3, "leaves": []}]}, {"name": "Turkic", "lat": 42.4, "lng": 54.724999999999994, "n": 4, "branches": [{"name": "Common Turkic", "lat": 42.4, "lng": 54.724999999999994, "n": 4, "leaves": []}]}, {"name": "Afro-Asiatic", "lat": 19.43333333333333, "lng": 28.944444444444443, "n": 9, "branches": [{"name": "Semitic", "lat": 23.240000000000002, "lng": 34.36, "n": 5, "leaves": [{"code": "ar", "layout": "arabic", "name": "Arabic", "lat": 25.0, "lng": 45.0}]}, {"name": "Chadic", "lat": 12.0, "lng": 8.5, "n": 1, "leaves": []}, {"name": "Berber", "lat": 33.0, "lng": -5.0, "n": 1, "leaves": []}, {"name": "Cushitic", "lat": 6.85, "lng": 42.6, "n": 2, "leaves": []}]}, {"name": "Sino-Tibetan", "lat": 26.7, "lng": 101.625, "n": 4, "branches": [{"name": "Sinitic", "lat": 28.65, "lng": 109.6, "n": 2, "leaves": []}, {"name": "Tibeto-Burman", "lat": 24.75, "lng": 93.65, "n": 2, "leaves": []}]}, {"name": "Kra-Dai", "lat": 15.9, "lng": 101.55, "n": 2, "branches": [{"name": "Tai", "lat": 15.9, "lng": 101.55, "n": 2, "leaves": []}]}, {"name": "Austroasiatic", "lat": 13.8, "lng": 106.45, "n": 2, "branches": [{"name": "Vietic", "lat": 16.0, "lng": 108.0, "n": 1, "leaves": []}, {"name": "Khmer", "lat": 11.6, "lng": 104.9, "n": 1, "leaves": []}]}, {"name": "Austronesian", "lat": -8.34, "lng": 37.470000000000006, "n": 10, "branches": [{"name": "Malayo-Polynesian", "lat": -1.8499999999999996, "lng": 94.3, "n": 4, "leaves": []}, {"name": "Polynesian", "lat": -13.05, "lng": -81.875, "n": 4, "leaves": []}, {"name": "Oceanic", "lat": -11.9, "lng": 162.5, "n": 2, "leaves": []}]}, {"name": "Niger-Congo", "lat": -6.4642857142857135, "lng": 17.20714285714286, "n": 14, "branches": [{"name": "Bantu", "lat": -15.61111111111111, "lng": 27.311111111111114, "n": 9, "leaves": []}, {"name": "Volta-Niger", "lat": 6.95, "lng": 5.7, "n": 2, "leaves": []}, {"name": "Atlantic", "lat": 14.1, "lng": -7.6499999999999995, "n": 2, "leaves": []}, {"name": "Kwa", "lat": 7.9, "lng": -1.0, "n": 1, "leaves": []}]}, {"name": "Dravidian", "lat": 13.549999999999999, "lng": 77.25, "n": 4, "branches": [{"name": "South Dravidian", "lat": 12.266666666666666, "lng": 76.83333333333333, "n": 3, "leaves": []}, {"name": "South-Central", "lat": 17.4, "lng": 78.5, "n": 1, "leaves": []}]}, {"name": "Japonic", "lat": 36.5, "lng": 138.0, "n": 1, "branches": [{"name": "Japanese", "lat": 36.5, "lng": 138.0, "n": 1, "leaves": [{"code": "ja", "layout": "japanese", "name": "Japanese", "lat": 36.5, "lng": 138.0}]}]}, {"name": "Koreanic", "lat": 36.5, "lng": 127.8, "n": 1, "branches": [{"name": "Korean", "lat": 36.5, "lng": 127.8, "n": 1, "leaves": [{"code": "ko", "layout": "korean", "name": "Korean", "lat": 36.5, "lng": 127.8}]}]}, {"name": "Kartvelian", "lat": 42.0, "lng": 43.5, "n": 1, "branches": [{"name": "Georgian", "lat": 42.0, "lng": 43.5, "n": 1, "leaves": []}]}, {"name": "Mongolic", "lat": 47.9, "lng": 106.9, "n": 1, "branches": [{"name": "Mongolian", "lat": 47.9, "lng": 106.9, "n": 1, "leaves": []}]}, {"name": "Quechuan", "lat": -13.5, "lng": -72.0, "n": 1, "branches": [{"name": "Quechua", "lat": -13.5, "lng": -72.0, "n": 1, "leaves": []}]}, {"name": "Tupi-Guarani", "lat": -25.3, "lng": -57.6, "n": 1, "branches": [{"name": "Guarani", "lat": -25.3, "lng": -57.6, "n": 1, "leaves": []}]}, {"name": "Uto-Aztecan", "lat": 19.5, "lng": -99.5, "n": 1, "branches": [{"name": "Nahuatl", "lat": 19.5, "lng": -99.5, "n": 1, "leaves": []}]}, {"name": "Language Isolate", "lat": 43.0, "lng": -2.3, "n": 1, "branches": [{"name": "Basque", "lat": 43.0, "lng": -2.3, "n": 1, "leaves": []}]}, {"name": "Na-Dene", "lat": 36.0, "lng": -109.0, "n": 1, "branches": [{"name": "Athabaskan", "lat": 36.0, "lng": -109.0, "n": 1, "leaves": []}]}, {"name": "Iroquoian", "lat": 35.9, "lng": -95.0, "n": 1, "branches": [{"name": "Cherokee", "lat": 35.9, "lng": -95.0, "n": 1, "leaves": []}]}, {"name": "Siouan", "lat": 44.5, "lng": -102.5, "n": 1, "branches": [{"name": "Lakota", "lat": 44.5, "lng": -102.5, "n": 1, "leaves": []}]}, {"name": "Algonquian", "lat": 50.25, "lng": -93.5, "n": 2, "branches": [{"name": "Ojibwe-Cree", "lat": 50.25, "lng": -93.5, "n": 2, "leaves": []}]}, {"name": "Eskimo-Aleut", "lat": 68.0, "lng": -95.0, "n": 1, "branches": [{"name": "Inuit", "lat": 68.0, "lng": -95.0, "n": 1, "leaves": []}]}, {"name": "Aymaran", "lat": -16.5, "lng": -68.1, "n": 1, "branches": [{"name": "Aymara", "lat": -16.5, "lng": -68.1, "n": 1, "leaves": []}]}, {"name": "Araucanian", "lat": -38.7, "lng": -72.6, "n": 1, "branches": [{"name": "Mapudungun", "lat": -38.7, "lng": -72.6, "n": 1, "leaves": []}]}, {"name": "Arawakan", "lat": 11.7, "lng": -72.3, "n": 1, "branches": [{"name": "Wayuu", "lat": 11.7, "lng": -72.3, "n": 1, "leaves": []}]}], "dots": [[-1.5, 53.0], [-2.0, 40.4], [2.3, 46.6], [10.5, 51.0], [38.0, 56.0], [22.9, 39.0], [45.0, 25.0], [105.0, 35.0], [138.0, 36.5], [127.8, 36.5], [19.5, 52.0], [32.8, 39.9], [80.0, 23.0], [12.5, 42.5], [-9.5, 37.0], [18.6, 60.1], [25.7, 61.9], [19.5, 47.1], [5.3, 52.3], [31.1, 48.3], [15.5, 49.8], [24.9, 45.9], [34.8, 31.0], [-77.0, 38.9], [-71.2, 46.8], [-102.5, 23.6], [-51.9, -14.2], [8.2, 46.8], [-3.6, 52.2], [1.8, 41.7], [-2.3, 43.0], [-7.7, 53.3], [-3.0, 48.2], [-8.2, 42.4], [18.9, 50.3], [18.0, 54.4], [-5.5, 57.5], [9.0, 42.0], [5.8, 53.2], [14.3, 51.3], [6.1, 49.8], [14.4, 35.9], [25.0, 58.6], [24.6, 56.8], [23.9, 55.1], [19.6, 48.6], [14.8, 46.0], [20.1, 41.1], [21.7, 41.5], [17.6, 43.9], [19.0, 42.2], [-19.0, 64.9], [-6.8, 62.0], [27.5, 53.9], [25.4, 42.7], [20.9, 44.0], [15.2, 45.1], [28.5, 47.4], [9.5, 55.7], [10.0, 62.0], [25.5, 69.0], [20.2, 67.2], [14.5, 63.5], [9.1, 40.0], [14.2, 40.8], [14.0, 37.5], [7.7, 45.0], [8.9, 44.4], [13.2, 46.1], [9.2, 45.5], [12.3, 45.4], [-0.4, 42.4], [-5.8, 43.3], [2.3, 43.6], [7.5, 48.5], [11.6, 48.1], [10.0, 53.6], [6.9, 50.9], [8.1, 49.4], [9.5, 48.5], [17.0, 51.1], [8.9, 54.7], [7.7, 53.1], [14.5, 51.2], [14.0, 51.7], [5.0, 50.4], [5.6, 50.9], [3.0, 51.0], [9.8, 46.6], [-3.5, 56.5], [-4.5, 54.2], [-5.0, 50.3], [32.0, 64.0], [27.0, 57.8], [22.2, 57.6], [22.5, 49.0], [21.0, 40.5], [43.5, 42.0], [44.5, 40.2], [49.8, 40.4], [37.0, -6.8], [38.7, 9.0], [3.9, 7.5], [7.5, 6.4], [8.5, 12.0], [30.5, -28.5], [27.5, -32.0], [18.5, -33.9], [46.2, 5.2], [47.5, -18.9], [-17.4, 14.7], [-5.0, 33.0], [30.0, -18.0], [-1.0, 7.9], [2.1, 13.5], [15.3, -4.3], [30.0, -1.9], [33.8, -13.9], [28.2, -29.6], [38.9, 15.3], [39.0, 8.5], [13.5, -5.5], [53.7, 32.4], [43.0, 36.2], [69.3, 41.3], [67.0, 48.0], [69.2, 34.5], [69.3, 30.4], [90.4, 23.7], [78.5, 11.0], [78.5, 17.4], [73.0, 19.0], [72.6, 23.0], [74.3, 31.5], [75.7, 15.3], [76.3, 10.5], [80.6, 7.9], [85.3, 27.7], [100.5, 13.8], [108.0, 16.0], [107.0, -6.2], [101.7, 3.1], [121.0, 14.6], [96.2, 19.8], [104.9, 11.6], [102.6, 18.0], [106.9, 47.9], [91.1, 29.7], [114.2, 22.3], [-72.0, -13.5], [-57.6, -25.3], [-99.5, 19.5], [-72.3, 19.0], [-109.0, 36.0], [-95.0, 35.9], [-102.5, 44.5], [-90.0, 47.5], [-97.0, 53.0], [-95.0, 68.0], [-68.1, -16.5], [-72.6, -38.7], [-72.3, 11.7], [176.0, -38.0], [-156.3, 20.8], [-172.0, -13.8], [-175.2, -21.2], [178.0, -17.8], [147.0, -6.0]], "source": "map-merger-venti/translator_v7.html LANG_TREE"};
+const LAND = "M70,120 C120,80 180,90 230,130 C270,150 250,190 210,210 C160,230 120,200 90,170 Z M250,210 C300,200 340,230 330,270 C300,300 250,280 230,250 Z M390,110 C450,90 520,100 560,130 C600,150 590,190 540,200 C480,210 420,180 400,140 Z M560,200 C620,190 680,220 660,270 C620,300 560,270 540,230 Z M700,130 C760,110 840,120 880,160 C910,190 860,220 800,210 C740,200 700,170 700,130 Z";
+
+function xy(lat, lng) {
+  return [(lng + 180) / 360 * 1000, (90 - lat) / 180 * 460];
+}
+function svgEl(name, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  return el;
+}
+function drawMap() {
+  const svg = document.getElementById("langMap");
+  if (!svg) return;
+  const open = document.getElementById("minimap").classList.contains("open");
+  svg.innerHTML = "";
+  svg.appendChild(svgEl("path", { d: LAND, class: "land" }));
+  MAP_TREE.dots.forEach(([lng, lat]) => {
+    const [x, y] = xy(lat, lng);
+    svg.appendChild(svgEl("circle", { cx: x, cy: y, r: open ? 1.6 : 1.1, fill: "rgba(0,255,65,0.35)" }));
+  });
+  if (open) {
+    MAP_TREE.families.forEach(fam => {
+      const [fx, fy] = xy(fam.lat, fam.lng);
+      fam.branches.forEach(br => {
+        const [bx, by] = xy(br.lat, br.lng);
+        svg.appendChild(svgEl("path", { class: "tree", d: `M${fx},${fy} C${fx},${(fy+by)/2} ${bx},${(fy+by)/2} ${bx},${by}` }));
+        br.leaves.forEach(leaf => {
+          const [lx, ly] = xy(leaf.lat, leaf.lng);
+          svg.appendChild(svgEl("path", { class: "tree", d: `M${bx},${by} C${bx},${(by+ly)/2} ${lx},${(by+ly)/2} ${lx},${ly}` }));
+        });
+        const t = svgEl("text", { x: bx + 6, y: by - 4, fill: "#9ff", "font-size": 10 });
+        t.textContent = br.name;
+        svg.appendChild(t);
+      });
+      const ft = svgEl("text", { x: fx + 6, y: fy - 6, fill: "#ffe600", "font-size": 12 });
+      ft.textContent = fam.name;
+      svg.appendChild(ft);
+    });
+  }
+  MAP_TREE.families.forEach(fam => fam.branches.forEach(br => br.leaves.forEach(leaf => {
+    const [x, y] = xy(leaf.lat, leaf.lng);
+    const g = svgEl("g", { class: "node" });
+    g.appendChild(svgEl("circle", {
+      cx: x, cy: y, r: state.layout === leaf.layout ? 7 : 4.5,
+      fill: state.layout === leaf.layout ? "#ffe600" : "#00ff41"
+    }));
+    if (open) {
+      const t = svgEl("text", { x: x + 8, y: y + 4, fill: "#00ff41", "font-size": 11 });
+      t.textContent = leaf.name;
+      g.appendChild(t);
+    }
+    g.addEventListener("click", (e) => {
+      e.stopPropagation();
+      state.layout = leaf.layout;
+      state.follow = false;
+      document.getElementById("followDevice").checked = false;
+      renderSelect();
+      persist();
+    });
+    svg.appendChild(g);
+  })));
+}
+document.getElementById("minimap").addEventListener("click", () => {
+  const box = document.getElementById("minimap");
+  box.classList.toggle("open");
+  document.getElementById("mapHint").textContent = box.classList.contains("open") ? "translator v7 tree on the map · click a keyboard language" : "click to open the translator tree";
+  drawMap();
+});
+const _persist = persist;
+persist = function () { _persist(); drawMap(); };
+drawMap();
+</script>
+</head>
+<body>
+<div class="keyboard-window">
+  <div class="kb-header">
+    <div data-rv-logo class="kb-title">WORLD KEYBOARDS</div>
+    <div class="kb-sub" id="deviceLine">Following the device language.</div>
+  </div>
+  <div class="kb-controls">
+    <select class="kb-select" id="layoutSelect"></select>
+    <label class="kb-toggle"><input type="checkbox" id="followDevice" checked> Device language</label>
+    <button class="kb-btn" id="copyBtn" type="button">Copy</button>
+    <button class="kb-btn" id="clearBtn" type="button">Clear</button>
+  </div>
+  <div class="minimap" id="minimap">
+    <div class="minimap-bar"><span>LANGUAGE MINIMAP</span><span id="mapHint">click to open the translator tree</span></div>
+    <svg id="langMap" viewBox="0 0 1000 460"></svg>
+  </div>
+  <div class="autocomplete-bar" id="autocompleteBar"></div>
+  <div class="kb-output" id="outputBox">
+    <div class="kb-output-label">OUTPUT</div>
+    <div id="output"></div>
+  </div>
+  <div class="keyboard" id="keyboard"></div>
+  <div class="status" id="status"></div>
+</div>
+<div class="copy-notification" id="copyNotif">COPIED</div>
+<script>
+const LAYOUTS = {
+  us: {
+    name: "US English QWERTY",
+    group: "Europe / Americas",
+    rows: [
+      [["`", "~"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"backspace special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"tab modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["[","{"], ["]","}"], ["\\","|"]],
+      [{id:"CapsLock", label:"Caps", cls:"caps modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], [";",":"], ["'","\""], {id:"Enter", label:"Enter", cls:"enter special w20", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"shift modifier w23", action:"shift"}, ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",","<"], [".",">"], ["/","?"], {id:"ShiftR", label:"Shift", cls:"shift modifier w23", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"ctrl modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"alt modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"Alt", cls:"alt modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"ctrl modifier", action:"noop"}]
+    ]
+  },
+  uk: {
+    name: "UK English",
+    group: "Europe / Americas",
+    rows: [
+      [["`", "¬"], ["1","!"], ["2","\""], ["3","£"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["[","{"], ["]","}"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], [";",":"], ["'","@"], ["#","~"], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["\\","|"], ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",","<"], [".",">"], ["/","?"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  polish: {
+    name: "Polish programmers",
+    group: "Europe / Americas",
+    rows: [
+      [["`", "~"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["[","{"], ["]","}"], ["\\","|"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], [";",":"], ["'","\""], {id:"Enter", label:"Enter", cls:"special w20", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w23", action:"shift"}, ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",","<"], [".",">"], ["/","?"], {id:"ShiftR", label:"Shift", cls:"modifier w23", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {label:"ą ć ę", cls:"special", action:"char", ch:"ą"}, {label:"ł ń ó", cls:"special", action:"char", ch:"ł"}, {label:"ś ź ż", cls:"special", action:"char", ch:"ś"}]
+    ],
+    alt: { a:"ą", c:"ć", e:"ę", l:"ł", n:"ń", o:"ó", s:"ś", x:"ź", z:"ż", A:"Ą", C:"Ć", E:"Ę", L:"Ł", N:"Ń", O:"Ó", S:"Ś", X:"Ź", Z:"Ż" }
+  },
+  german: {
+    name: "German QWERTZ",
+    group: "Europe / Americas",
+    rows: [
+      [["^","°"], ["1","!"], ["2","\""], ["3","§"], ["4","$"], ["5","%"], ["6","&"], ["7","/"], ["8","("], ["9",")"], ["0","="], ["ß","?"], ["´","`"], {id:"Backspace", label:"⌫", cls:"special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["z","Z"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["ü","Ü"], ["+","*"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], ["ö","Ö"], ["ä","Ä"], ["#","'"], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["<","›"], ["y","Y"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",",";"], [".",":"], ["-","_"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Strg", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"Leer", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Strg", cls:"modifier", action:"noop"}]
+    ]
+  },
+  french: {
+    name: "French AZERTY",
+    group: "Europe / Americas",
+    rows: [
+      [["²"], ["&","1"], ["é","2"], ["\"","3"], ["'","4"], ["(","5"], ["-","6"], ["è","7"], ["_","8"], ["ç","9"], ["à","0"], [")","°"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["a","A"], ["z","Z"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["^","¨"], ["$","£"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["q","Q"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], ["m","M"], ["ù","%"], ["*","µ"], {id:"Enter", label:"Entrée", cls:"special w15", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["<","›"], ["w","W"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], [",","?"], [";","."], [":","/"], ["!","§"], {id:"ShiftR", label:"Shift", cls:"modifier w17", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"espace", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  spanish: {
+    name: "Spanish QWERTY",
+    group: "Europe / Americas",
+    rows: [
+      [["º","ª"], ["1","!"], ["2","\""], ["3","·"], ["4","$"], ["5","%"], ["6","&"], ["7","/"], ["8","("], ["9",")"], ["0","="], ["'","?"], ["¡","¿"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["`","^"], ["+","*"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], ["ñ","Ñ"], ["´","¨"], ["ç","Ç"], {id:"Enter", label:"Intro", cls:"special w15", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["<","›"], ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",",";"], [".",":"], ["-","_"], {id:"ShiftR", label:"Shift", cls:"modifier w17", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"espacio", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  arabic: {
+    name: "Arabic",
+    group: "Asia / Middle East",
+    rtl: true,
+    rows: [
+      [["ذ"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9",")"], ["0","("], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["ض"], ["ص"], ["ث"], ["ق"], ["ف"], ["غ"], ["ع"], ["ه"], ["خ"], ["ح"], ["ج"], ["د"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w15", action:"caps"}, ["ش"], ["س"], ["ي"], ["ب"], ["ل"], ["ا"], ["ت"], ["ن"], ["م"], ["ك"], ["ط"], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["ئ"], ["ء"], ["ؤ"], ["ر"], ["لا"], ["ى"], ["ة"], ["و"], ["ز"], ["ظ"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"مسافة", cls:"space", action:"space"}, {id:"AltR", label:"Alt", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  japanese: {
+    name: "Japanese JIS",
+    group: "Asia / Middle East",
+    alphabet: "hiragana",
+    note: "JIS order. Keys are printed in hiragana, as on a real board. カタカナ is the same keys, other alphabet.",
+    rows: [
+      [{id:"CapsLock", label:"半/全", cls:"modifier", action:"caps"}, ["1","ぬ"], ["2","ふ"], ["3","あ"], ["4","う"], ["5","え"], ["6","お"], ["7","や"], ["8","ゆ"], ["9","よ"], ["0","わ"], ["-","ほ"], ["^","へ"], ["¥","ー"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","た"], ["w","て"], ["e","い"], ["r","す"], ["t","か"], ["y","ん"], ["u","な"], ["i","に"], ["o","ら"], ["p","せ"], ["@","゛"], ["[","゜"]],
+      [{id:"Eisu", label:"英数", cls:"modifier w15", action:"eisu"}, ["a","ち"], ["s","と"], ["d","し"], ["f","は"], ["g","き"], ["h","く"], ["j","ま"], ["k","の"], ["l","り"], [";","れ"], [":","け"], ["]","む"], {id:"Enter", label:"Enter", cls:"special w15", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["z","つ"], ["x","さ"], ["c","そ"], ["v","ひ"], ["b","こ"], ["n","み"], ["m","も"], [",","ね"], [".","る"], ["/","め"], ["\\","ろ"], {id:"ShiftR", label:"Shift", cls:"modifier w17", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Win", label:"Win", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Muhenkan", label:"無変換", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"Henkan", label:"変換", cls:"modifier", action:"noop"}, {id:"Kana", label:"かな", cls:"modifier", action:"kana"}, {id:"Kata", label:"カタカナ", cls:"modifier", action:"kata"}, {id:"AltR", label:"Alt", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  korean: {
+    name: "Korean 2-set",
+    group: "Asia / Middle East",
+    note: "Dubeolsik jamo. Syllable composition is not applied.",
+    rows: [
+      [["`", "~"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["ㅂ","ㅃ"], ["ㅈ","ㅉ"], ["ㄷ","ㄸ"], ["ㄱ","ㄲ"], ["ㅅ","ㅆ"], ["ㅛ"], ["ㅕ"], ["ㅑ"], ["ㅐ","ㅒ"], ["ㅔ","ㅖ"], ["[", "{"], ["]", "}"]],
+      [{id:"CapsLock", label:"한/영", cls:"modifier w17", action:"caps"}, ["ㅁ"], ["ㄴ"], ["ㅇ"], ["ㄹ"], ["ㅎ"], ["ㅗ"], ["ㅓ"], ["ㅏ"], ["ㅣ"], [";", ":"], ["'", "\""], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w23", action:"shift"}, ["ㅋ"], ["ㅌ"], ["ㅊ"], ["ㅍ"], ["ㅠ"], ["ㅜ"], ["ㅡ"], [",", "<"], [".", ">"], ["/", "?"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"한자", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  emoji: {
+    name: "Emoji",
+    group: "Fun",
+    rows: [
+      [["😀"], ["😃"], ["😄"], ["😁"], ["😆"], ["😅"], ["🤣"], ["😂"], ["🙂"], ["😉"], ["😊"], {id:"Backspace", label:"⌫", cls:"special", action:"backspace"}],
+      [["🥰"], ["😍"], ["🤩"], ["😘"], ["😎"], ["🤔"], ["😴"], ["🤯"], ["🎃"], ["⚡"]],
+      [["☢️"], ["🌐"], ["💬"], ["⌨️"], ["🗺️"], ["🎮"], ["💰"], ["🍿"], ["❤️"], ["💚"]],
+      [["👍"], ["👎"], ["✌️"], ["🤘"], ["🙏"], ["💪"], ["🔥"], ["✨"]],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"Alt", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  }
+};
+
+const WORDS = ["hello","help","here","how","world","what","where","when","why","windows","thank","the","this","that","they","rudventur","really","right","chemventur","can","could","pumpkin","please","popcorn","popcoin","keyboard","layout","shift","caps"];
+
+const DEVICE_MAP = [
+  ["ja", "japanese"],
+  ["ko", "korean"],
+  ["ar", "arabic"],
+  ["pl", "polish"],
+  ["de", "german"],
+  ["fr", "french"],
+  ["es", "spanish"],
+  ["en-gb", "uk"],
+  ["en-au", "uk"],
+  ["en", "us"]
+];
+
+function deviceLocale() {
+  return (navigator.languages && navigator.languages[0]) || navigator.language || "en";
+}
+
+function layoutForLocale(locale) {
+  const tag = String(locale || "en").toLowerCase();
+  const hit = DEVICE_MAP.find(([prefix]) => tag === prefix || tag.startsWith(prefix + "-"));
+  return hit ? hit[1] : "us";
+}
+
+const state = {
+  text: localStorage.getItem("w13kb-text") || "",
+  layout: localStorage.getItem("w13kb-layout") || layoutForLocale(deviceLocale()),
+  shift: false,
+  caps: false,
+  kana: true,
+  script: "hira",
+  auto: localStorage.getItem("w13kb-auto") === "1",
+  follow: localStorage.getItem("w13kb-follow") !== "0"
+};
+
+const keyboardEl = document.getElementById("keyboard");
+const outputEl = document.getElementById("output");
+const outputBox = document.getElementById("outputBox");
+const statusEl = document.getElementById("status");
+const bar = document.getElementById("autocompleteBar");
+const select = document.getElementById("layoutSelect");
+
+function toKata(ch) {
+  return Array.from(ch).map(c => {
+    const n = c.codePointAt(0);
+    if (n >= 0x3041 && n <= 0x3096) return String.fromCodePoint(n + 0x60);
+    if (c === "゛") return "゛";
+    if (c === "゜") return "゜";
+    return c;
+  }).join("");
+}
+
+function glyph(key) {
+  if (key.action) return key.label;
+  const base = key[0];
+  const shifted = key[1] || key[0];
+  if (state.layout === "japanese") {
+    if (state.script === "hira") return state.shift ? base : shifted;
+    if (state.script === "kata") return state.shift ? base : toKata(shifted);
+    return state.shift ? base.toUpperCase() : base;
+  }
+  const letter = base.toLowerCase() !== base.toUpperCase() && base.toLowerCase() === base;
+  if (state.shift) return shifted;
+  if (state.caps && letter) return base.toUpperCase();
+  return base;
+}
+
+function renderSelect() {
+  const groups = {};
+  Object.entries(LAYOUTS).forEach(([id, layout]) => {
+    (groups[layout.group] ||= []).push([id, layout.name]);
+  });
+  select.innerHTML = "";
+  Object.entries(groups).forEach(([name, items]) => {
+    const og = document.createElement("optgroup");
+    og.label = name;
+    items.forEach(([id, label]) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = label;
+      if (id === state.layout) opt.selected = true;
+      og.appendChild(opt);
+    });
+    select.appendChild(og);
+  });
+}
+
+function renderKeyboard() {
+  const layout = LAYOUTS[state.layout];
+  keyboardEl.innerHTML = "";
+  outputBox.dir = layout.rtl ? "rtl" : "ltr";
+  layout.rows.forEach(row => {
+    const rowEl = document.createElement("div");
+    rowEl.className = "kb-row";
+    row.forEach(key => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "key " + (key.cls || "");
+      if (key.action === "shift" && state.shift) el.classList.add("latched");
+      if (key.action === "caps" && state.caps) el.classList.add("latched");
+      if (key.action === "kana" && state.script === "hira") el.classList.add("latched");
+      if (key.action === "kata" && state.script === "kata") el.classList.add("latched");
+      if (key.action === "eisu" && state.script === "latin") el.classList.add("latched");
+      if (key.id) el.dataset.id = key.id;
+      const shown = glyph(key);
+      if (!key.action && key[1] && key[1] !== key[0]) {
+        const sub = document.createElement("small");
+        sub.textContent = state.shift ? key[0] : key[1];
+        el.appendChild(sub);
+      }
+      el.appendChild(document.createTextNode(shown));
+      el.addEventListener("click", () => press(key));
+      rowEl.appendChild(el);
+    });
+    keyboardEl.appendChild(rowEl);
+  });
+  const locale = deviceLocale();
+  const alphabet = layout.alphabet || (layout.rtl ? "arabic" : "latin");
+  const note = layout.note ? " · " + layout.note : "";
+  const alt = layout.alt ? " · AltGr diacritics on a c e l n o s x z" : "";
+  const kana = state.layout === "japanese"
+    ? (state.script === "kata" ? " · alphabet katakana" : state.script === "latin" ? " · alphabet latin" : " · alphabet hiragana")
+    : " · alphabet " + alphabet;
+  statusEl.textContent = layout.name + (state.caps ? " · CAPS" : "") + (state.shift ? " · SHIFT" : "") + kana + note + alt;
+  document.getElementById("deviceLine").textContent = "Device " + locale + " → " + LAYOUTS[layoutForLocale(locale)].name + (state.follow ? " · following" : " · manual");
+}
+
+function insert(ch) {
+  state.text += ch;
+  if (state.shift) state.shift = false;
+  persist();
+}
+
+function press(key) {
+  if (key.action === "backspace") state.text = state.text.slice(0, -1);
+  else if (key.action === "space") insert(" ");
+  else if (key.action === "enter") insert("\n");
+  else if (key.action === "tab") insert("\t");
+  else if (key.action === "shift") state.shift = !state.shift;
+  else if (key.action === "caps") state.caps = !state.caps;
+  else if (key.action === "kana") state.script = "hira";
+  else if (key.action === "kata") state.script = "kata";
+  else if (key.action === "eisu") state.script = "latin";
+  else if (key.action === "char") insert(key.ch);
+  else if (key.action === "noop") return;
+  else insert(glyph(key));
+  persist();
+}
+
+function persist() {
+  localStorage.setItem("w13kb-text", state.text);
+  localStorage.setItem("w13kb-layout", state.layout);
+  localStorage.setItem("w13kb-follow", state.follow ? "1" : "0");
+  outputEl.textContent = state.text;
+  renderKeyboard();
+  updateAutocomplete();
+}
+
+function updateAutocomplete() {
+  if (!state.auto) { bar.classList.remove("active"); return; }
+  const parts = state.text.split(/\s/);
+  const last = (parts[parts.length - 1] || "").toLowerCase();
+  const hits = last ? WORDS.filter(w => w.startsWith(last) && w !== last).slice(0, 6) : [];
+  bar.innerHTML = "";
+  if (!hits.length) { bar.classList.remove("active"); return; }
+  hits.forEach(word => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "suggestion";
+    b.textContent = word;
+    b.addEventListener("click", () => {
+      parts[parts.length - 1] = word;
+      state.text = parts.join(" ");
+      persist();
+    });
+    bar.appendChild(b);
+  });
+  bar.classList.add("active");
+}
+
+function flash(id) {
+  const el = keyboardEl.querySelector('[data-id="' + id + '"]');
+  if (!el) return;
+  el.classList.add("down");
+  setTimeout(() => el.classList.remove("down"), 90);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
+  if (e.key === "Shift") { state.shift = true; renderKeyboard(); return; }
+  if (e.key === "CapsLock") { state.caps = !state.caps; renderKeyboard(); return; }
+  if (e.key === "Backspace") { e.preventDefault(); state.text = state.text.slice(0, -1); flash("Backspace"); persist(); return; }
+  if (e.key === "Enter") { e.preventDefault(); insert("\n"); flash("Enter"); return; }
+  if (e.key === " ") { e.preventDefault(); insert(" "); flash("Space"); return; }
+  if (e.key === "Tab") { e.preventDefault(); insert("\t"); flash("Tab"); return; }
+  if (e.altKey && LAYOUTS[state.layout].alt) {
+    const hit = LAYOUTS[state.layout].alt[e.key];
+    if (hit) { e.preventDefault(); insert(hit); return; }
+  }
+  if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault();
+    insert(e.key);
+  }
+});
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Shift") { state.shift = false; renderKeyboard(); }
+});
+
+select.addEventListener("change", () => {
+  state.layout = select.value;
+  state.follow = false;
+  document.getElementById("followDevice").checked = false;
+  persist();
+});
+document.getElementById("followDevice").checked = state.follow;
+document.getElementById("followDevice").addEventListener("change", (e) => {
+  state.follow = e.target.checked;
+  if (state.follow) state.layout = layoutForLocale(deviceLocale());
+  persist();
+  renderSelect();
+});
+document.getElementById("autocompleteToggle").checked = state.auto;
+document.getElementById("autocompleteToggle").addEventListener("change", (e) => { state.auto = e.target.checked; persist(); });
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!state.text) return;
+  await navigator.clipboard.writeText(state.text);
+  const n = document.getElementById("copyNotif");
+  n.classList.add("show");
+  setTimeout(() => n.classList.remove("show"), 1200);
+});
+document.getElementById("clearBtn").addEventListener("click", () => { state.text = ""; persist(); });
+
+if (state.follow) state.layout = layoutForLocale(deviceLocale());
+renderSelect();
+persist();
+
+const FAMILIES = [
+  { id: "ine", name: "Indo-European", x: 500, y: 210 },
+  { id: "gem", name: "Germanic", parent: "ine", x: 470, y: 150 },
+  { id: "rom", name: "Romance", parent: "ine", x: 430, y: 195 },
+  { id: "sla", name: "Slavic", parent: "ine", x: 560, y: 155 },
+  { id: "afa", name: "Afro-Asiatic", x: 590, y: 250 },
+  { id: "sem", name: "Semitic", parent: "afa", x: 610, y: 230 },
+  { id: "jpx", name: "Japonic", x: 830, y: 200 },
+  { id: "kor", name: "Koreanic", x: 790, y: 175 }
+];
+const PLACES = [
+  { id: "us", name: "English", family: "gem", x: 210, y: 175 },
+  { id: "uk", name: "English", family: "gem", x: 455, y: 128 },
+  { id: "german", name: "German", family: "gem", x: 510, y: 142 },
+  { id: "french", name: "French", family: "rom", x: 470, y: 158 },
+  { id: "spanish", name: "Spanish", family: "rom", x: 445, y: 185 },
+  { id: "polish", name: "Polish", family: "sla", x: 555, y: 140 },
+  { id: "arabic", name: "Arabic", family: "sem", x: 600, y: 215 },
+  { id: "korean", name: "Korean", family: "kor", x: 805, y: 168 },
+  { id: "japanese", name: "Japanese", family: "jpx", x: 855, y: 185 }
+];
+const LAND = "M70,120 C120,80 180,90 230,130 C270,150 250,190 210,210 C160,230 120,200 90,170 Z M250,210 C300,200 340,230 330,270 C300,300 250,280 230,250 Z M390,110 C450,90 520,100 560,130 C600,150 590,190 540,200 C480,210 420,180 400,140 Z M560,200 C620,190 680,220 660,270 C620,300 560,270 540,230 Z M700,130 C760,110 840,120 880,160 C910,190 860,220 800,210 C740,200 700,170 700,130 Z";
+
+function drawMap() {
+  const svg = document.getElementById("langMap");
+  const open = document.getElementById("minimap").classList.contains("open");
+  svg.innerHTML = "";
+  const land = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  land.setAttribute("d", LAND);
+  land.setAttribute("class", "land");
+  svg.appendChild(land);
+  const byId = Object.fromEntries(FAMILIES.map(f => [f.id, f]));
+  if (open) {
+    FAMILIES.forEach(f => {
+      if (!f.parent) return;
+      const p = byId[f.parent];
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      line.setAttribute("class", "tree");
+      line.setAttribute("d", `M${p.x},${p.y} C${p.x},${(p.y+f.y)/2} ${f.x},${(p.y+f.y)/2} ${f.x},${f.y}`);
+      svg.appendChild(line);
+    });
+    PLACES.forEach(place => {
+      const f = byId[place.family];
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      line.setAttribute("class", "tree");
+      line.setAttribute("d", `M${f.x},${f.y} C${f.x},${(f.y+place.y)/2} ${place.x},${(f.y+place.y)/2} ${place.x},${place.y}`);
+      svg.appendChild(line);
+    });
+    FAMILIES.forEach(f => svg.appendChild(label(f.x, f.y - 8, f.name, "#ffe600", 11)));
+  }
+  PLACES.forEach(place => {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("class", "node");
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", place.x);
+    c.setAttribute("cy", place.y);
+    c.setAttribute("r", state.layout === place.id ? 7 : 4.5);
+    c.setAttribute("fill", state.layout === place.id ? "#ffe600" : "#00ff41");
+    g.appendChild(c);
+    if (open) g.appendChild(label(place.x + 8, place.y + 4, place.name, "#00ff41", 12));
+    g.addEventListener("click", (e) => {
+      e.stopPropagation();
+      state.layout = place.id;
+      state.follow = false;
+      document.getElementById("followDevice").checked = false;
+      renderSelect();
+      persist();
+    });
+    svg.appendChild(g);
+  });
+}
+function label(x, y, text, fill, size) {
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  t.setAttribute("x", x);
+  t.setAttribute("y", y);
+  t.setAttribute("fill", fill);
+  t.setAttribute("font-size", size);
+  t.textContent = text;
+  return t;
+}
+document.getElementById("minimap").addEventListener("click", () => {
+  const box = document.getElementById("minimap");
+  box.classList.toggle("open");
+  document.getElementById("mapHint").textContent = box.classList.contains("open") ? "click a language, or the bar to fold" : "click to open the tree";
+  drawMap();
+});
+const _persist = persist;
+persist = function () { _persist(); drawMap(); };
+drawMap();
 </script>
 </body>
 </html>
