@@ -3,572 +3,463 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>⌨️ Realistic Keyboards - World Style</title>
-
+<title>Realistic Keyboards - Windows13</title>
 <style>
 :root {
   --neon: #00ff41;
   --yellow: #ffe600;
-  --bg: #000;
   --panel-bg: rgba(0, 15, 5, 0.96);
-  --key-bg: #1a1a1a;
-  --key-hover: #2a2a2a;
-  --key-active: var(--neon);
+  --key-bg: #141414;
+  --key-hover: #242424;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   background: #000;
   color: var(--neon);
-  font-family: 'Courier New', monospace;
-  padding: 20px;
+  font-family: "Courier New", monospace;
+  padding: 16px;
   min-height: 100vh;
 }
-
-/* ===== KEYBOARD CONTAINER ===== */
 .keyboard-window {
   background: var(--panel-bg);
   border: 3px solid var(--neon);
   border-radius: 16px;
-  padding: 20px;
-  max-width: 900px;
+  padding: 18px;
+  max-width: 1040px;
   margin: 0 auto;
-  box-shadow: 0 0 40px rgba(0,255,65,0.2);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 0 40px rgba(0,255,65,0.18);
 }
-
-/* ===== HEADER ===== */
 .kb-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(0,255,65,0.3);
 }
-
-.kb-title {
-  font-size: 1.3rem;
-  color: var(--yellow);
-  text-shadow: 0 0 10px var(--yellow);
-}
-
-/* ===== CONTROLS ===== */
-.kb-controls {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-.kb-select {
-  flex: 1;
-  min-width: 200px;
+.kb-title { font-size: 1.25rem; color: var(--yellow); text-shadow: 0 0 10px var(--yellow); }
+.kb-sub { font-size: 0.8rem; opacity: 0.85; }
+.kb-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+.kb-select, .kb-btn {
   background: #000;
   color: var(--neon);
   border: 2px solid var(--neon);
-  padding: 10px;
+  padding: 9px 12px;
   border-radius: 6px;
-  font-family: monospace;
-  font-size: 0.95rem;
+  font-family: inherit;
+  font-size: 0.92rem;
 }
-
+.kb-select { flex: 1; min-width: 220px; }
+.kb-btn { cursor: pointer; font-weight: bold; }
+.kb-btn:hover, .kb-toggle:hover { background: var(--neon); color: #000; }
 .kb-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: flex; align-items: center; gap: 8px;
   padding: 8px 12px;
-  background: rgba(0,255,65,0.1);
   border: 1px solid var(--neon);
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
 }
-
-.kb-toggle:hover {
-  background: rgba(0,255,65,0.2);
-}
-
-.kb-toggle input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.kb-btn {
-  background: #000;
-  color: var(--neon);
-  border: 2px solid var(--neon);
-  padding: 10px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
-}
-
-.kb-btn:hover {
-  background: var(--neon);
-  color: #000;
-}
-
-/* ===== OUTPUT DISPLAY ===== */
 .kb-output {
   background: #000;
   border: 2px solid var(--neon);
   border-radius: 8px;
-  padding: 15px;
-  min-height: 80px;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-  color: var(--neon);
-  word-wrap: break-word;
+  padding: 16px 14px 12px;
+  min-height: 88px;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  white-space: pre-wrap;
+  word-break: break-word;
   position: relative;
 }
-
 .kb-output-label {
-  position: absolute;
-  top: -10px;
-  left: 15px;
-  background: var(--panel-bg);
-  padding: 0 8px;
-  font-size: 0.75rem;
-  color: var(--yellow);
+  position: absolute; top: -10px; left: 14px;
+  background: var(--panel-bg); padding: 0 8px;
+  font-size: 0.72rem; color: var(--yellow);
 }
-
-/* ===== AUTOCOMPLETE SUGGESTIONS ===== */
 .autocomplete-bar {
-  display: none;
-  background: rgba(0,0,0,0.8);
-  border: 1px solid var(--neon);
-  border-radius: 6px;
-  padding: 8px;
-  margin-bottom: 12px;
-  gap: 8px;
-  overflow-x: auto;
-  white-space: nowrap;
+  display: none; gap: 8px; overflow-x: auto;
+  margin-bottom: 10px; padding: 6px;
+  border: 1px solid rgba(0,255,65,0.35); border-radius: 6px;
 }
-
-.autocomplete-bar.active {
-  display: flex;
-}
-
+.autocomplete-bar.active { display: flex; }
 .suggestion {
-  background: rgba(0,255,65,0.15);
+  background: rgba(0,255,65,0.12);
   border: 1px solid var(--neon);
   color: var(--neon);
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
+  white-space: nowrap;
 }
-
-.suggestion:hover {
-  background: var(--neon);
-  color: #000;
-}
-
-/* ===== KEYBOARD LAYOUT ===== */
+.suggestion:hover { background: var(--neon); color: #000; }
 .keyboard {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 15px;
-  background: rgba(0,0,0,0.5);
-  border-radius: 12px;
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 14px; background: rgba(0,0,0,0.45); border-radius: 12px;
 }
-
-.kb-row {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-}
-
-/* ===== KEY STYLES ===== */
+.kb-row { display: flex; gap: 6px; justify-content: center; }
 .key {
   background: var(--key-bg);
   border: 2px solid var(--neon);
   border-radius: 6px;
   color: var(--neon);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
   user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 8px;
-  min-width: 45px;
-  height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  min-width: 42px; height: 48px; padding: 4px 6px;
+  box-shadow: 0 2px 0 #062;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
-
-.key:hover {
-  background: var(--key-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,255,65,0.3);
+.key small {
+  position: absolute; top: 3px; left: 5px;
+  font-size: 0.62rem; color: var(--yellow); font-weight: 700;
 }
-
-.key:active {
-  transform: translateY(0);
-  background: var(--key-active);
-  color: #000;
-  box-shadow: 0 0 15px var(--neon);
+.key:hover { background: var(--key-hover); transform: translateY(-1px); }
+.key.down, .key:active {
+  transform: translateY(1px);
+  background: var(--neon); color: #000; box-shadow: none;
 }
-
-/* ===== SPECIAL KEY SIZES ===== */
-.key.tab { min-width: 70px; }
-.key.caps { min-width: 85px; }
-.key.shift { min-width: 100px; }
-.key.ctrl { min-width: 70px; }
-.key.alt { min-width: 60px; }
-.key.space { min-width: 300px; }
-.key.enter { min-width: 90px; }
-.key.backspace { min-width: 90px; }
-
-/* ===== SPECIAL KEY COLORS ===== */
-.key.special {
-  background: rgba(255,230,0,0.15);
-  border-color: var(--yellow);
-  color: var(--yellow);
-}
-
-.key.special:hover {
-  background: rgba(255,230,0,0.25);
-}
-
-.key.special:active {
-  background: var(--yellow);
-  color: #000;
-}
-
-.key.modifier {
-  background: rgba(0,100,255,0.15);
-  border-color: #0af;
-  color: #0af;
-  font-size: 0.85rem;
-}
-
-/* ===== ROW OFFSETS (STAGGERED LAYOUT) ===== */
-.kb-row:nth-child(2) { padding-left: 25px; }
-.kb-row:nth-child(3) { padding-left: 40px; }
-.kb-row:nth-child(4) { padding-left: 60px; }
-
-/* ===== MOBILE RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .key {
-    min-width: 35px;
-    height: 45px;
-    font-size: 0.95rem;
-    padding: 10px 6px;
-  }
-  
-  .key.tab { min-width: 55px; }
-  .key.caps { min-width: 65px; }
-  .key.shift { min-width: 75px; }
-  .key.space { min-width: 200px; }
-  .key.enter { min-width: 70px; }
-  .key.backspace { min-width: 70px; }
-  
-  .kb-row:nth-child(2) { padding-left: 15px; }
-  .kb-row:nth-child(3) { padding-left: 25px; }
-  .kb-row:nth-child(4) { padding-left: 35px; }
-}
-
-/* ===== COPY NOTIFICATION ===== */
+.key.down small { color: #222; }
+.key.special { border-color: var(--yellow); color: var(--yellow); background: rgba(255,230,0,0.08); }
+.key.modifier { border-color: #0af; color: #0af; font-size: 0.78rem; background: rgba(0,100,255,0.1); }
+.key.latched { background: rgba(0,255,65,0.28); }
+.key.w15 { min-width: 62px; }
+.key.w17 { min-width: 72px; }
+.key.w20 { min-width: 86px; }
+.key.w23 { min-width: 104px; }
+.key.space { min-width: 280px; }
+.status { margin-top: 10px; font-size: 0.78rem; opacity: 0.8; }
 .copy-notification {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  background: rgba(0,255,65,0.95);
-  color: #000;
-  padding: 20px 40px;
-  border-radius: 12px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  box-shadow: 0 0 40px var(--neon);
-  z-index: 10000;
-  transition: all 0.3s;
+  background: rgba(0,255,65,0.95); color: #000;
+  padding: 16px 28px; border-radius: 12px; font-weight: bold;
+  z-index: 20; transition: transform 0.2s;
 }
-
-.copy-notification.show {
-  transform: translate(-50%, -50%) scale(1);
+.copy-notification.show { transform: translate(-50%, -50%) scale(1); }
+@media (max-width: 760px) {
+  .key { min-width: 28px; height: 40px; font-size: 0.78rem; }
+  .key.space { min-width: 120px; }
+  .key.w23 { min-width: 64px; }
 }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
 </head>
-
 <body>
-
 <div class="keyboard-window">
-  
-  <!-- HEADER -->
   <div class="kb-header">
-    <div data-rv-logo class="kb-title">⌨️ WORLD KEYBOARDS</div>
-    <div style="font-size: 0.85rem; color: var(--neon);">Realistic Layout • Display/Copy Mode</div>
+    <div data-rv-logo class="kb-title">WORLD KEYBOARDS</div>
+    <div class="kb-sub">Shift and Caps type. Hardware keys light the board.</div>
   </div>
-
-  <!-- CONTROLS -->
   <div class="kb-controls">
-    <select class="kb-select" id="layoutSelect" onchange="switchLayout()">
-      <optgroup label="🌍 Europe">
-        <option value="us">🇺🇸 US English (QWERTY)</option>
-        <option value="polish">🇵🇱 Polish</option>
-        <option value="german">🇩🇪 German</option>
-        <option value="french">🇫🇷 French</option>
-        <option value="spanish">🇪🇸 Spanish</option>
-      </optgroup>
-      <optgroup label="🌏 Asia">
-        <option value="japanese">🇯🇵 Japanese</option>
-        <option value="korean">🇰🇷 Korean</option>
-        <option value="arabic">🇸🇦 Arabic</option>
-      </optgroup>
-      <optgroup label="😀 Fun">
-        <option value="emoji">😀 Emoji</option>
-      </optgroup>
-    </select>
-
-    <label class="kb-toggle">
-      <input type="checkbox" id="autocompleteToggle" onchange="toggleAutocomplete()">
-      <span>Autocomplete</span>
-    </label>
-
-    <button class="kb-btn" onclick="copyText()">📋 Copy</button>
-    <button class="kb-btn" onclick="clearText()">🗑️ Clear</button>
+    <select class="kb-select" id="layoutSelect"></select>
+    <label class="kb-toggle"><input type="checkbox" id="autocompleteToggle"> Autocomplete</label>
+    <button class="kb-btn" id="copyBtn" type="button">Copy</button>
+    <button class="kb-btn" id="clearBtn" type="button">Clear</button>
   </div>
-
-  <!-- AUTOCOMPLETE BAR -->
   <div class="autocomplete-bar" id="autocompleteBar"></div>
-
-  <!-- OUTPUT DISPLAY -->
-  <div class="kb-output">
+  <div class="kb-output" id="outputBox">
     <div class="kb-output-label">OUTPUT</div>
     <div id="output"></div>
   </div>
-
-  <!-- KEYBOARD -->
   <div class="keyboard" id="keyboard"></div>
-
+  <div class="status" id="status"></div>
 </div>
-
-<!-- COPY NOTIFICATION -->
-<div class="copy-notification" id="copyNotif">✅ COPIED!</div>
-
+<div class="copy-notification" id="copyNotif">COPIED</div>
 <script>
-/* ===== STATE ===== */
-let currentText = '';
-let currentLayout = 'us';
-let autocompleteEnabled = false;
-
-/* ===== KEYBOARD LAYOUTS ===== */
 const LAYOUTS = {
-  us: [
-    ['`','1','2','3','4','5','6','7','8','9','0','-','=',{t:'⌫',c:'backspace special'}],
-    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Y','U','I','O','P','[',']','\\'],
-    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',';',"'",{t:'Enter',c:'enter special'}],
-    [{t:'Shift',c:'shift modifier'},'Z','X','C','V','B','N','M',',','.','/'],
-    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
-  ],
-  
-  polish: [
-    ['`','1','2','3','4','5','6','7','8','9','0','-','=',{t:'⌫',c:'backspace special'}],
-    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Y','U','I','O','P',{t:'Ą',c:'special'},{t:'Ć',c:'special'},'\\'],
-    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',{t:'Ł',c:'special'},{t:'Ę',c:'special'},{t:'Enter',c:'enter special'}],
-    [{t:'Shift',c:'shift modifier'},'Z','X','C','V','B','N','M',{t:'Ń',c:'special'},{t:'Ó',c:'special'},{t:'Ś',c:'special'},{t:'Ź',c:'special'},{t:'Ż',c:'special'}],
-    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
-  ],
-  
-  german: [
-    ['^','1','2','3','4','5','6','7','8','9','0','ß','´',{t:'⌫',c:'backspace special'}],
-    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Z','U','I','O','P',{t:'Ü',c:'special'},'+','#'],
-    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',{t:'Ö',c:'special'},{t:'Ä',c:'special'},{t:'Enter',c:'enter special'}],
-    [{t:'Shift',c:'shift modifier'},'Y','X','C','V','B','N','M',',','.','-'],
-    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
-  ],
-  
-  french: [
-    ['²','&','é','"',"'",'(','-','è','_','ç','à',')','=',{t:'⌫',c:'backspace special'}],
-    [{t:'Tab',c:'tab modifier'},'A','Z','E','R','T','Y','U','I','O','P','^','$','*'],
-    [{t:'Caps',c:'caps modifier'},'Q','S','D','F','G','H','J','K','L','M',{t:'Ù',c:'special'},{t:'Enter',c:'enter special'}],
-    [{t:'Shift',c:'shift modifier'},'W','X','C','V','B','N',',',';',':','!'],
-    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
-  ],
-  
-  spanish: [
-    ['º','1','2','3','4','5','6','7','8','9','0',"'",'¡',{t:'⌫',c:'backspace special'}],
-    [{t:'Tab',c:'tab modifier'},'Q','W','E','R','T','Y','U','I','O','P','`','+','ç'],
-    [{t:'Caps',c:'caps modifier'},'A','S','D','F','G','H','J','K','L',{t:'Ñ',c:'special'},'´',{t:'Enter',c:'enter special'}],
-    [{t:'Shift',c:'shift modifier'},'Z','X','C','V','B','N','M',',','.','-'],
-    [{t:'Ctrl',c:'ctrl modifier'},{t:'Alt',c:'alt modifier'},{t:'SPACE',c:'space'},{t:'Alt',c:'alt modifier'},{t:'Ctrl',c:'ctrl modifier'}]
-  ],
-  
-  japanese: [
-    ['あ','い','う','え','お','か','き','く','け','こ',{t:'⌫',c:'backspace special'}],
-    ['さ','し','す','せ','そ','た','ち','つ','て','と'],
-    ['な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ'],
-    ['ま','み','む','め','も','や','ゆ','よ'],
-    ['ら','り','る','れ','ろ','わ','を','ん',{t:'SPACE',c:'space'}]
-  ],
-  
-  korean: [
-    ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ',{t:'⌫',c:'backspace special'}],
-    ['ㅋ','ㅌ','ㅍ','ㅎ','ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ'],
-    ['ㅜ','ㅠ','ㅡ','ㅣ','가','나','다','라','마'],
-    ['바','사','아','자','차','카','타','파','하'],
-    [{t:'SPACE',c:'space'}]
-  ],
-  
-  arabic: [
-    ['١','٢','٣','٤','٥','٦','٧','٨','٩','٠',{t:'⌫',c:'backspace special'}],
-    ['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح'],
-    ['ش','س','ي','ب','ل','ا','ت','ن','م','ك'],
-    ['ظ','ط','ذ','د','ز','ر','و','ة','ى'],
-    [{t:'SPACE',c:'space'}]
-  ],
-  
-  emoji: [
-    ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃',{t:'⌫',c:'backspace special'}],
-    ['😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙'],
-    ['🎃','⚡','☢️','🌐','💬','⌨️','🗺️','🎮','💰','🍿'],
-    ['❤️','💚','💙','💛','🧡','💜','🖤','🤍','🤎'],
-    ['👍','👎','✌️','🤘','🙏','💪',{t:'SPACE',c:'space'}]
-  ]
+  us: {
+    name: "US English QWERTY",
+    group: "Europe / Americas",
+    rows: [
+      [["`", "~"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"backspace special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"tab modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["[","{"], ["]","}"], ["\\","|"]],
+      [{id:"CapsLock", label:"Caps", cls:"caps modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], [";",":"], ["'","\""], {id:"Enter", label:"Enter", cls:"enter special w20", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"shift modifier w23", action:"shift"}, ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",","<"], [".",">"], ["/","?"], {id:"ShiftR", label:"Shift", cls:"shift modifier w23", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"ctrl modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"alt modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"Alt", cls:"alt modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"ctrl modifier", action:"noop"}]
+    ]
+  },
+  uk: {
+    name: "UK English",
+    group: "Europe / Americas",
+    rows: [
+      [["`", "¬"], ["1","!"], ["2","\""], ["3","£"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["[","{"], ["]","}"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], [";",":"], ["'","@"], ["#","~"], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["\\","|"], ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",","<"], [".",">"], ["/","?"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  polish: {
+    name: "Polish programmers",
+    group: "Europe / Americas",
+    rows: [
+      [["`", "~"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["[","{"], ["]","}"], ["\\","|"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], [";",":"], ["'","\""], {id:"Enter", label:"Enter", cls:"special w20", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w23", action:"shift"}, ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",","<"], [".",">"], ["/","?"], {id:"ShiftR", label:"Shift", cls:"modifier w23", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {label:"ą ć ę", cls:"special", action:"char", ch:"ą"}, {label:"ł ń ó", cls:"special", action:"char", ch:"ł"}, {label:"ś ź ż", cls:"special", action:"char", ch:"ś"}]
+    ],
+    alt: { a:"ą", c:"ć", e:"ę", l:"ł", n:"ń", o:"ó", s:"ś", x:"ź", z:"ż", A:"Ą", C:"Ć", E:"Ę", L:"Ł", N:"Ń", O:"Ó", S:"Ś", X:"Ź", Z:"Ż" }
+  },
+  german: {
+    name: "German QWERTZ",
+    group: "Europe / Americas",
+    rows: [
+      [["^","°"], ["1","!"], ["2","\""], ["3","§"], ["4","$"], ["5","%"], ["6","&"], ["7","/"], ["8","("], ["9",")"], ["0","="], ["ß","?"], ["´","`"], {id:"Backspace", label:"⌫", cls:"special w20", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["z","Z"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["ü","Ü"], ["+","*"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], ["ö","Ö"], ["ä","Ä"], ["#","'"], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["<","›"], ["y","Y"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",",";"], [".",":"], ["-","_"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Strg", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"Leer", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Strg", cls:"modifier", action:"noop"}]
+    ]
+  },
+  french: {
+    name: "French AZERTY",
+    group: "Europe / Americas",
+    rows: [
+      [["²"], ["&","1"], ["é","2"], ["\"","3"], ["'","4"], ["(","5"], ["-","6"], ["è","7"], ["_","8"], ["ç","9"], ["à","0"], [")","°"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["a","A"], ["z","Z"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["^","¨"], ["$","£"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["q","Q"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], ["m","M"], ["ù","%"], ["*","µ"], {id:"Enter", label:"Entrée", cls:"special w15", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["<","›"], ["w","W"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], [",","?"], [";","."], [":","/"], ["!","§"], {id:"ShiftR", label:"Shift", cls:"modifier w17", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"espace", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  spanish: {
+    name: "Spanish QWERTY",
+    group: "Europe / Americas",
+    rows: [
+      [["º","ª"], ["1","!"], ["2","\""], ["3","·"], ["4","$"], ["5","%"], ["6","&"], ["7","/"], ["8","("], ["9",")"], ["0","="], ["'","?"], ["¡","¿"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["q","Q"], ["w","W"], ["e","E"], ["r","R"], ["t","T"], ["y","Y"], ["u","U"], ["i","I"], ["o","O"], ["p","P"], ["`","^"], ["+","*"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w17", action:"caps"}, ["a","A"], ["s","S"], ["d","D"], ["f","F"], ["g","G"], ["h","H"], ["j","J"], ["k","K"], ["l","L"], ["ñ","Ñ"], ["´","¨"], ["ç","Ç"], {id:"Enter", label:"Intro", cls:"special w15", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["<","›"], ["z","Z"], ["x","X"], ["c","C"], ["v","V"], ["b","B"], ["n","N"], ["m","M"], [",",";"], [".",":"], ["-","_"], {id:"ShiftR", label:"Shift", cls:"modifier w17", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"espacio", cls:"space", action:"space"}, {id:"AltR", label:"AltGr", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  arabic: {
+    name: "Arabic",
+    group: "Asia / Middle East",
+    rtl: true,
+    rows: [
+      [["ذ"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9",")"], ["0","("], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["ض"], ["ص"], ["ث"], ["ق"], ["ف"], ["غ"], ["ع"], ["ه"], ["خ"], ["ح"], ["ج"], ["د"]],
+      [{id:"CapsLock", label:"Caps", cls:"modifier w15", action:"caps"}, ["ش"], ["س"], ["ي"], ["ب"], ["ل"], ["ا"], ["ت"], ["ن"], ["م"], ["ك"], ["ط"], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w20", action:"shift"}, ["ئ"], ["ء"], ["ؤ"], ["ر"], ["لا"], ["ى"], ["ة"], ["و"], ["ز"], ["ظ"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"مسافة", cls:"space", action:"space"}, {id:"AltR", label:"Alt", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  japanese: {
+    name: "Japanese kana pad",
+    group: "Asia / Middle East",
+    note: "Hiragana pad, not a full JIS board.",
+    rows: [
+      [["あ"], ["い"], ["う"], ["え"], ["お"], ["や"], ["ゆ"], ["よ"], ["わ"], ["を"], ["ん"], {id:"Backspace", label:"⌫", cls:"special w15", action:"backspace"}],
+      [["か"], ["き"], ["く"], ["け"], ["こ"], ["さ"], ["し"], ["す"], ["せ"], ["そ"]],
+      [["た"], ["ち"], ["つ"], ["て"], ["と"], ["な"], ["に"], ["ぬ"], ["ね"], ["の"]],
+      [["は"], ["ひ"], ["ふ"], ["へ"], ["ほ"], ["ま"], ["み"], ["む"], ["め"], ["も"]],
+      [["ら"], ["り"], ["る"], ["れ"], ["ろ"], ["、"], ["。"], {id:"Space", label:"space", cls:"space", action:"space"}, {id:"Enter", label:"Enter", cls:"special", action:"enter"}]
+    ]
+  },
+  korean: {
+    name: "Korean 2-set",
+    group: "Asia / Middle East",
+    note: "Dubeolsik jamo. Syllable composition is not applied.",
+    rows: [
+      [["`", "~"], ["1","!"], ["2","@"], ["3","#"], ["4","$"], ["5","%"], ["6","^"], ["7","&"], ["8","*"], ["9","("], ["0",")"], ["-","_"], ["=","+"], {id:"Backspace", label:"⌫", cls:"special w17", action:"backspace"}],
+      [{id:"Tab", label:"Tab", cls:"modifier w15", action:"tab"}, ["ㅂ","ㅃ"], ["ㅈ","ㅉ"], ["ㄷ","ㄸ"], ["ㄱ","ㄲ"], ["ㅅ","ㅆ"], ["ㅛ"], ["ㅕ"], ["ㅑ"], ["ㅐ","ㅒ"], ["ㅔ","ㅖ"], ["[", "{"], ["]", "}"]],
+      [{id:"CapsLock", label:"한/영", cls:"modifier w17", action:"caps"}, ["ㅁ"], ["ㄴ"], ["ㅇ"], ["ㄹ"], ["ㅎ"], ["ㅗ"], ["ㅓ"], ["ㅏ"], ["ㅣ"], [";", ":"], ["'", "\""], {id:"Enter", label:"Enter", cls:"special w17", action:"enter"}],
+      [{id:"Shift", label:"Shift", cls:"modifier w23", action:"shift"}, ["ㅋ"], ["ㅌ"], ["ㅊ"], ["ㅍ"], ["ㅠ"], ["ㅜ"], ["ㅡ"], [",", "<"], [".", ">"], ["/", "?"], {id:"ShiftR", label:"Shift", cls:"modifier w20", action:"shift"}],
+      [{id:"Ctrl", label:"Ctrl", cls:"modifier", action:"noop"}, {id:"Alt", label:"Alt", cls:"modifier", action:"noop"}, {id:"Space", label:"space", cls:"space", action:"space"}, {id:"AltR", label:"한자", cls:"modifier", action:"noop"}, {id:"CtrlR", label:"Ctrl", cls:"modifier", action:"noop"}]
+    ]
+  },
+  emoji: {
+    name: "Emoji",
+    group: "Fun",
+    rows: [
+      [["😀"], ["😃"], ["😄"], ["😁"], ["😆"], ["😅"], ["🤣"], ["😂"], ["🙂"], ["😉"], ["😊"], {id:"Backspace", label:"⌫", cls:"special", action:"backspace"}],
+      [["🥰"], ["😍"], ["🤩"], ["😘"], ["😎"], ["🤔"], ["😴"], ["🤯"], ["🎃"], ["⚡"]],
+      [["☢️"], ["🌐"], ["💬"], ["⌨️"], ["🗺️"], ["🎮"], ["💰"], ["🍿"], ["❤️"], ["💚"]],
+      [["👍"], ["👎"], ["✌️"], ["🤘"], ["🙏"], ["💪"], ["🔥"], ["✨"], {id:"Space", label:"space", cls:"space", action:"space"}]
+    ]
+  }
 };
 
-/* ===== AUTOCOMPLETE WORDS ===== */
-const AUTOCOMPLETE_WORDS = {
-  'h': ['hello', 'how', 'help', 'here'],
-  'w': ['world', 'what', 'where', 'when', 'why'],
-  't': ['thank', 'the', 'this', 'that', 'they'],
-  'r': ['rudventur', 'really', 'right'],
-  'c': ['chemventur', 'can', 'could'],
-  'p': ['pumpkin', 'please', 'popcorn', 'popcoin']
+const WORDS = ["hello","help","here","how","world","what","where","when","why","windows","thank","the","this","that","they","rudventur","really","right","chemventur","can","could","pumpkin","please","popcorn","popcoin","keyboard","layout","shift","caps"];
+
+const state = {
+  text: localStorage.getItem("w13kb-text") || "",
+  layout: localStorage.getItem("w13kb-layout") || "us",
+  shift: false,
+  caps: false,
+  auto: localStorage.getItem("w13kb-auto") === "1"
 };
 
-/* ===== RENDER KEYBOARD ===== */
-function renderKeyboard() {
-  const keyboard = document.getElementById('keyboard');
-  const layout = LAYOUTS[currentLayout];
-  
-  keyboard.innerHTML = layout.map(row => {
-    return `<div class="kb-row">
-      ${row.map(key => {
-        if (typeof key === 'string') {
-          return `<div class="key" onclick="typeKey('${key}')">${key}</div>`;
-        } else {
-          const value = key.v || key.t;
-          return `<div class="key ${key.c || ''}" onclick="typeKey('${value}')">${key.t}</div>`;
-        }
-      }).join('')}
-    </div>`;
-  }).join('');
+const keyboardEl = document.getElementById("keyboard");
+const outputEl = document.getElementById("output");
+const outputBox = document.getElementById("outputBox");
+const statusEl = document.getElementById("status");
+const bar = document.getElementById("autocompleteBar");
+const select = document.getElementById("layoutSelect");
+
+function glyph(key) {
+  if (key.action) return key.label;
+  const pair = key;
+  const base = pair[0];
+  const shifted = pair[1] || pair[0];
+  const letter = base.toLowerCase() !== base.toUpperCase() && base.toLowerCase() === base;
+  if (state.shift) return shifted;
+  if (state.caps && letter) return base.toUpperCase();
+  return base;
 }
 
-/* ===== TYPE KEY ===== */
-function typeKey(char) {
-  if (char === '⌫') {
-    currentText = currentText.slice(0, -1);
-  } else if (char === 'SPACE') {
-    currentText += ' ';
-  } else if (['Tab','Caps','Shift','Ctrl','Alt','Enter'].includes(char)) {
-    // Modifier keys - visual feedback only
-    return;
-  } else {
-    currentText += char;
-  }
-  
-  updateOutput();
-  updateAutocomplete();
-}
-
-/* ===== UPDATE OUTPUT ===== */
-function updateOutput() {
-  document.getElementById('output').textContent = currentText || '';
-}
-
-/* ===== AUTOCOMPLETE ===== */
-function toggleAutocomplete() {
-  autocompleteEnabled = document.getElementById('autocompleteToggle').checked;
-  if (!autocompleteEnabled) {
-    document.getElementById('autocompleteBar').classList.remove('active');
-  } else {
-    updateAutocomplete();
-  }
-}
-
-function updateAutocomplete() {
-  if (!autocompleteEnabled) return;
-  
-  const words = currentText.toLowerCase().split(' ');
-  const lastWord = words[words.length - 1];
-  
-  if (!lastWord || lastWord.length === 0) {
-    document.getElementById('autocompleteBar').classList.remove('active');
-    return;
-  }
-  
-  const firstChar = lastWord[0];
-  const suggestions = AUTOCOMPLETE_WORDS[firstChar] || [];
-  const matching = suggestions.filter(s => s.startsWith(lastWord) && s !== lastWord);
-  
-  if (matching.length === 0) {
-    document.getElementById('autocompleteBar').classList.remove('active');
-    return;
-  }
-  
-  const bar = document.getElementById('autocompleteBar');
-  bar.innerHTML = matching.map(word => 
-    `<div class="suggestion" onclick="acceptSuggestion('${word}')">${word}</div>`
-  ).join('');
-  bar.classList.add('active');
-}
-
-function acceptSuggestion(word) {
-  const words = currentText.split(' ');
-  words[words.length - 1] = word;
-  currentText = words.join(' ');
-  updateOutput();
-  document.getElementById('autocompleteBar').classList.remove('active');
-}
-
-/* ===== COPY TEXT ===== */
-function copyText() {
-  if (!currentText) return;
-  
-  navigator.clipboard.writeText(currentText).then(() => {
-    const notif = document.getElementById('copyNotif');
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 1500);
+function renderSelect() {
+  const groups = {};
+  Object.entries(LAYOUTS).forEach(([id, layout]) => {
+    (groups[layout.group] ||= []).push([id, layout.name]);
+  });
+  select.innerHTML = "";
+  Object.entries(groups).forEach(([name, items]) => {
+    const og = document.createElement("optgroup");
+    og.label = name;
+    items.forEach(([id, label]) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = label;
+      if (id === state.layout) opt.selected = true;
+      og.appendChild(opt);
+    });
+    select.appendChild(og);
   });
 }
 
-/* ===== CLEAR TEXT ===== */
-function clearText() {
-  currentText = '';
-  updateOutput();
-  document.getElementById('autocompleteBar').classList.remove('active');
+function renderKeyboard() {
+  const layout = LAYOUTS[state.layout];
+  keyboardEl.innerHTML = "";
+  outputBox.dir = layout.rtl ? "rtl" : "ltr";
+  layout.rows.forEach(row => {
+    const rowEl = document.createElement("div");
+    rowEl.className = "kb-row";
+    row.forEach(key => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "key " + (key.cls || "");
+      if (key.action === "shift" && state.shift) el.classList.add("latched");
+      if (key.action === "caps" && state.caps) el.classList.add("latched");
+      if (key.id) el.dataset.id = key.id;
+      const shown = glyph(key);
+      if (!key.action && key[1] && key[1] !== key[0]) {
+        const sub = document.createElement("small");
+        sub.textContent = state.shift ? key[0] : key[1];
+        el.appendChild(sub);
+      }
+      el.appendChild(document.createTextNode(shown));
+      el.addEventListener("click", () => press(key));
+      rowEl.appendChild(el);
+    });
+    keyboardEl.appendChild(rowEl);
+  });
+  const note = layout.note ? " · " + layout.note : "";
+  const alt = layout.alt ? " · AltGr diacritics on a c e l n o s x z" : "";
+  statusEl.textContent = layout.name + (state.caps ? " · CAPS" : "") + (state.shift ? " · SHIFT" : "") + note + alt;
 }
 
-/* ===== SWITCH LAYOUT ===== */
-function switchLayout() {
-  currentLayout = document.getElementById('layoutSelect').value;
+function insert(ch) {
+  state.text += ch;
+  if (state.shift) state.shift = false;
+  persist();
+}
+
+function press(key) {
+  if (key.action === "backspace") state.text = state.text.slice(0, -1);
+  else if (key.action === "space") insert(" ");
+  else if (key.action === "enter") insert("\n");
+  else if (key.action === "tab") insert("\t");
+  else if (key.action === "shift") state.shift = !state.shift;
+  else if (key.action === "caps") state.caps = !state.caps;
+  else if (key.action === "char") insert(key.ch);
+  else if (key.action === "noop") return;
+  else insert(glyph(key));
+  persist();
+}
+
+function persist() {
+  localStorage.setItem("w13kb-text", state.text);
+  localStorage.setItem("w13kb-layout", state.layout);
+  localStorage.setItem("w13kb-auto", state.auto ? "1" : "0");
+  outputEl.textContent = state.text;
   renderKeyboard();
+  updateAutocomplete();
 }
 
-/* ===== INIT ===== */
-renderKeyboard();
-</script>
+function updateAutocomplete() {
+  if (!state.auto) { bar.classList.remove("active"); return; }
+  const parts = state.text.split(/\s/);
+  const last = (parts[parts.length - 1] || "").toLowerCase();
+  const hits = last ? WORDS.filter(w => w.startsWith(last) && w !== last).slice(0, 6) : [];
+  bar.innerHTML = "";
+  if (!hits.length) { bar.classList.remove("active"); return; }
+  hits.forEach(word => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "suggestion";
+    b.textContent = word;
+    b.addEventListener("click", () => {
+      parts[parts.length - 1] = word;
+      state.text = parts.join(" ");
+      persist();
+    });
+    bar.appendChild(b);
+  });
+  bar.classList.add("active");
+}
 
+function flash(id) {
+  const el = keyboardEl.querySelector('[data-id="' + id + '"]');
+  if (!el) return;
+  el.classList.add("down");
+  setTimeout(() => el.classList.remove("down"), 90);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
+  if (e.key === "Shift") { state.shift = true; renderKeyboard(); return; }
+  if (e.key === "CapsLock") { state.caps = !state.caps; renderKeyboard(); return; }
+  if (e.key === "Backspace") { e.preventDefault(); state.text = state.text.slice(0, -1); flash("Backspace"); persist(); return; }
+  if (e.key === "Enter") { e.preventDefault(); insert("\n"); flash("Enter"); return; }
+  if (e.key === " ") { e.preventDefault(); insert(" "); flash("Space"); return; }
+  if (e.key === "Tab") { e.preventDefault(); insert("\t"); flash("Tab"); return; }
+  if (e.altKey && LAYOUTS[state.layout].alt) {
+    const hit = LAYOUTS[state.layout].alt[e.key];
+    if (hit) { e.preventDefault(); insert(hit); return; }
+  }
+  if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault();
+    insert(e.key);
+  }
+});
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Shift") { state.shift = false; renderKeyboard(); }
+});
+
+select.addEventListener("change", () => { state.layout = select.value; persist(); });
+document.getElementById("autocompleteToggle").checked = state.auto;
+document.getElementById("autocompleteToggle").addEventListener("change", (e) => { state.auto = e.target.checked; persist(); });
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!state.text) return;
+  await navigator.clipboard.writeText(state.text);
+  const n = document.getElementById("copyNotif");
+  n.classList.add("show");
+  setTimeout(() => n.classList.remove("show"), 1200);
+});
+document.getElementById("clearBtn").addEventListener("click", () => { state.text = ""; persist(); });
+
+renderSelect();
+persist();
+</script>
 </body>
 </html>
