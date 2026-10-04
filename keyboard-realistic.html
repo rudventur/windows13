@@ -258,7 +258,6 @@ document.getElementById("minimap").addEventListener("click", () => {
 });
 drawMap();
 renderAccents();
-
 </script>
 </head>
 <body>
@@ -447,6 +446,8 @@ const state = {
   caps: false,
   kana: true,
   script: "hira",
+  alt: false,
+  dead: "",
   auto: localStorage.getItem("w13kb-auto") === "1",
   follow: localStorage.getItem("w13kb-follow") !== "0"
 };
@@ -477,11 +478,21 @@ function glyph(key) {
     if (state.script === "kata") return state.shift ? base : toKata(shifted);
     return state.shift ? base.toUpperCase() : base;
   }
+  const shown = state.shift ? shifted : base;
+  if (state.alt && LAYOUTS[state.layout].alt && LAYOUTS[state.layout].alt[shown]) return LAYOUTS[state.layout].alt[shown];
   const letter = base.toLowerCase() !== base.toUpperCase() && base.toLowerCase() === base;
   if (state.shift) return shifted;
   if (state.caps && letter) return base.toUpperCase();
   return base;
 }
+
+const DEAD = {
+  "^": { a:"â", e:"ê", i:"î", o:"ô", u:"û", A:"Â", E:"Ê", I:"Î", O:"Ô", U:"Û" },
+  "¨": { a:"ä", e:"ë", i:"ï", o:"ö", u:"ü", A:"Ä", E:"Ë", I:"Ï", O:"Ö", U:"Ü" },
+  "´": { a:"á", e:"é", i:"í", o:"ó", u:"ú", A:"Á", E:"É", I:"Í", O:"Ó", U:"Ú" }
+};
+const DAKU = { か:"が",き:"ぎ",く:"ぐ",け:"げ",こ:"ご",さ:"ざ",し:"じ",す:"ず",せ:"ぜ",そ:"ぞ",た:"だ",ち:"ぢ",つ:"づ",て:"で",と:"ど",は:"ば",ひ:"び",ふ:"ぶ",へ:"べ",ほ:"ぼ" };
+const HANDAKU = { は:"ぱ",ひ:"ぴ",ふ:"ぷ",へ:"ぺ",ほ:"ぽ" };
 
 function renderSelect() {
   const groups = {};
@@ -518,7 +529,7 @@ function renderKeyboard() {
       if (key.action === "caps" && state.caps) el.classList.add("latched");
       if (key.action === "kana" && state.script === "hira") el.classList.add("latched");
       if (key.action === "kata" && state.script === "kata") el.classList.add("latched");
-      if (key.action === "eisu" && state.script === "latin") el.classList.add("latched");
+      if (key.id === "AltR" && state.alt) el.classList.add("latched");
       if (key.id) el.dataset.id = key.id;
       const shown = glyph(key);
       if (!key.action && key[1] && key[1] !== key[0]) {
@@ -539,19 +550,37 @@ function renderKeyboard() {
   const kana = state.layout === "japanese"
     ? (state.script === "kata" ? " · alphabet katakana" : state.script === "latin" ? " · alphabet latin" : " · alphabet hiragana")
     : " · alphabet " + alphabet;
-  statusEl.textContent = layout.name + (state.caps ? " · CAPS" : "") + (state.shift ? " · SHIFT" : "") + kana + note + alt;
+  statusEl.textContent = layout.name + (state.caps ? " · CAPS" : "") + (state.shift ? " · SHIFT" : "") + (state.alt ? " · ALT" : "") + (state.dead ? " · dead " + state.dead : "") + kana + note + alt;
   document.getElementById("deviceLine").textContent = "Device " + locale + " → " + LAYOUTS[layoutForLocale(locale)].name + (state.follow ? " · following" : " · manual");
 }
 
+function voice(table, ch) {
+  const hira = ch.normalize("NFKC");
+  const kata = ch.codePointAt(0) >= 0x30A1;
+  const base = kata ? String.fromCodePoint(ch.codePointAt(0) - 0x60) : ch;
+  const next = table[base];
+  if (!next) return "";
+  return kata ? toKata(next) : next;
+}
+
 function insert(ch) {
+  if (state.dead && DEAD[state.dead] && DEAD[state.dead][ch]) {
+    ch = DEAD[state.dead][ch];
+    state.dead = "";
+  } else if (state.dead) {
+    state.text += state.dead;
+    state.dead = "";
+  }
   state.text += ch;
   if (state.shift) state.shift = false;
   persist();
 }
 
 function press(key) {
-  if (key.action === "backspace") state.text = state.text.slice(0, -1);
-  else if (key.action === "space") insert(" ");
+  if (key.action === "backspace") {
+    state.text = state.text.slice(0, -1);
+    state.dead = "";
+  } else if (key.action === "space") insert(" ");
   else if (key.action === "enter") insert("\n");
   else if (key.action === "tab") insert("\t");
   else if (key.action === "shift") state.shift = !state.shift;
@@ -559,9 +588,28 @@ function press(key) {
   else if (key.action === "kana") state.script = "hira";
   else if (key.action === "kata") state.script = "kata";
   else if (key.action === "eisu") state.script = "latin";
+  else if (key.id === "AltR") state.alt = !state.alt;
   else if (key.action === "char") insert(key.ch);
   else if (key.action === "noop") return;
-  else insert(glyph(key));
+  else {
+    const ch = glyph(key);
+    if ((ch === "゛" || ch === "゜") && state.text) {
+      const last = Array.from(state.text).pop();
+      const voiced = voice(ch === "゛" ? DAKU : HANDAKU, last);
+      if (voiced) {
+        state.text = Array.from(state.text).slice(0, -1).join("") + voiced;
+        persist();
+        return;
+      }
+    }
+    if ("^¨´".includes(ch) && (state.layout === "french" || state.layout === "spanish")) {
+      state.dead = state.dead === ch ? "" : ch;
+      persist();
+      return;
+    }
+    insert(ch);
+    return;
+  }
   persist();
 }
 
@@ -602,27 +650,6 @@ function flash(id) {
   el.classList.add("down");
   setTimeout(() => el.classList.remove("down"), 90);
 }
-
-document.addEventListener("keydown", (e) => {
-  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
-  if (e.key === "Shift") { state.shift = true; renderKeyboard(); return; }
-  if (e.key === "CapsLock") { state.caps = !state.caps; renderKeyboard(); return; }
-  if (e.key === "Backspace") { e.preventDefault(); state.text = state.text.slice(0, -1); flash("Backspace"); persist(); return; }
-  if (e.key === "Enter") { e.preventDefault(); insert("\n"); flash("Enter"); return; }
-  if (e.key === " ") { e.preventDefault(); insert(" "); flash("Space"); return; }
-  if (e.key === "Tab") { e.preventDefault(); insert("\t"); flash("Tab"); return; }
-  if (e.altKey && LAYOUTS[state.layout].alt) {
-    const hit = LAYOUTS[state.layout].alt[e.key];
-    if (hit) { e.preventDefault(); insert(hit); return; }
-  }
-  if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-    e.preventDefault();
-    insert(e.key);
-  }
-});
-document.addEventListener("keyup", (e) => {
-  if (e.key === "Shift") { state.shift = false; renderKeyboard(); }
-});
 
 select.addEventListener("change", () => {
   state.layout = select.value;
