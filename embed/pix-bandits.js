@@ -6,13 +6,23 @@
  * objects, places, weather, vehicles, animals, food, clothing). No skin-tone
  * modifiers; prefer single-codepoint or common ZWJ sequences that render widely.
  *
+ * ZWJ NOTE — some challenge glyphs are *emoji sequences*, not single code
+ * points: several emoji glued with U+200D ZERO WIDTH JOINER (and often a
+ * U+FE0F variation selector), e.g. 👨‍👩‍👧 family, 🚴‍♀️ woman biking,
+ * 🏳️‍🌈 rainbow flag, 🐕‍🦺 service dog. Treat every catalogue entry as ONE
+ * opaque string (never split by code unit / Array.from), and expect older
+ * fonts to draw them as 2–3 separate glyphs. PixBandits.isSequence(e) tells
+ * you whether a target is a ZWJ sequence so hosts can hint it in the UI.
+ *
  * Public API (window.PixBandits):
  *   mount(rootEl)           — build UI into #pix-bandits-root (or given node)
  *   spinAll()               — spin all 3 bandits; returns challenge
  *   resetBandit(index)      — reshuffle + re-roll one bandit (0..2)
  *   getChallenge()          — { title, indicators, landed, centers }
  *   getCounts()             — master / theme / reel sizes
- *   onChange(fn)            — subscribe to challenge updates
+ *   onChange(fn)            — subscribe to challenge updates; the challenge
+ *                             carries .reason ('spin' | 'reset' | 'mount')
+ *   isSequence(emoji)       — true for ZWJ emoji sequences (👨‍👩‍👧 🚴‍♀️ 🏳️‍🌈)
  *
  * HOOK — future statistics & probability:
  *   PixBandits._stats hooks are stubbed below (spin counts, per-emoji hits,
@@ -40,6 +50,8 @@
     '🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚',
     '🚛', '🚜', '🏍️', '🛵', '🚲', '🛴', '✈️', '🚁', '🚂', '🚆', '🚇', '🚊',
     '⛵', '🚤', '⛴️', '🛳️', '🚀', '🛸', '🛶', '🚂',
+    // ZWJ sequences (one target each — see ZWJ NOTE above)
+    '🚴‍♀️', '🚴‍♂️', '🧑‍🦽',
     // Food / drink (easy photo subjects)
     '🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍒', '🍑', '🍍', '🥝',
     '🍅', '🥑', '🌽', '🥕', '🥦', '🍞', '🧀', '🍕', '🍔', '🌭', '🌮', '🍿',
@@ -63,7 +75,9 @@
     '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦆', '🦅', '🦉', '🦇', '🐺',
     '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🐢', '🐙', '🐠',
     '🐟', '🐬', '🐳', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🐘', '🦏', '🐪',
-    '🦒', '🦘', '🦥', '🦦', '🦨', '🦩', '🦚', '🦜'
+    '🦒', '🦘', '🦥', '🦦', '🦨', '🦩', '🦚', '🦜',
+    // ZWJ sequences (one target each — see ZWJ NOTE above)
+    '👨‍👩‍👧', '🏳️‍🌈', '🐕‍🦺', '🐈‍⬛', '🐻‍❄️'
   ];
 
   // Deduplicate within each theme (theme B had a duplicate 🚂)
@@ -115,6 +129,11 @@
   };
 
   // ── Helpers ──────────────────────────────────────────────────────────────
+  // ZWJ = U+200D. A catalogue entry containing it is an emoji *sequence*.
+  function isSequence(e) {
+    return typeof e === 'string' && e.indexOf('\u200D') !== -1;
+  }
+
   function shuffle(arr) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -213,8 +232,9 @@
     };
   }
 
-  function notify() {
+  function notify(reason) {
     var ch = challengeFromState();
+    ch.reason = reason || 'spin';
     for (var i = 0; i < state.listeners.length; i++) {
       try { state.listeners[i](ch); } catch (e) {}
     }
@@ -239,7 +259,9 @@
       }
     }
     return flat.map(function (e) {
-      return '<span class="pix-bandit-pool-emoji" title="' + escapeAttr(e) + '">' + e + '</span>';
+      var seq = isSequence(e);
+      return '<span class="pix-bandit-pool-emoji' + (seq ? ' is-zwj' : '') + '" title="' + escapeAttr(e) +
+        (seq ? ' · emoji sequence (ZWJ)' : '') + '">' + e + '</span>';
     }).join('');
   }
 
@@ -262,7 +284,9 @@
       for (var r = 0; r < 3; r++) {
         var isCenter = r === 1;
         html += '<div class="pix-bandit-reel' + (isCenter ? ' is-center' : '') + '" data-reel="' + r + '">';
-        html += '<span class="pix-bandit-landed">' + b.landed[r] + '</span>';
+        var lz = isSequence(b.landed[r]);
+        html += '<span class="pix-bandit-landed' + (lz ? ' is-zwj' : '') + '"' +
+          (lz ? ' title="Emoji sequence (ZWJ) — counts as one target"' : '') + '>' + b.landed[r] + '</span>';
         html += '</div>';
       }
       html += '</div>';
@@ -319,25 +343,27 @@
       if (!state.root) return null;
       ensureBandits();
       render();
-      return notify();
+      return notify('mount');
     },
+
+    isSequence: isSequence,
 
     spinAll: function () {
       ensureBandits();
       for (var i = 0; i < 3; i++) spinBandit(i, true);
       render();
       flashReels();
-      return notify();
+      return notify('spin');
     },
 
     resetBandit: function (index) {
       ensureBandits();
       index = index | 0;
-      if (index < 0 || index > 2) return notify();
+      if (index < 0 || index > 2) return challengeFromState();
       reshuffleBandit(index);
       render();
       flashReels();
-      return notify();
+      return notify('reset');
     },
 
     getChallenge: function () {
