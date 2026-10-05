@@ -549,6 +549,125 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   line-height: 1.45;
 }
 
+/* ===== PIX EMOJI BANDITS ===== */
+.pix-bandits {
+  margin: 10px 0 4px;
+  padding: 10px;
+  border: 1px solid rgba(0, 255, 65, 0.28);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 215, 0, 0.06), transparent 50%),
+    rgba(0, 20, 8, 0.55);
+  box-shadow: inset 0 0 18px rgba(0, 255, 65, 0.06);
+}
+.pix-bandits-header {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.pix-bandits-sub {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.68rem;
+  margin-left: 6px;
+}
+.pix-bandits-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pix-bandit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 65, 0.35);
+  background: rgba(0, 10, 4, 0.65);
+  min-width: 0;
+}
+.pix-bandit-label {
+  font-size: 0.62rem;
+  color: var(--bandit-accent, var(--neon-green));
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pix-bandit-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  justify-content: center;
+  max-height: 52px;
+  overflow: hidden;
+  padding: 3px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(0, 255, 65, 0.2);
+}
+.pix-bandit-pool-emoji {
+  font-size: 0.62rem;
+  line-height: 1.15;
+  opacity: 0.85;
+}
+.pix-bandit-reels {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.pix-bandit-reel {
+  width: 36px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 215, 0, 0.45);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+  transition: transform 0.25s var(--ease), border-color 0.25s;
+}
+.pix-bandit-reel.is-center {
+  border-color: var(--bandit-accent, var(--neon-green));
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
+  transform: scale(1.06);
+}
+.pix-bandit-landed {
+  font-size: 1.25rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.25));
+}
+.pix-bandit-reel.spinning .pix-bandit-landed {
+  animation: pixBanditPop 0.45s var(--ease);
+}
+@keyframes pixBanditPop {
+  0% { transform: translateY(-10px) scale(0.7); opacity: 0.3; }
+  60% { transform: translateY(2px) scale(1.12); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+.pix-bandit-reset {
+  width: 100%;
+  padding: 0.35rem 0.3rem !important;
+  font-size: 0.65rem !important;
+  margin-top: 2px;
+}
+.pix-bandits-spin-all {
+  width: 100%;
+  margin-top: 8px;
+  padding: 0.55rem 0.5rem !important;
+  font-size: 0.75rem !important;
+  background: rgba(255, 215, 0, 0.08);
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+@media (max-width: 420px) {
+  .pix-bandits-row { grid-template-columns: 1fr; }
+  .pix-bandit-pool { max-height: 40px; }
+}
+
 /* ===== BUNKER PANEL ===== */
 #bunker-panel {
   position: fixed;
@@ -897,6 +1016,7 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="embed/pix-bandits.js"></script>
 </head>
 
 <body>
@@ -958,13 +1078,16 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
     <div class="tab-view" id="view-pix">
       <h3 style="color: var(--gold); margin-bottom: 8px;">📛 Pix Describer</h3>
       <p class="pix-hint">
-        Point your camera at the challenge. Match the picture indicators, then submit for random popCoins (1–200). Soft &amp; playful — no pressure, just popcorn vibes.
+        Spin the emoji bandits for a 3-emoji challenge, point your camera at a matching scene, then submit for random popCoins (1–200). Soft &amp; playful — no pressure, just popcorn vibes.
       </p>
 
       <div class="pix-meta">
-        <span>Challenge <strong id="pix-challenge-num">1</strong> / <span id="pix-challenge-total">6</span></span>
+        <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
         <span>Earned <strong id="pix-earned">0</strong> popCoins</span>
       </div>
+
+      <!-- Cheese Casino–style emoji bandits (see embed/pix-bandits.js) -->
+      <div id="pix-bandits-root"></div>
 
       <div class="pix-stage" id="pix-stage">
         <video id="pix-video" playsinline muted autoplay></video>
@@ -974,14 +1097,14 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
           <div style="color:var(--gold);font-size:0.75rem;">You can still browse the challenge and submit when ready.</div>
         </div>
         <div class="pix-overlay">
-          <div class="pix-title-badge" id="pix-title">📛 Picture of sunset on sea</div>
+          <div class="pix-title-badge" id="pix-title">📛 🌳 🚗 ☀️</div>
           <div class="pix-indicators" id="pix-indicators"></div>
         </div>
       </div>
 
       <div class="pix-controls">
         <button type="button" class="pp-btn" id="pix-cam-btn" onclick="pixEnableCamera()">📷 Enable camera</button>
-        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎲 New challenge</button>
+        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎰 New challenge</button>
         <button type="button" class="pp-btn" id="pix-submit-btn" onclick="pixSubmitChallenge()" style="grid-column:1/-1;background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);">✨ I took it — award popCoins</button>
       </div>
     </div>
@@ -1620,40 +1743,57 @@ function toggleBunker() {
   else openBunker();
 }
 
-/* ===== PIX DESCRIBER ===== */
-const PIX_CHALLENGES = [
-  { title: 'Picture of sunset on sea', indicators: ['horizon line', 'sun', 'water', 'cloud'] },
-  { title: 'Forest path adventure', indicators: ['trees', 'path', 'leaves', 'shadow'] },
-  { title: 'Mountain morning glow', indicators: ['mountains', 'sky', 'rocks', 'mist'] },
-  { title: 'River picnic day', indicators: ['river', 'trees', 'grass', 'sky'] },
-  { title: 'City night lights', indicators: ['buildings', 'lights', 'street', 'skyline'] },
-  { title: 'Cozy café corner', indicators: ['cup', 'table', 'window', 'chair'] },
-  { title: 'Desert road horizon', indicators: ['sand', 'road', 'horizon line', 'sky'] },
-  { title: 'Rainy window story', indicators: ['raindrops', 'glass', 'blur', 'light'] }
-];
-
+/* ===== PIX DESCRIBER (emoji bandits) ===== */
 const Pix = {
-  index: 0,
+  spinCount: parseInt(localStorage.getItem('rudventur_pix_spins') || '0', 10) || 0,
   stream: null,
   earned: parseInt(localStorage.getItem('rudventur_popcoins_pix') || '0', 10) || 0,
-  camAsked: false
+  camAsked: false,
+  challenge: { title: '🌳 🚗 ☀️', indicators: ['🌳', '🚗', '☀️'] },
+  banditsReady: false
 };
 
+function pixGetChallenge() {
+  if (window.PixBandits && typeof window.PixBandits.getChallenge === 'function') {
+    return window.PixBandits.getChallenge();
+  }
+  return Pix.challenge;
+}
+
+function pixApplyChallenge(ch) {
+  if (!ch) return;
+  Pix.challenge = ch;
+  pixRender();
+}
+
+function pixEnsureBandits() {
+  if (Pix.banditsReady) return;
+  const root = document.getElementById('pix-bandits-root');
+  if (!root || !window.PixBandits) return;
+  const ch = window.PixBandits.mount(root);
+  window.PixBandits.onChange(function (next) {
+    pixApplyChallenge(next);
+  });
+  Pix.banditsReady = true;
+  if (ch) pixApplyChallenge(ch);
+}
+
 function pixRender() {
-  const c = PIX_CHALLENGES[Pix.index];
+  const c = pixGetChallenge();
   const title = document.getElementById('pix-title');
   const inds = document.getElementById('pix-indicators');
   const num = document.getElementById('pix-challenge-num');
   const total = document.getElementById('pix-challenge-total');
   const earned = document.getElementById('pix-earned');
-  if (title) title.textContent = '📛 ' + c.title;
+  if (title) title.textContent = '📛 ' + (c.title || '');
   if (inds) {
-    inds.innerHTML = c.indicators.map(function (x) {
-      return '<span class="pix-chip">📍 ' + escapeHtml(x) + '</span>';
+    const list = c.indicators || [];
+    inds.innerHTML = list.map(function (x) {
+      return '<span class="pix-chip">' + x + '</span>';
     }).join('');
   }
-  if (num) num.textContent = String(Pix.index + 1);
-  if (total) total.textContent = String(PIX_CHALLENGES.length);
+  if (num) num.textContent = String(Pix.spinCount);
+  if (total) total.textContent = 'emoji';
   if (earned) earned.textContent = String(Pix.earned);
 }
 
@@ -1692,7 +1832,7 @@ async function pixEnableCamera() {
       video.play().catch(function () {});
     }
     pixHideFallback();
-    showToast('📷 Camera live — find those indicators!', 'gold');
+    showToast('📷 Camera live — find those emoji vibes!', 'gold');
   } catch (err) {
     const denied = err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError');
     pixShowFallback(denied
@@ -1703,9 +1843,17 @@ async function pixEnableCamera() {
 }
 
 function pixNextChallenge() {
-  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
-  pixRender();
-  showToast('🎲 New challenge unlocked', 'normal');
+  pixEnsureBandits();
+  let ch;
+  if (window.PixBandits && typeof window.PixBandits.spinAll === 'function') {
+    ch = window.PixBandits.spinAll();
+  } else {
+    ch = Pix.challenge;
+  }
+  Pix.spinCount += 1;
+  try { localStorage.setItem('rudventur_pix_spins', String(Pix.spinCount)); } catch (e) {}
+  pixApplyChallenge(ch);
+  showToast('🎰 Bandits spun — new emoji challenge!', 'normal');
 }
 
 function awardPixPopCoins(reason) {
@@ -1733,14 +1881,14 @@ function awardPixPopCoins(reason) {
 }
 
 function pixSubmitChallenge() {
-  const c = PIX_CHALLENGES[Pix.index];
-  awardPixPopCoins('pix:' + c.title);
-  // Advance to keep the game moving
-  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
-  pixRender();
+  const c = pixGetChallenge();
+  awardPixPopCoins('pix:' + (c.title || 'emoji'));
+  // Spin fresh bandits to keep the game moving
+  pixNextChallenge();
 }
 
 function pixOnShow() {
+  pixEnsureBandits();
   pixRender();
   if (!Pix.camAsked && !Pix.stream) {
     // Soft prompt — do not auto-request until the user agrees
@@ -1766,6 +1914,7 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') closeBunker();
 });
 
+pixEnsureBandits();
 pixRender();
 renderDescriptions();
 document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
