@@ -412,6 +412,14 @@ input[type="checkbox"] {
   background: var(--neon);
   border-radius: 4px;
 }
+
+/* ===== PANEL TOGGLES (js/panel-toggle.js) ===== */
+:root {
+  --sf-panel-accent: var(--neon); --sf-panel-text: var(--neon); --sf-panel-ink: #000;
+  --sf-panel-font: 'Courier New', monospace; --sf-panel-font-size: 0.8rem; --sf-panel-radius: 6px;
+}
+.useRbox-header .sf-ptoggle { font-size: 0.8rem; font-weight: bold; padding: 4px 8px; }
+#useRbox.sf-panel-collapsed .useRbox-header { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
@@ -437,10 +445,12 @@ input[type="checkbox"] {
 
   <!-- useRbox -->
   <div id="useRbox" class="hidden">
-    <div class="useRbox-header">
+    <div class="useRbox-header sf-phead">
       <strong data-rv-logo>⚡ useRbox v2.0</strong>
+      <button class="sf-ptoggle" type="button" data-panel-toggle="useRbox"><span class="sf-pt-icon"></span><span class="sf-pt-label"></span></button>
       <button id="closeUser">✖</button>
     </div>
+    <div class="sf-pbody">
 
     <!-- Live Clock -->
     <div id="liveClock">--:--:--</div>
@@ -531,6 +541,7 @@ input[type="checkbox"] {
 
     <!-- Save Button -->
     <button id="saveUser">💾 SAVE PROFILE</button>
+    </div>
   </div>
 
 </div>
@@ -734,12 +745,15 @@ document.getElementById('saveUser').onclick = saveUser;
 
 /* ===== INIT ===== */
 loadUser();
-loadProfile();
 loadChannel();
 
 console.log('👤 useRbox v2.0 - Ultimate Edition loaded!');
 console.log('All social media links ready! 🌐');
 </script>
 
+<script src="js/panel-toggle.js"></script>
+<script>
+sfPanels.register({ id: 'useRbox', el: '#useRbox', label: 'the useRbox', side: 'top' });
+</script>
 </body>
 </html>
