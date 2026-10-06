@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🍿 Popcorn Hub - Accessibility + Cookies + Popcoin</title>
+<title>🍿 Popcorn Hub - Accessibility + Cookies + PopCOIN Wallet</title>
 
 <style>
 :root {
@@ -137,13 +137,14 @@ body {
 
 .pp-tab {
   flex:1;
-  padding:1rem;
+  padding:0.7rem 0.3rem;
   text-align:center;
   cursor:pointer;
   color:var(--text-muted);
   font-weight:bold;
   transition:0.3s;
-  font-size: 0.85rem;
+  font-size: 0.72rem;
+  white-space: nowrap;
 }
 
 .pp-tab:hover {
@@ -217,13 +218,6 @@ body {
   background:var(--neon-green);
   color:#000;
   box-shadow:0 0 16px var(--neon-green);
-}
-
-.pp-btn.pp-game {
-  display:block;
-  text-align:center;
-  text-decoration:none;
-  margin-bottom:12px;
 }
 
 .pp-btn.mining {
@@ -404,6 +398,237 @@ body {
   transition:width 0.3s ease;
 }
 
+
+/* ===== EMBEDDED IN DESKTOP WINDOW ===== */
+html.embedded #popcorn-trigger { display: none !important; }
+html.embedded #popcorn-panel {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  border-radius: 0 !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  box-shadow: none;
+}
+html.embedded body { overflow: hidden; min-height: 100%; }
+
+/* ===== PB2 bunker control ===== */
+.pb2-btn {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font: 700 0.72rem var(--font);
+  cursor: pointer;
+  letter-spacing: 0.6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s var(--ease);
+  box-shadow: 0 0 10px var(--gold-dim);
+}
+.pb2-btn:hover {
+  background: var(--gold);
+  color: #000;
+  transform: scale(1.06) rotate(-4deg);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.55);
+}
+.pb2-btn.on {
+  background: rgba(255, 42, 109, 0.15);
+  border-color: var(--danger);
+  color: var(--danger);
+  box-shadow: 0 0 14px rgba(255, 42, 109, 0.35);
+}
+.pp-header-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ===== PIX DESCRIBER ===== */
+.pix-stage {
+  position: relative;
+  border: 1px solid var(--neon-green);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  min-height: 280px;
+  height: min(42vh, 340px);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.18);
+}
+.pix-stage video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  background: #020805;
+}
+.pix-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1.2rem;
+  text-align: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(0, 255, 65, 0.08), transparent 45%),
+    linear-gradient(160deg, #031008, #000);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  z-index: 1;
+}
+.pix-fallback.show { display: flex; }
+.pix-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 28%, transparent 72%, rgba(0,0,0,0.6) 100%);
+}
+.pix-title-badge {
+  align-self: flex-start;
+  background: rgba(0, 20, 8, 0.82);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+  max-width: 92%;
+}
+.pix-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  pointer-events: none;
+}
+.pix-chip {
+  background: rgba(0, 30, 10, 0.78);
+  border: 1px dashed rgba(0, 255, 65, 0.55);
+  color: var(--neon-green);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.3px;
+}
+.pix-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.pix-controls .pp-btn { width: 100%; padding: 0.65rem 0.6rem; font-size: 0.78rem; }
+.pix-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+.pix-meta strong { color: var(--gold); }
+.pix-hint {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+/* ===== BUNKER PANEL ===== */
+#bunker-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1000001;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(20, 8, 0, 0.2), rgba(0, 0, 0, 0.92)),
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 215, 0, 0.02) 3px, rgba(255, 215, 0, 0.02) 4px);
+  padding: 16px;
+}
+#bunker-panel.open { display: flex; }
+.bunker-card {
+  width: min(440px, 96vw);
+  max-height: 92vh;
+  overflow: auto;
+  background: linear-gradient(165deg, #0a0704 0%, #120c05 40%, #050805 100%);
+  border: 1.5px solid #8a6a12;
+  border-radius: 14px;
+  box-shadow: 0 0 40px rgba(255, 180, 0, 0.18), inset 0 0 30px rgba(255, 215, 0, 0.05);
+  padding: 1.25rem 1.35rem 1.4rem;
+  color: #f3e6b0;
+  font-family: var(--font);
+}
+.bunker-card h2 {
+  color: var(--gold);
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bunker-card .bunker-sub {
+  color: #8a7a4a;
+  font-size: 0.75rem;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.bunker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+.bunker-tile {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid #5a4810;
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #d8c878;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.bunker-tile .ico { font-size: 1.35rem; }
+.bunker-note {
+  font-size: 0.72rem;
+  color: #6a6040;
+  line-height: 1.45;
+  margin-bottom: 14px;
+  border-left: 2px solid #5a4810;
+  padding-left: 10px;
+}
+.bunker-actions { display: flex; gap: 8px; }
+.bunker-actions .pp-btn { flex: 1; }
+.bunker-close-gold {
+  background: rgba(255, 215, 0, 0.08) !important;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+
 /* ===== TOAST ===== */
 #toast {
   position:fixed;
@@ -432,6 +657,220 @@ body {
   border-color:var(--gold);
   color:var(--gold);
   box-shadow:0 0 24px rgba(255,215,0,0.4);
+}
+
+/* ===== MINER TAB ===== */
+.miner-explain {
+  background: rgba(0,15,0,0.7);
+  border: 1px dashed rgba(0,255,65,0.25);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.diff-selector {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.diff-btn {
+  flex: 1;
+  padding: 8px 4px;
+  background: rgba(0,10,0,0.7);
+  border: 1.5px solid #224422;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.diff-btn:hover {
+  border-color: var(--neon-green);
+  color: var(--text-main);
+}
+
+.diff-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(255,215,0,0.08);
+  box-shadow: 0 0 10px rgba(255,215,0,0.15);
+}
+
+.miner-live-hash {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid #1a3a1a;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+  min-height: 48px;
+}
+
+.history-block {
+  background: rgba(0,15,0,0.5);
+  border-left: 3px solid var(--gold);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.75rem;
+}
+
+.history-block .hb-hash {
+  color: #557755;
+  font-family: monospace;
+  font-size: 0.65rem;
+  word-break: break-all;
+  margin-top: 3px;
+}
+
+.history-block .hb-meta {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.history-block .hb-reward {
+  color: var(--gold);
+  font-weight: bold;
+}
+
+/* ===== WALLET TAB ===== */
+.wallet-section-label {
+  color: var(--neon-green);
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 18px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(0,255,65,0.2);
+}
+
+.ticker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(0,10,0,0.6);
+  border-left: 3px solid var(--text-muted);
+  margin-bottom: 4px;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.2s;
+}
+
+.ticker-row:hover {
+  border-left-color: var(--gold);
+  background: rgba(0,25,0,0.7);
+}
+
+.ticker-name {
+  color: var(--gold);
+  font-weight: bold;
+  font-size: 0.9rem;
+  min-width: 50px;
+}
+
+.ticker-price {
+  color: var(--text-main);
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.ticker-price .up { color: #00ff41; }
+.ticker-price .down { color: #ff2a6d; }
+
+.wallet-links {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.wallet-link {
+  display: block;
+  padding: 9px 12px;
+  background: rgba(0,10,0,0.5);
+  border-left: 3px solid transparent;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.85rem;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.2s;
+}
+
+.wallet-link:hover {
+  border-left-color: var(--neon-green);
+  background: rgba(0,40,0,0.6);
+  color: var(--neon-green);
+  padding-left: 18px;
+}
+
+/* ===== TOOLS LAUNCHER TAB ===== */
+.launch-group-label {
+  color: var(--neon-green);
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  margin: 14px 0 6px;
+  padding-bottom: 3px;
+  border-bottom: 1px dashed rgba(0,255,65,0.15);
+}
+
+.launch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.launch-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  background: rgba(0,10,0,0.5);
+  border-left: 3px solid transparent;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.85rem;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.2s;
+}
+
+.launch-link:hover {
+  border-left-color: var(--neon-green);
+  background: rgba(0,40,0,0.6);
+  color: var(--neon-green);
+  padding-left: 16px;
+}
+
+.launch-link .launch-icon { font-size: 1rem; min-width: 22px; text-align: center; }
+.launch-link .launch-name { flex: 1; }
+.launch-link .launch-arrow { color: var(--text-muted); transition: color 0.2s; }
+.launch-link:hover .launch-arrow { color: var(--neon-green); }
+
+.launch-link.soon {
+  color: #335533;
+  font-style: italic;
+  cursor: default;
+}
+.launch-link.soon:hover {
+  border-left-color: transparent;
+  background: rgba(0,10,0,0.5);
+  color: #335533;
+  padding-left: 10px;
+}
+
+.launch-badge {
+  font-size: 0.6rem;
+  color: #446644;
+  border: 1px dashed #335533;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -469,14 +908,18 @@ body {
 <div id="popcorn-panel">
   <div class="pp-header">
     <div data-rv-logo class="pp-title">🍿 POPCORN HUB</div>
-    <button class="pp-close" id="pp-close">×</button>
+    <div class="pp-header-actions">
+      <button type="button" id="pb2-btn" class="pb2-btn" title="Open the bunker for secret movie making">🍿 PB2</button>
+      <button class="pp-close" id="pp-close">×</button>
+    </div>
   </div>
 
   <div class="pp-tabs">
     <div class="pp-tab active" data-tab="maker">🍿 MAKER</div>
+    <div class="pp-tab" data-tab="pix">📛 PIX</div>
     <div class="pp-tab" data-tab="cookies">🍪 COOKIES</div>
     <div class="pp-tab" data-tab="popcoin">🍿 PopCOIN</div>
-    <div class="pp-tab" data-tab="games">🎮 GAMES</div>
+    <div class="pp-tab" data-tab="launch">🚀 LAUNCH</div>
   </div>
 
   <div class="pp-content-area">
@@ -511,6 +954,38 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       <div class="saved-descriptions" id="saved-descriptions"></div>
     </div>
 
+    <!-- PIX DESCRIBER TAB -->
+    <div class="tab-view" id="view-pix">
+      <h3 style="color: var(--gold); margin-bottom: 8px;">📛 Pix Describer</h3>
+      <p class="pix-hint">
+        Point your camera at the challenge. Match the picture indicators, then submit for random popCoins (1–200). Soft &amp; playful — no pressure, just popcorn vibes.
+      </p>
+
+      <div class="pix-meta">
+        <span>Challenge <strong id="pix-challenge-num">1</strong> / <span id="pix-challenge-total">6</span></span>
+        <span>Earned <strong id="pix-earned">0</strong> popCoins</span>
+      </div>
+
+      <div class="pix-stage" id="pix-stage">
+        <video id="pix-video" playsinline muted autoplay></video>
+        <div class="pix-fallback" id="pix-fallback">
+          <div style="font-size:1.6rem;">📷</div>
+          <div id="pix-fallback-msg">Camera needs your OK to light up the stage.</div>
+          <div style="color:var(--gold);font-size:0.75rem;">You can still browse the challenge and submit when ready.</div>
+        </div>
+        <div class="pix-overlay">
+          <div class="pix-title-badge" id="pix-title">📛 Picture of sunset on sea</div>
+          <div class="pix-indicators" id="pix-indicators"></div>
+        </div>
+      </div>
+
+      <div class="pix-controls">
+        <button type="button" class="pp-btn" id="pix-cam-btn" onclick="pixEnableCamera()">📷 Enable camera</button>
+        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎲 New challenge</button>
+        <button type="button" class="pp-btn" id="pix-submit-btn" onclick="pixSubmitChallenge()" style="grid-column:1/-1;background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);">✨ I took it — award popCoins</button>
+      </div>
+    </div>
+
     <!-- COOKIES TAB -->
     <div class="tab-view" id="view-cookies">
       <h3 style="color: var(--neon-green); margin-bottom: 16px;">🍪 Cookies & Storage Inspector</h3>
@@ -527,31 +1002,28 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       <div id="cookies-list"></div>
     </div>
 
-    <!-- POPCOIN WALLET TAB -->
-    <!-- PopCOIN WALLET TAB — the shared wallet (popcoin/ in the RudVentur.com repo).
-         The old POPCOIN view below is kept but no longer has a tab. -->
-    <div class="tab-view" id="view-popcoin" style="padding:0">
-      <iframe src="https://rudventur.github.io/RudVentur.com/popcoin/" title="PopCOIN Wallet" loading="lazy" allow="clipboard-write"
-        style="width:100%;height:100%;border:0;display:block;background:#050607"></iframe>
-    </div>
-
-    <!-- GAMES TAB -->
-    <div class="tab-view" id="view-games">
-      <h3 style="color: var(--neon-green); margin-bottom: 16px;">🎮 Games</h3>
-      <a class="pp-btn pp-game" href="https://rudventur.github.io/cheese-ouiji-empire/" target="_blank" rel="noopener">🧀 Cheese Ouiji Empire</a>
-      <a class="pp-btn pp-game" href="https://rudventur.github.io/ChemVentur/" target="_blank" rel="noopener">☢️ ChemVentur</a>
-      <a class="pp-btn pp-game" href="https://www.soldat.pl" target="_blank" rel="noopener">🔫 Soldat.pl</a>
-    </div>
-
-    <div class="tab-view" id="view-wallet">
-      <div class="wallet-hero">
-        <div class="currency-label">YOUR BALANCE</div>
-        <div class="popcoin-balance" id="wallet-balance">0.00</div>
-        <div style="font-size: 1.8rem; position: relative; z-index: 1;">🍿 POPCOIN</div>
-        <div style="font-size: 0.85rem; color: #88aa88; margin-top: 12px; position: relative; z-index: 1;">
-          Value = Average of ~180 world currencies ÷ currency count<br>
-          Mined via SHA-256 Proof-of-Work
+    <!-- MINNER TAB -->
+    <div class="tab-view" id="view-miner">
+      <div class="miner-explain">
+        <div style="color:var(--gold);font-size:1rem;font-weight:bold;margin-bottom:6px;">⛏️ HOW POPCOIN MINING WORKS</div>
+        <div style="color:var(--text-muted);font-size:.78rem;line-height:1.6;">
+          Like real Bitcoin (shoutout Veritasium) — your browser hashes random data through <span style="color:var(--neon-green)">SHA-256</span> thousands of times, hunting for a hash that starts with <span style="color:var(--gold)">leading zeros</span>.<br>
+          More zeros = harder to find = rarer block = bigger reward.<br>
+          It's proof-of-work, running right here in your browser. No servers. No blockchain. Just maths.
         </div>
+      </div>
+
+      <div style="color:var(--neon-green);font-size:.8rem;margin:14px 0 6px;font-weight:bold;">DIFFICULTY (leading zeros)</div>
+      <div class="diff-selector">
+        <button class="diff-btn active" data-zeros="3" onclick="setDifficulty(3)">EASY<br><span style="font-size:.65rem;color:var(--text-muted)">000...</span></button>
+        <button class="diff-btn" data-zeros="4" onclick="setDifficulty(4)">MEDIUM<br><span style="font-size:.65rem;color:var(--text-muted)">0000...</span></button>
+        <button class="diff-btn" data-zeros="5" onclick="setDifficulty(5)">HARD<br><span style="font-size:.65rem;color:var(--text-muted)">00000...</span></button>
+        <button class="diff-btn" data-zeros="6" onclick="setDifficulty(6)">INSANE<br><span style="font-size:.65rem;color:var(--text-muted)">000000...</span></button>
+      </div>
+
+      <div class="miner-live-hash">
+        <div style="color:var(--text-muted);font-size:.7rem;margin-bottom:4px;">CURRENT HASH:</div>
+        <div id="live-hash" style="font-size:.7rem;color:#335533;word-break:break-all;font-family:monospace;">waiting...</div>
       </div>
 
       <button class="pp-btn" id="mine-btn" onclick="startMining()">
@@ -559,17 +1031,145 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       </button>
 
       <div id="mining-status" class="mining-status">
-        Mining in progress... Target: 4 leading zeros<br>
-        Nonce: <span id="current-nonce">0</span> | Hash attempts: <span id="attempts">0</span><br>
+        Hunting for <span id="target-zeros" style="color:var(--gold)">4</span> leading zeros...<br>
+        Nonce: <span id="current-nonce">0</span> | Hashes: <span id="attempts">0</span><br>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
 
-      <div style="text-align:center; color:var(--text-muted); margin-top: 20px; font-size:0.9rem;">
-        Mining multiplier: <span id="multiplier">1.0×</span><br>
-        Last block hash: <span id="last-hash" style="font-family: monospace; font-size: 0.75rem;">0000...</span>
+      <div style="text-align:center;color:var(--text-muted);margin-top:14px;font-size:.82rem;">
+        Multiplier: <span id="multiplier" style="color:var(--gold)">1.0×</span> &middot;
+        Last hash: <span id="last-hash" style="font-family:monospace;font-size:.7rem;color:#557755">0000...</span>
+      </div>
+
+      <div style="text-align:center;margin-top:10px;font-size:.78rem;color:var(--gold);">
+        1 POPCOIN = <span id="joke-rate">priceless (probably)</span>
+      </div>
+      <div style="text-align:center;font-size:.6rem;color:#334433;margin-top:2px;">fictional &middot; not real money &middot; for fun only</div>
+
+      <div class="wallet-section-label" style="margin-top:18px;">📜 MINING HISTORY</div>
+      <div id="mine-history"></div>
+    </div>
+
+    <!-- POPCOIN WALLET TAB -->
+    <div class="tab-view" id="view-wallet">
+      <div class="wallet-hero">
+        <div class="currency-label">YOUR BALANCE</div>
+        <div class="popcoin-balance" id="wallet-balance">0.00</div>
+        <div style="font-size: 1.8rem; position: relative; z-index: 1;">🍿 POPCOIN</div>
+        <div style="font-size: 0.75rem; color: #557755; margin-top: 8px; position: relative; z-index: 1;">
+          Popcoin is a fictional currency mined for fun.<br>Real crypto links open external sites.
+        </div>
+      </div>
+
+      <!-- LIVE CRYPTO TICKER -->
+      <div class="wallet-section-label">📡 LIVE PRICES <span id="ticker-status" style="font-size:.7rem;color:var(--text-muted)">loading...</span></div>
+      <div id="crypto-ticker">
+        <div class="ticker-row"><span class="ticker-name">BTC</span><span class="ticker-price" id="price-btc">—</span></div>
+        <div class="ticker-row"><span class="ticker-name">ETH</span><span class="ticker-price" id="price-eth">—</span></div>
+        <div class="ticker-row"><span class="ticker-name">SOL</span><span class="ticker-price" id="price-sol">—</span></div>
+        <div class="ticker-row"><span class="ticker-name">DOGE</span><span class="ticker-price" id="price-doge">—</span></div>
+      </div>
+
+      <!-- CRYPTO LINKS -->
+      <div class="wallet-section-label">⛓️ CRYPTO</div>
+      <div class="wallet-links">
+        <a class="wallet-link" href="https://www.coinbase.com" target="_blank" rel="noopener">💰 Coinbase</a>
+        <a class="wallet-link" href="https://www.binance.com" target="_blank" rel="noopener">📈 Binance</a>
+        <a class="wallet-link" href="https://metamask.io" target="_blank" rel="noopener">🦊 MetaMask</a>
+        <a class="wallet-link" href="https://opensea.io" target="_blank" rel="noopener">🌊 OpenSea</a>
+      </div>
+
+      <!-- BANK LINKS -->
+      <div class="wallet-section-label">🏦 BANKING</div>
+      <div class="wallet-links">
+        <a class="wallet-link" href="https://www.revolut.com" target="_blank" rel="noopener">💳 Revolut Crypto</a>
+        <a class="wallet-link" href="https://monzo.com" target="_blank" rel="noopener">🏦 Monzo</a>
+        <a class="wallet-link" href="https://www.starlingbank.com" target="_blank" rel="noopener">🏦 Starling</a>
+        <a class="wallet-link" href="https://wise.com" target="_blank" rel="noopener">🏦 Wise</a>
       </div>
     </div>
 
+    <!-- PopCOIN WALLET TAB — the shared wallet (popcoin/ in the RudVentur.com repo).
+         The old MINNER / WALLET views below are kept but no longer have tabs. -->
+    <div class="tab-view" id="view-popcoin" style="padding:0">
+      <iframe src="https://rudventur.github.io/RudVentur.com/popcoin/" title="PopCOIN Wallet" loading="lazy" allow="clipboard-write"
+        style="width:100%;height:100%;border:0;display:block;background:#050607"></iframe>
+    </div>
+
+    <!-- TOOLS LAUNCHER TAB -->
+    <div class="tab-view" id="view-launch">
+      <h3 style="color:var(--neon-green);margin-bottom:14px;">🚀 RUDVENTUR TOOLS</h3>
+
+      <div class="launch-group-label">🗺️ MAPS & EXPLORATION</div>
+      <div class="launch-list">
+        <a class="launch-link" href="https://rudventur.github.io/map-merger-venti/" target="_blank" rel="noopener">
+          <span class="launch-icon">🗺️</span><span class="launch-name">ArtSpace City / Map Merger</span><span class="launch-arrow">→</span>
+        </a>
+      </div>
+
+      <div class="launch-group-label">👤 USER TOOLS</div>
+      <div class="launch-list">
+        <a class="launch-link" href="https://rudventur.github.io/windows13/useRbox-v2-upgraded.html" target="_blank" rel="noopener">
+          <span class="launch-icon">👤</span><span class="launch-name">useRbox</span><span class="launch-arrow">→</span>
+        </a>
+        <a class="launch-link" href="https://rudventur.github.io/windows13/keyboard-realistic.html" target="_blank" rel="noopener">
+          <span class="launch-icon">⌨️</span><span class="launch-name">Keyboard</span><span class="launch-arrow">→</span>
+        </a>
+      </div>
+
+      <div class="launch-group-label">🖥️ OS</div>
+      <div class="launch-list">
+        <a class="launch-link" href="https://rudventur.github.io/LuxWin13/" target="_blank" rel="noopener">
+          <span class="launch-icon">🪟</span><span class="launch-name">LuxWin13</span><span class="launch-arrow">→</span>
+        </a>
+        <a class="launch-link" href="https://rudventur.github.io/windows13/taskbar-window-system.html" target="_blank" rel="noopener">
+          <span class="launch-icon">🖥️</span><span class="launch-name">Taskbar System</span><span class="launch-arrow">→</span>
+        </a>
+        <a class="launch-link" href="https://rudventur.github.io/windows13/WINDOWS13-MASTER.html" target="_blank" rel="noopener">
+          <span class="launch-icon">💻</span><span class="launch-name">Windows13 Master</span><span class="launch-arrow">→</span>
+        </a>
+      </div>
+
+      <div class="launch-group-label">🌍 SOCIAL & CHAT</div>
+      <div class="launch-list">
+        <a class="launch-link soon" href="#coming-soon" onclick="event.preventDefault()">
+          <span class="launch-icon">💬</span><span class="launch-name">RudVentur Social</span><span class="launch-badge">soon</span>
+        </a>
+        <a class="launch-link soon" href="#coming-soon" onclick="event.preventDefault()">
+          <span class="launch-icon">🌐</span><span class="launch-name">Global Chat</span><span class="launch-badge">soon</span>
+        </a>
+      </div>
+
+      <div class="launch-group-label">🔬 SCIENCE</div>
+      <div class="launch-list">
+        <a class="launch-link" href="https://rudventur.github.io/ChemVentur/" target="_blank" rel="noopener">
+          <span class="launch-icon">🧪</span><span class="launch-name">ChemVentur</span><span class="launch-arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- BUNKER: secret movie making (PB2) -->
+<div id="bunker-panel" aria-hidden="true">
+  <div class="bunker-card" role="dialog" aria-label="Secret movie bunker">
+    <h2>🛢️ Secret Movie Bunker</h2>
+    <div class="bunker-sub">PB2 · sealed vibe · neon gold on black · for playful clandestine clips</div>
+    <div class="bunker-grid">
+      <div class="bunker-tile"><span class="ico">🎬</span>Story board<br><span style="color:#6a6040">stub reel ready</span></div>
+      <div class="bunker-tile"><span class="ico">🤫</span>Quiet takes<br><span style="color:#6a6040">soft footsteps</span></div>
+      <div class="bunker-tile"><span class="ico">📼</span>Tape vault<br><span style="color:#6a6040">local only</span></div>
+      <div class="bunker-tile"><span class="ico">🍿</span>Popcorn lights<br><span style="color:#6a6040">action!</span></div>
+    </div>
+    <div class="bunker-note">
+      This bunker is the fun “secret movie making” room. On the RUDVENTUR home desktop, PB2 also wakes the sealed popcorn window when it is available. Stub content for now — polish over pulp.
+    </div>
+    <div class="bunker-actions">
+      <button type="button" class="pp-btn bunker-close-gold" onclick="closeBunker()">Leave bunker</button>
+      <button type="button" class="pp-btn" onclick="closeBunker(); switchToTab('pix')">📛 Pix instead</button>
+    </div>
   </div>
 </div>
 
@@ -583,6 +1183,7 @@ const State = {
   balance: parseFloat(localStorage.getItem('rudventur_popcoin_balance') || '0'),
   multiplier: parseFloat(localStorage.getItem('rudventur_multiplier') || '1'),
   lastHash: localStorage.getItem('rudventur_last_hash') || '0000',
+  mineHistory: JSON.parse(localStorage.getItem('rudventur_mine_history') || '[]'),
   mining: false
 };
 
@@ -596,17 +1197,20 @@ document.getElementById('pp-close').onclick = () => {
 };
 
 /* ===== TAB SWITCHING ===== */
+function switchToTab(tabName) {
+  const tab = document.querySelector('.pp-tab[data-tab="' + tabName + '"]');
+  const view = document.getElementById('view-' + tabName);
+  if (!tab || !view) return;
+  document.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active-view'));
+  view.classList.add('active-view');
+  if (tabName === 'pix') pixOnShow();
+}
+
 document.querySelectorAll('.pp-tab').forEach(tab => {
   tab.onclick = function() {
-    const tabName = this.dataset.tab;
-    
-    // Update active tab
-    document.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
-    this.classList.add('active');
-    
-    // Update active view
-    document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active-view'));
-    document.getElementById(`view-${tabName}`).classList.add('active-view');
+    switchToTab(this.dataset.tab);
   };
 });
 
@@ -724,7 +1328,7 @@ function clearAllCookies() {
   });
   
   // Clear localStorage (except our game data)
-  const keep = ['rudventur_descriptions', 'rudventur_popcoin_balance', 'rudventur_multiplier', 'rudventur_last_hash'];
+  const keep = ['rudventur_descriptions', 'rudventur_popcoin_balance', 'rudventur_multiplier', 'rudventur_last_hash', 'rudventur_mine_history', 'rudventur_last_prices'];
   Object.keys(localStorage).forEach(key => {
     if (!keep.includes(key)) {
       localStorage.removeItem(key);
@@ -736,6 +1340,29 @@ function clearAllCookies() {
 }
 
 /* ===== POPCOIN MINING ===== */
+let miningDifficulty = 3; // leading zeros required
+const diffRewards = { 3: 0.05, 4: 0.15, 5: 0.80, 6: 5.00 };
+const diffMaxAttempts = { 3: 50000, 4: 200000, 5: 800000, 6: 3000000 };
+
+// Joke exchange rate — random per session
+const jokeRate = (Math.random() * 0.00009 + 0.0000001).toFixed(7);
+
+function initMinerUI() {
+  const jokeEl = document.getElementById('joke-rate');
+  if (jokeEl) jokeEl.textContent = '£' + jokeRate + ' GBP (approx. vibes-based)';
+  renderMineHistory();
+}
+
+function setDifficulty(zeros) {
+  if (State.mining) return;
+  miningDifficulty = zeros;
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.zeros) === zeros);
+  });
+  const tz = document.getElementById('target-zeros');
+  if (tz) tz.textContent = zeros;
+}
+
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -745,72 +1372,130 @@ async function sha256(message) {
 
 async function startMining() {
   if (State.mining) return;
-  
+
   State.mining = true;
   const btn = document.getElementById('mine-btn');
   const statusDiv = document.getElementById('mining-status');
   const progressBar = document.getElementById('progress-fill');
-  
+  const liveHashEl = document.getElementById('live-hash');
+  const tzEl = document.getElementById('target-zeros');
+
+  const zeros = miningDifficulty;
+  const target = '0'.repeat(zeros);
+  const maxAttempts = diffMaxAttempts[zeros] || 200000;
+
   btn.classList.add('mining');
-  btn.textContent = '⛏️ MINING...';
+  btn.textContent = '⛏️ MINING... (' + zeros + ' zeros)';
   statusDiv.style.display = 'block';
-  
+  if (tzEl) tzEl.textContent = zeros;
+
   let nonce = 0;
   let attempts = 0;
-  const target = '0000'; // 4 leading zeros
-  const maxAttempts = 100000;
-  
+  const startTime = Date.now();
+
   const mineStep = async () => {
-    for (let i = 0; i < 1000 && attempts < maxAttempts; i++) {
-      const data = `${Date.now()}_${nonce}_rudventur_popcoin`;
+    for (let i = 0; i < 500 && attempts < maxAttempts; i++) {
+      const data = `${startTime}_${nonce}_rudventur_popcoin_v2`;
       const hash = await sha256(data);
       attempts++;
-      
-      document.getElementById('current-nonce').textContent = nonce;
-      document.getElementById('attempts').textContent = attempts;
-      progressBar.style.width = ((attempts / maxAttempts) * 100) + '%';
-      
+
+      // Update live hash display every 50 hashes
+      if (attempts % 50 === 0) {
+        if (liveHashEl) {
+          // Highlight leading zeros in gold
+          let leading = 0;
+          while (hash[leading] === '0' && leading < hash.length) leading++;
+          liveHashEl.innerHTML = '<span style="color:var(--gold)">' + hash.substring(0, leading) + '</span><span style="color:#335533">' + hash.substring(leading) + '</span>';
+        }
+        document.getElementById('current-nonce').textContent = nonce.toLocaleString();
+        document.getElementById('attempts').textContent = attempts.toLocaleString();
+        progressBar.style.width = Math.min((attempts / maxAttempts) * 100, 100) + '%';
+      }
+
       if (hash.startsWith(target)) {
-        // SUCCESS!
-        const reward = 0.1 * State.multiplier;
+        // BLOCK FOUND!
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        const reward = (diffRewards[zeros] || 0.1) * State.multiplier;
         State.balance += reward;
         State.lastHash = hash;
-        State.multiplier += 0.1;
-        
+        State.multiplier += 0.05;
+
         localStorage.setItem('rudventur_popcoin_balance', State.balance.toFixed(4));
         localStorage.setItem('rudventur_last_hash', hash);
         localStorage.setItem('rudventur_multiplier', State.multiplier.toFixed(2));
-        
+
+        // Show winning hash fully highlighted
+        if (liveHashEl) {
+          liveHashEl.innerHTML = '<span style="color:var(--gold)">' + hash.substring(0, zeros) + '</span><span style="color:var(--neon-green)">' + hash.substring(zeros) + '</span>';
+        }
+
         document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
         document.getElementById('multiplier').textContent = State.multiplier.toFixed(2) + '×';
-        document.getElementById('last-hash').textContent = hash.substring(0, 12) + '...';
-        
+        document.getElementById('last-hash').textContent = hash.substring(0, 16) + '...';
+
+        // Save to mining history
+        saveMineBlock({ hash, nonce, attempts, zeros, reward, elapsed, time: Date.now() });
+
         btn.classList.remove('mining');
         btn.textContent = '⛏️ START MINING POPCOIN';
         statusDiv.style.display = 'none';
         progressBar.style.width = '0%';
         State.mining = false;
-        
-        showToast(`💰 MINED! +${reward.toFixed(4)} POPCOIN!`, 'gold');
+
+        showToast(`⛏️ BLOCK FOUND! +${reward.toFixed(4)} PPC (${elapsed}s, ${attempts.toLocaleString()} hashes)`, 'gold');
         return;
       }
-      
+
       nonce++;
     }
-    
+
     if (attempts < maxAttempts) {
       setTimeout(mineStep, 0);
     } else {
+      if (liveHashEl) liveHashEl.innerHTML = '<span style="color:var(--danger)">no block found — try again or lower difficulty</span>';
       btn.classList.remove('mining');
       btn.textContent = '⛏️ START MINING POPCOIN';
       statusDiv.style.display = 'none';
       progressBar.style.width = '0%';
       State.mining = false;
-      showToast('⛏️ Mining timeout. Try again!', 'normal');
+      showToast('⛏️ ' + attempts.toLocaleString() + ' hashes — no block. Try again!', 'normal');
     }
   };
-  
-  setTimeout(mineStep, 100);
+
+  setTimeout(mineStep, 50);
+}
+
+/* ===== MINING HISTORY ===== */
+function getMineHistory() {
+  return JSON.parse(localStorage.getItem('rudventur_mine_history') || '[]');
+}
+
+function saveMineBlock(block) {
+  const history = getMineHistory();
+  history.unshift(block);
+  if (history.length > 5) history.length = 5;
+  localStorage.setItem('rudventur_mine_history', JSON.stringify(history));
+  renderMineHistory();
+}
+
+function renderMineHistory() {
+  const el = document.getElementById('mine-history');
+  if (!el) return;
+  const history = getMineHistory();
+  if (history.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-size:.75rem;text-align:center;padding:10px;">No blocks mined yet. Start mining!</div>';
+    return;
+  }
+  el.innerHTML = history.map(b => {
+    const d = new Date(b.time);
+    const ts = d.toLocaleTimeString() + ' ' + d.toLocaleDateString();
+    const leading = '<span style="color:var(--gold)">' + b.hash.substring(0, b.zeros) + '</span>';
+    return `<div class="history-block">
+      <div><span class="hb-reward">+${b.reward.toFixed(4)} PPC</span> <span class="hb-meta">· ${b.zeros} zeros · ${b.attempts.toLocaleString()} hashes · ${b.elapsed}s</span></div>
+      <div class="hb-meta">${ts}</div>
+      <div class="hb-hash">${leading}${b.hash.substring(b.zeros)}</div>
+    </div>`;
+  }).join('');
 }
 
 /* ===== TOAST ===== */
@@ -830,12 +1515,268 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+/* ===== CRYPTO TICKER ===== */
+let lastPrices = JSON.parse(localStorage.getItem('rudventur_last_prices') || 'null');
+let tickerInterval = null;
+
+async function fetchCryptoPrices() {
+  const statusEl = document.getElementById('ticker-status');
+  try {
+    statusEl.textContent = 'fetching...';
+    const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,dogecoin&vs_currencies=gbp,usd');
+    if (!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+    const coins = [
+      { id: 'bitcoin', sym: 'btc', el: 'price-btc' },
+      { id: 'ethereum', sym: 'eth', el: 'price-eth' },
+      { id: 'solana', sym: 'sol', el: 'price-sol' },
+      { id: 'dogecoin', sym: 'doge', el: 'price-doge' }
+    ];
+    coins.forEach(c => {
+      const gbp = data[c.id]?.gbp;
+      const usd = data[c.id]?.usd;
+      if (gbp == null || usd == null) return;
+      const el = document.getElementById(c.el);
+      let arrow = '';
+      if (lastPrices && lastPrices[c.id]) {
+        const prev = lastPrices[c.id].usd;
+        if (usd > prev) arrow = ' <span class="up">▲</span>';
+        else if (usd < prev) arrow = ' <span class="down">▼</span>';
+      }
+      el.innerHTML = '£' + gbp.toLocaleString() + ' / $' + usd.toLocaleString() + arrow;
+    });
+    lastPrices = data;
+    localStorage.setItem('rudventur_last_prices', JSON.stringify(data));
+    statusEl.textContent = 'live · 60s';
+  } catch (e) {
+    statusEl.textContent = 'offline';
+    // Try to show cached data
+    if (lastPrices) {
+      ['bitcoin','ethereum','solana','dogecoin'].forEach((id, i) => {
+        const syms = ['btc','eth','sol','doge'];
+        const el = document.getElementById('price-' + syms[i]);
+        const gbp = lastPrices[id]?.gbp;
+        const usd = lastPrices[id]?.usd;
+        if (gbp && usd) el.innerHTML = '£' + gbp.toLocaleString() + ' / $' + usd.toLocaleString() + ' <span style="color:var(--text-muted)">(cached)</span>';
+      });
+    }
+  }
+}
+
+function startTicker() {
+  fetchCryptoPrices();
+  if (tickerInterval) clearInterval(tickerInterval);
+  tickerInterval = setInterval(fetchCryptoPrices, 60000);
+}
+
+
+/* ===== PB2 BUNKER ===== */
+function isEmbedded() {
+  try { return window.parent && window.parent !== window; } catch (e) { return true; }
+}
+
+function openParentBunker() {
+  try {
+    if (window.parent && window.parent !== window && window.parent.rvPopcorn && typeof window.parent.rvPopcorn.open === 'function') {
+      window.parent.rvPopcorn.open();
+      return true;
+    }
+  } catch (e) {}
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'rudventur-open-bunker', source: 'popcorn-hub' }, '*');
+    }
+  } catch (e) {}
+  return false;
+}
+
+function showLocalBunker(open) {
+  const panel = document.getElementById('bunker-panel');
+  const btn = document.getElementById('pb2-btn');
+  if (panel) {
+    panel.classList.toggle('open', !!open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  if (btn) btn.classList.toggle('on', !!open);
+}
+
+function openBunker() {
+  // Prefer the sealed desktop bunker (popcornWindow) when the hub is embedded.
+  if (openParentBunker()) {
+    showToast('🛢️ Sealed bunker opening — secret movie making', 'gold');
+    return;
+  }
+  showLocalBunker(true);
+  showToast('🛢️ Bunker open — secret movie making mode', 'gold');
+}
+
+function closeBunker() {
+  showLocalBunker(false);
+}
+
+function toggleBunker() {
+  const panel = document.getElementById('bunker-panel');
+  if (panel && panel.classList.contains('open')) closeBunker();
+  else openBunker();
+}
+
+/* ===== PIX DESCRIBER ===== */
+const PIX_CHALLENGES = [
+  { title: 'Picture of sunset on sea', indicators: ['horizon line', 'sun', 'water', 'cloud'] },
+  { title: 'Forest path adventure', indicators: ['trees', 'path', 'leaves', 'shadow'] },
+  { title: 'Mountain morning glow', indicators: ['mountains', 'sky', 'rocks', 'mist'] },
+  { title: 'River picnic day', indicators: ['river', 'trees', 'grass', 'sky'] },
+  { title: 'City night lights', indicators: ['buildings', 'lights', 'street', 'skyline'] },
+  { title: 'Cozy café corner', indicators: ['cup', 'table', 'window', 'chair'] },
+  { title: 'Desert road horizon', indicators: ['sand', 'road', 'horizon line', 'sky'] },
+  { title: 'Rainy window story', indicators: ['raindrops', 'glass', 'blur', 'light'] }
+];
+
+const Pix = {
+  index: 0,
+  stream: null,
+  earned: parseInt(localStorage.getItem('rudventur_popcoins_pix') || '0', 10) || 0,
+  camAsked: false
+};
+
+function pixRender() {
+  const c = PIX_CHALLENGES[Pix.index];
+  const title = document.getElementById('pix-title');
+  const inds = document.getElementById('pix-indicators');
+  const num = document.getElementById('pix-challenge-num');
+  const total = document.getElementById('pix-challenge-total');
+  const earned = document.getElementById('pix-earned');
+  if (title) title.textContent = '📛 ' + c.title;
+  if (inds) {
+    inds.innerHTML = c.indicators.map(function (x) {
+      return '<span class="pix-chip">📍 ' + escapeHtml(x) + '</span>';
+    }).join('');
+  }
+  if (num) num.textContent = String(Pix.index + 1);
+  if (total) total.textContent = String(PIX_CHALLENGES.length);
+  if (earned) earned.textContent = String(Pix.earned);
+}
+
+function pixShowFallback(msg) {
+  const fb = document.getElementById('pix-fallback');
+  const m = document.getElementById('pix-fallback-msg');
+  if (m && msg) m.textContent = msg;
+  if (fb) fb.classList.add('show');
+}
+
+function pixHideFallback() {
+  const fb = document.getElementById('pix-fallback');
+  if (fb) fb.classList.remove('show');
+}
+
+async function pixEnableCamera() {
+  Pix.camAsked = true;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    pixShowFallback('This browser cannot open a camera here. You can still finish the challenge.');
+    showToast('📷 Camera not available in this browser', 'normal');
+    return;
+  }
+  try {
+    if (Pix.stream) {
+      Pix.stream.getTracks().forEach(function (t) { t.stop(); });
+      Pix.stream = null;
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
+      audio: false
+    });
+    Pix.stream = stream;
+    const video = document.getElementById('pix-video');
+    if (video) {
+      video.srcObject = stream;
+      video.play().catch(function () {});
+    }
+    pixHideFallback();
+    showToast('📷 Camera live — find those indicators!', 'gold');
+  } catch (err) {
+    const denied = err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError');
+    pixShowFallback(denied
+      ? 'Camera permission denied. No worries — peek at the challenge and submit when you have snapped it another way.'
+      : 'Could not start the camera. Challenge still works without the live feed.');
+    showToast('📷 Camera unavailable — challenge still playable', 'normal');
+  }
+}
+
+function pixNextChallenge() {
+  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
+  pixRender();
+  showToast('🎲 New challenge unlocked', 'normal');
+}
+
+function awardPixPopCoins(reason) {
+  const coins = 1 + Math.floor(Math.random() * 200); // 1–200
+  Pix.earned += coins;
+  try { localStorage.setItem('rudventur_popcoins_pix', String(Pix.earned)); } catch (e) {}
+  // Shared wallet path: 100 pips = 1 PopCOIN. Treat awarded popCoins as pips
+  // (so 1–200 popCoins ≈ 0.01–2.00 PopCOIN) to stay within rate limits.
+  if (typeof window.PopCOINReward === 'function') {
+    try { window.PopCOINReward(coins, reason || 'pix-describer'); } catch (e) {}
+  } else {
+    // Fallback when the reward script is offline: keep a local popCoins tally only
+    try {
+      const frac = coins / 100;
+      State.balance = (parseFloat(State.balance) || 0) + frac;
+      localStorage.setItem('rudventur_popcoin_balance', State.balance.toFixed(4));
+      const wb = document.getElementById('wallet-balance');
+      if (wb) wb.textContent = State.balance.toFixed(4);
+    } catch (e) {}
+  }
+  const earned = document.getElementById('pix-earned');
+  if (earned) earned.textContent = String(Pix.earned);
+  showToast('📛 +' + coins + ' popCoins! Nice shot!', 'gold');
+  return coins;
+}
+
+function pixSubmitChallenge() {
+  const c = PIX_CHALLENGES[Pix.index];
+  awardPixPopCoins('pix:' + c.title);
+  // Advance to keep the game moving
+  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
+  pixRender();
+}
+
+function pixOnShow() {
+  pixRender();
+  if (!Pix.camAsked && !Pix.stream) {
+    // Soft prompt — do not auto-request until the user agrees
+    pixShowFallback('Tap “Enable camera” when you are happy to share the live view. 📛');
+  }
+}
+
 /* ===== INIT ===== */
+if (isEmbedded()) {
+  document.documentElement.classList.add('embedded');
+  document.getElementById('popcorn-panel').classList.add('active');
+}
+
+const pb2 = document.getElementById('pb2-btn');
+if (pb2) pb2.addEventListener('click', toggleBunker);
+const bunkerPanel = document.getElementById('bunker-panel');
+if (bunkerPanel) {
+  bunkerPanel.addEventListener('click', function (e) {
+    if (e.target === bunkerPanel) closeBunker();
+  });
+}
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeBunker();
+});
+
+pixRender();
 renderDescriptions();
 document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
 document.getElementById('multiplier').textContent = State.multiplier.toFixed(2) + '×';
-document.getElementById('last-hash').textContent = State.lastHash.substring(0, 12) + '...';
+document.getElementById('last-hash').textContent = State.lastHash.substring(0, 16) + '...';
+initMinerUI();
+startTicker();
 </script>
 
+<script src="https://rudventur.github.io/RudVentur.com/embed/popcoin-reward.js" defer></script>
+
+<script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" defer></script>
 </body>
 </html>

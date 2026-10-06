@@ -2083,11 +2083,13 @@ function openWindow(type) {
       id: 'popcorn',
       title: '🍿 Popcorn Hub',
       icon: '🍿',
-      x: 150,
-      y: 80,
-      width: 550,
-      height: 700,
-      content: '<div style="padding: 20px; color: var(--neon);"><h2>🍿 Popcorn Hub</h2><p>🍿 Accessibility Descriptions<br>🍪 Cookies Inspector<br>💰 Popcoin Mining</p><h3 style="margin-top: 15px;">🎮 Games</h3><p><a href="https://rudventur.github.io/cheese-ouiji-empire/" target="_blank" rel="noopener" style="color: var(--yellow);">🧀 Cheese Ouiji Empire</a><br><a href="https://rudventur.github.io/ChemVentur/" target="_blank" rel="noopener" style="color: var(--yellow);">☢️ ChemVentur</a><br><a href="https://www.soldat.pl" target="_blank" rel="noopener" style="color: var(--yellow);">🔫 Soldat.pl</a></p><p style="margin-top: 15px;">Replace with Popcorn Hub component!</p></div>'
+      x: 120,
+      y: 60,
+      width: 600,
+      height: 760,
+      noPadding: true,
+      // PB1 opens this hub; PB2 + PIX describer live inside bottom-right-popcorn-complete.html
+      content: '<iframe src="bottom-right-popcorn-complete.html" title="Popcorn Hub" allow="camera; microphone; clipboard-write; fullscreen" allowfullscreen loading="eager" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     }
   };
   
