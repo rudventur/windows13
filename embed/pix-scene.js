@@ -27,6 +27,17 @@
  *   object (small → medium → geo → big; the background stays) while more than
  *   one object is left; leftover steps free the remaining objects.
  *
+ * Doubles and triples: every emoji in a picture-line slot is its own target.
+ *   The settings give one object per picture-line slot (3); each extra emoji
+ *   from a double or triple adds one more object slot (medium, then small,
+ *   alternating) BEFORE the ease steps run, so nothing is silently dropped.
+ *
+ * Illegal bandit (all three bandits hit a jackpot): NO ease steps at all, and
+ *   every emoji on the illegal bandit's win line is ADDED as an extra required
+ *   indicator on top of the normal ones (buildings → big, people → medium,
+ *   flags → small). Illegal indicators always have a set place and size
+ *   (never unallocated) and carry a red "illegal" label. Super extra hard.
+ *
  * Public API (window.PixScene):
  *   mount(stageEl)              — add the canvas + label layers to the stage
  *   render(scene | null)        — draw (null = the empty default scene)
@@ -45,6 +56,12 @@
   var BLUE = '#3fa9ff';
   var TYPES = ['big', 'medium', 'small', 'geo'];
   var TYPE_LABEL = { background: 'background', big: 'big', medium: 'medium', small: 'small', geo: 'geo-nature' };
+  // Illegal emojis → indicator type (buildings big, people medium, flags small)
+  var ILLEGAL_TYPE = {
+    '⛪': 'big', '🕌': 'big', '🛕': 'big', '🕍': 'big', '⛩️': 'big', '🕋': 'big', '💒': 'big',
+    '🏳️‍🌈': 'small'
+  };
+  function illegalType(e) { return ILLEGAL_TYPE[e] || 'medium'; }
   var KEY = 'rudventur_pix_scene_v1';
 
   // ── Settings (saved in localStorage) ────────────────────────────────────
@@ -177,7 +194,9 @@
       placed.push(it);
       if (!it.shape) it.shape = it.type === 'big' ? 'box' : it.type === 'medium' ? 'ellipse' : 'circle';
       // Unallocated indicators (no set place and / or no set size)
-      if (!it.forcedFree) {
+      if (it.illegal) {
+        it.unalloc = null; // illegal indicators: place AND size are always set
+      } else if (!it.forcedFree) {
         it.unalloc = (s.unallocOn && !scene.noUnalloc && Math.random() * 100 < s.unalloc)
           ? pick(['noplace', 'nosize', 'free']) : null;
       }
@@ -192,13 +211,22 @@
     var p = PB();
     var jackpot = ch.jackpot || (p && p.jackpotFor ? p.jackpotFor(ch.centers) : { tier: 0, label: 'No jackpot' });
     var ease = ch.ease != null ? ch.ease : 1;
+    var illegal = ch.illegal && ch.illegal.active ? (ch.illegal.emojis || []).slice() : [];
 
     // 1) slots from the settings (the background is always there)
     var slots = [];
     TYPES.forEach(function (t) { for (var i = 0; i < s.counts[t]; i++) slots.push({ type: t }); });
 
-    // 2) jackpot → easier: remove objects smallest-first, then free the rest
-    var steps = (jackpot.tier || 0) * ease, removed = 0, freed = 0;
+    // 1b) doubles / triples: one more object slot per extra picture-line emoji
+    var lineSlots = ch.centerSlots ? ch.centerSlots.length : 3;
+    var payCount = 0, seenPay = Object.create(null);
+    ch.centers.forEach(function (e) { if (e && !seenPay[e]) { seenPay[e] = 1; payCount++; } });
+    var extra = Math.max(0, payCount - lineSlots);
+    for (var x = 0; x < extra; x++) slots.push({ type: x % 2 ? 'small' : 'medium', extra: true });
+
+    // 2) jackpot → easier: remove objects smallest-first, then free the rest.
+    //    Illegal bandit out (3 jackpots) → no ease at all.
+    var steps = illegal.length ? 0 : (jackpot.tier || 0) * ease, removed = 0, freed = 0;
     var dropOrder = ['small', 'medium', 'geo', 'big'];
     while (steps > 0 && slots.length > 1) {
       for (var d = 0; d < dropOrder.length; d++) {
@@ -238,13 +266,22 @@
       used[sl.emoji] = 1;
     });
 
+    // 4) illegal bandit: its emojis are extra REQUIRED indicators on top
+    var items = slots.map(function (sl) {
+      return { type: sl.type, emoji: sl.emoji, fromPayline: !!sl.fromPayline, forcedFree: !!sl.forcedFree, unalloc: sl.unalloc || null };
+    });
+    illegal.forEach(function (e) {
+      if (used[e]) return;
+      used[e] = 1;
+      items.push({ type: illegalType(e), emoji: e, illegal: true, fromPayline: false, forcedFree: false, unalloc: null });
+    });
+
     var scene = {
       background: { mode: s.background, emoji: bgSlot.emoji, fromPayline: !!bgSlot.fromPayline },
-      items: slots.map(function (sl) {
-        return { type: sl.type, emoji: sl.emoji, fromPayline: !!sl.fromPayline, forcedFree: !!sl.forcedFree, unalloc: sl.unalloc || null };
-      }),
-      jackpot: jackpot, ease: ease, easeSteps: (jackpot.tier || 0) * ease,
-      removed: removed, freed: freed, dropped: dropped, payline: ch.centers.slice()
+      items: items,
+      jackpot: jackpot, ease: ease, easeSteps: illegal.length ? 0 : (jackpot.tier || 0) * ease,
+      removed: removed, freed: freed, dropped: dropped, payline: ch.centers.slice(),
+      extra: extra, illegal: illegal
     };
     return layout(scene, s);
   }
@@ -293,8 +330,8 @@
     var out = [{ emoji: scene.background.emoji, type: 'background',
       text: (scene.background.mode === 'horizon' ? 'horizon background' : 'unified background') }];
     scene.items.forEach(function (it) {
-      out.push({ emoji: it.emoji, type: it.type, unalloc: it.unalloc,
-        text: TYPE_LABEL[it.type] + (it.unalloc ? ' · ' + unallocText(it.unalloc) : '') });
+      out.push({ emoji: it.emoji, type: it.type, unalloc: it.unalloc, illegal: !!it.illegal,
+        text: TYPE_LABEL[it.type] + (it.unalloc ? ' · ' + unallocText(it.unalloc) : '') + (it.illegal ? ' · 🚨 illegal' : '') });
     });
     return out;
   }
@@ -423,8 +460,8 @@
       shapePath(g, it.shape, x, y, w2, h2);
       stroke(GREEN, dash);
       labels.push({ x: x, y: y, emoji: it.emoji,
-        tag: TYPE_LABEL[it.type] + (it.unalloc === 'noplace' ? ' · any place' : ''),
-        cls: it.unalloc ? 'is-unalloc' : '' });
+        tag: (it.illegal ? '🚨 ' : '') + TYPE_LABEL[it.type] + (it.unalloc === 'noplace' ? ' · any place' : ''),
+        cls: (it.unalloc ? 'is-unalloc' : '') + (it.illegal ? ' is-illegal' : '') });
     });
 
     // Labels (HTML so emojis stay crisp and selectable)

@@ -594,9 +594,10 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 .pix-controls .pp-btn { width: 100%; padding: 0.65rem 0.6rem; font-size: 0.78rem; }
 .pix-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   margin: 10px 0 4px;
   color: var(--text-muted);
   font-size: 0.75rem;
@@ -1090,6 +1091,85 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 .pix-set-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .pix-set-actions .pp-btn { flex: 1 1 120px; width: auto; padding: 0.5rem 0.5rem; font-size: 0.7rem; }
 
+/* ===== PIX casino: doubles / triples, mini triplet reel, illegal bandit,
+   winnings breakdown (embed/pix-bandits.js) ===== */
+.pix-bandit-landed { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 1px; max-width: 100%; }
+.pix-bandit-landed i { font-style: normal; }
+.pix-bandit-landed.n-2 { font-size: 0.82rem; }
+.pix-bandit-landed.n-3 { font-size: 0.7rem; line-height: 1.05; width: 2.2em; }
+.pix-bandit-reel.is-multi { border-style: double; border-width: 3px; }
+.pix-bandit-reel.is-triple { box-shadow: 0 0 14px rgba(255, 215, 0, 0.55); }
+.pix-nest.is-max .pix-bandit-landed.n-2 { font-size: 1.1rem; }
+.pix-nest.is-max .pix-bandit-landed.n-3 { font-size: 0.92rem; }
+.pix-casino {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;
+  margin: 0 0 8px; padding: 5px 8px; border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.35); background: rgba(255, 215, 0, 0.05);
+  font-size: 0.66rem; color: var(--text-muted);
+}
+.pix-casino-bal { color: var(--text-main); }
+.pix-casino b { color: var(--gold); font-size: 0.8rem; }
+.pix-casino b.is-neg, .pix-neg { color: #ff3b5c !important; }
+.pix-casino-cost { margin-left: auto; }
+.pix-casino-note { flex-basis: 100%; color: #ff8fa3; font-size: 0.6rem; }
+.pix-bandit-result {
+  font-size: 0.58rem; text-align: center; color: var(--text-muted);
+  padding: 2px 3px; border-radius: 5px; min-height: 1.5em;
+}
+.pix-bandit-result.tier-1 { color: rgba(0, 255, 65, 0.75); }
+.pix-bandit.is-jackpot { border-color: var(--gold); box-shadow: 0 0 14px rgba(255, 215, 0, 0.35); }
+.pix-bandit.is-jackpot .pix-bandit-result { color: #000; background: var(--gold); font-weight: 700; }
+.pix-mini {
+  border: 1px solid var(--gold); border-radius: 8px; padding: 4px 5px;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.18), rgba(0, 0, 0, 0.75));
+  transform-origin: top center; animation: pixMiniPop 0.4s var(--ease) both;
+}
+.pix-mini-head { font-size: 0.56rem; color: var(--gold); font-weight: 700; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px; }
+.pix-mini-head span { color: var(--text-main); font-weight: 400; }
+.pix-mini-row { display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+.pix-mini-window {
+  width: 30px; height: 32px; flex: none; border-radius: 6px; border: 1.5px solid var(--gold);
+  background: #000; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; overflow: hidden;
+}
+.pix-mini.is-spinning .pix-mini-window span { animation: pixMiniBlur 0.14s linear infinite; }
+.pix-mini-log { display: flex; flex-wrap: wrap; gap: 2px; min-width: 0; }
+.pix-mini-log b { font-size: 0.62rem; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; animation: pixMiniPop 0.25s var(--ease) both; }
+.pix-mini-log b.is-win { background: var(--gold); color: #000; }
+.pix-mini-log b.is-miss { background: rgba(255, 42, 109, 0.35); color: #fff; }
+.pix-mini-mult { font-size: 0.6rem; margin-top: 3px; color: var(--text-muted); }
+.pix-mini.has-win .pix-mini-mult { color: var(--gold); font-weight: 700; }
+@keyframes pixMiniPop { 0% { transform: scale(0.4) translateY(-8px); opacity: 0; } 70% { transform: scale(1.06); opacity: 1; } 100% { transform: none; } }
+@keyframes pixMiniBlur { 0% { transform: translateY(-40%); filter: blur(1px); } 100% { transform: translateY(40%); filter: blur(1px); } }
+.pix-bandit-illegal {
+  margin-top: 8px; border: 1.5px solid #ff2a6d;
+  background: repeating-linear-gradient(135deg, rgba(255, 42, 109, 0.1) 0 8px, rgba(0, 0, 0, 0.6) 8px 16px);
+  box-shadow: 0 0 18px rgba(255, 42, 109, 0.45);
+}
+.pix-bandit-illegal .pix-bandit-label { color: #ff6b8e; font-weight: 700; white-space: normal; }
+.pix-bandit-illegal .pix-bandit-reel { border-color: #ff2a6d; width: 52px; height: 52px; }
+.pix-bandit-illegal .pix-bandit-landed { font-size: 1.3rem; }
+.pix-bandit-illegal .pix-bandit-landed.n-2 { font-size: 1rem; }
+.pix-bandit-illegal .pix-bandit-landed.n-3 { font-size: 0.82rem; }
+.pix-bandit-result.is-illegal { color: #fff; background: rgba(255, 42, 109, 0.4); font-size: 0.62rem; }
+.pix-bandit-illegal.is-popping { animation: pixIllegalPop 0.7s var(--ease) both; }
+@keyframes pixIllegalPop {
+  0% { transform: translateY(30px) scale(0.3) rotate(-6deg); opacity: 0; }
+  55% { transform: translateY(-4px) scale(1.05) rotate(2deg); opacity: 1; }
+  75% { transform: rotate(-1.5deg); }
+  100% { transform: none; }
+}
+.pix-jackpot.is-illegal { color: #fff; border-color: #ff2a6d; background: rgba(255, 42, 109, 0.22); font-weight: 700; }
+.pix-win {
+  margin-top: 6px; padding: 6px 8px; border-radius: 8px; font-size: 0.64rem; line-height: 1.45;
+  border: 1px dashed rgba(255, 215, 0, 0.35); color: var(--text-muted); word-break: break-word;
+}
+.pix-win strong { color: var(--gold); font-size: 0.9rem; display: block; }
+.pix-win.is-win { border-style: solid; border-color: var(--gold); background: rgba(255, 215, 0, 0.08); color: var(--text-main); }
+.pix-win.is-pending { visibility: hidden; }
+.pix-scene-label.is-illegal { border-color: #ff2a6d; background: rgba(60, 0, 15, 0.88); }
+.pix-chip.is-illegal { border-color: #ff2a6d; background: rgba(255, 42, 109, 0.14); }
+.pix-jackpot-badge.is-illegal { color: #ff8fa3; font-weight: 700; }
+
 /* ===== Small screens ===== */
 .pp-tabs { overflow-x: auto; scrollbar-width: none; }
 .pp-tabs::-webkit-scrollbar { display: none; }
@@ -1111,9 +1191,13 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   .pix-set-body { grid-template-columns: 1fr; }
   .pix-scene-label i { display: none; }
   .pix-scene-label { padding: 1px 5px 1px 4px; }
+  .pix-casino-cost { margin-left: 0; }
+  .pix-bandit-illegal .pix-bandit-reel { width: 46px; height: 46px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .pix-scene-chip, .pix-bopt, .pix-set-win { animation: none; }
+  .pix-mini, .pix-mini-log b, .pix-bandit-illegal.is-popping, .pix-bandit-reel.spinning .pix-bandit-landed { animation: none; }
+  .pix-mini.is-spinning .pix-mini-window span { animation: none; }
 }
 
 /* ===== BUNKER PANEL ===== */
@@ -1531,12 +1615,13 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
     <div class="tab-view" id="view-pix">
       <h3 style="color: var(--gold); margin-bottom: 8px;">📛 PIX PANEL</h3>
       <p class="pix-hint">
-        Spin the emoji bandits for your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size). Frame the scene, then submit for random popCoins (1–200). A jackpot on the bandits makes the picture easier. ⚙️ changes the scene.
+        Spin the emoji bandits for your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size). Frame the scene, then submit for random photo popCoins (1–200). A jackpot on the bandits makes the picture easier, but if all three hit a jackpot the illegal bandit pops out and the picture gets super extra hard. Each spin costs 1 casino popCoin; jackpots and the mini reel pay into your casino balance. ⚙️ changes the scene.
       </p>
 
       <div class="pix-meta">
         <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
-        <span>Earned <strong id="pix-earned">0</strong> popCoins</span>
+        <span title="popCoins from the “I took it” photo award (1–200 each)">📸 Photo popCoins <strong id="pix-earned">0</strong></span>
+        <span title="Bandit winnings minus spin costs; may go below zero (later: bank credit)">🎰 Casino popCoins <strong id="pix-casino">0</strong></span>
       </div>
 
       <!-- Nested bandit window (window-in-window). Open while the player has
@@ -2509,8 +2594,10 @@ function pixRender() {
     if (sc && sc.jackpot) {
       const j = sc.jackpot;
       const b = document.createElement('span');
-      b.className = 'pix-jackpot-badge';
+      const ill = sc.illegal && sc.illegal.length;
+      b.className = 'pix-jackpot-badge' + (ill ? ' is-illegal' : '');
       b.textContent = sc.fromSpec ? 'Worked example'
+        : ill ? '🚨 3 jackpots · illegal bandit → +' + sc.illegal.length + ' illegal indicators, no ease'
         : j.tier ? '🎉 ' + j.label + ' → ' + (sc.removed ? sc.removed + ' fewer' : 'no fewer') + (sc.freed ? ', ' + sc.freed + ' freed' : '') + ' indicators'
         : 'No jackpot · full challenge';
       title.appendChild(b);
@@ -2524,7 +2611,7 @@ function pixRender() {
     inds.innerHTML = list.map(function (d) {
       // ZWJ sequences (🐕‍🦺 🐈‍⬛ 🐻‍❄️) are one target each
       const seq = pixIsSeq(d.emoji);
-      return '<span class="pix-chip' + (d.unalloc ? ' is-unalloc' : '') + '"' +
+      return '<span class="pix-chip' + (d.unalloc ? ' is-unalloc' : '') + (d.illegal ? ' is-illegal' : '') + '"' +
         (seq ? ' title="Emoji sequence (ZWJ) — one target"' : '') + '>' + d.emoji +
         (d.text ? '<small>' + d.text + '</small>' : '') + '</span>';
     }).join('');
@@ -2534,6 +2621,21 @@ function pixRender() {
   if (num) num.textContent = String(Pix.spinCount);
   if (total) total.textContent = has ? Pix.targets.length + ' emoji' : 'emoji';
   if (earned) earned.textContent = String(Pix.earned);
+  pixRenderCasino();
+}
+
+// Casino popCoins (bandit winnings minus spin costs) live in
+// embed/pix-bandits.js (local storage rudventur_pix_casino_v1). They are a
+// separate balance from the photo popCoins above and from the shared wallet.
+// A negative casino balance shows in red. FUTURE (not built): bank credit —
+// going below zero will later need a bank credit line; the illegal bandit is
+// where losing popCoins will come in.
+function pixRenderCasino() {
+  const el = document.getElementById('pix-casino');
+  if (!el || !window.PixBandits || typeof window.PixBandits.getCasino !== 'function') return;
+  const c = window.PixBandits.getCasino();
+  el.textContent = c.balanceText;
+  el.classList.toggle('pix-neg', c.negative);
 }
 
 function pixShowFallback(msg) {
@@ -2596,7 +2698,14 @@ function pixNextChallenge() {
     Pix.nestOpen = true;
   }
   pixApplyChallenge(ch);
-  showToast('🎰 Bandits spun — new emoji targets!', 'normal');
+  const c = ch && ch.casino;
+  if (ch && ch.illegal && ch.illegal.active) {
+    showToast('🚨 3 jackpots! The illegal bandit popped out — super extra hard picture', 'gold');
+  } else if (c && c.total !== '0') {
+    showToast('💰 +' + c.totalText + ' casino popCoins!', 'gold');
+  } else {
+    showToast('🎰 Bandits spun — new emoji targets!', 'normal');
+  }
 }
 
 function awardPixPopCoins(reason) {
@@ -2682,6 +2791,14 @@ if (isEmbedded()) pb1Greet();
 
 pixEnsureBandits();
 pixRender();
+if (/pix-force-/.test(location.hash)) {
+  // Debug: #pix-force-triple, #pix-force-streak-3, #pix-force-3jackpots …
+  // (see embed/pix-bandits.js) opens the PIX PANEL and spins once with the
+  // forced outcome so every path can be checked.
+  document.getElementById('popcorn-panel').classList.add('active');
+  switchToTab('pix');
+  pixNextChallenge();
+}
 if (/pix-example/.test(location.hash)) {
   // #pix-example: open the PIX PANEL on the worked example (handy for demos)
   document.getElementById('popcorn-panel').classList.add('active');
