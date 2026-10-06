@@ -33,7 +33,15 @@ body {
   background-size: 45px 45px;
 }
 
-/* ===== FLOATING TRIGGER ===== */
+/* ===== FLOATING TRIGGER — PB1, popped with love ❤️ =====
+   Warm butter-gold glow + a soft "lub-dub" heartbeat (animates the
+   individual `scale` property so hover can still tilt via `rotate`).
+   A tiny ❤ badge beats along; clicks release a few rising hearts. */
+:root {
+  --pb1-butter: #ffcf5a;
+  --pb1-cream: #fff3d6;
+  --pb1-heart: #ff4d7d;
+}
 #popcorn-trigger {
   position: fixed;
   bottom: 32px;
@@ -41,29 +49,80 @@ body {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: #001a00;
-  border: 2.5px solid var(--neon-green);
-  box-shadow: 0 0 18px var(--neon-dim), inset 0 0 12px var(--neon-dim);
-  color: var(--neon-green);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 243, 214, 0.22), transparent 42%),
+    radial-gradient(circle at 50% 60%, #3a2100 0%, #160800 72%);
+  border: 2.5px solid var(--pb1-butter);
+  box-shadow: 0 0 16px rgba(255, 190, 80, 0.5), 0 0 34px rgba(255, 77, 125, 0.18), inset 0 0 14px rgba(255, 207, 90, 0.25);
+  color: var(--pb1-cream);
   font-size: 2.4rem;
   cursor: pointer;
   z-index: 999999;
   display: flex;
   align-items:center;
   justify-content:center;
-  transition: all 0.4s var(--ease);
-  animation: pulse 6.2s infinite ease-in-out;
+  transition: rotate 0.45s var(--ease), translate 0.45s var(--ease), box-shadow 0.35s ease;
+  animation: pb1Beat 2.8s infinite ease-in-out;
   user-select: none;
 }
-
-#popcorn-trigger:hover {
-  transform: scale(1.16) rotate(-12deg);
-  box-shadow: 0 0 36px var(--neon-green);
+#popcorn-trigger::after {
+  content: '❤';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: var(--pb1-heart);
+  text-shadow: 0 0 6px rgba(255, 77, 125, 0.8);
+  animation: pb1Beat 2.8s infinite ease-in-out;
+  pointer-events: none;
 }
-
+#popcorn-trigger:hover,
+#popcorn-trigger:focus-visible {
+  rotate: -10deg;
+  translate: 0 -4px;
+  outline: none;
+  box-shadow: 0 0 26px rgba(255, 207, 90, 0.85), 0 0 48px rgba(255, 77, 125, 0.4), inset 0 0 16px rgba(255, 207, 90, 0.35);
+}
+#popcorn-trigger:active { translate: 0 1px; }
+@keyframes pb1Beat {
+  0%, 100% { scale: 1; }
+  10% { scale: 1.09; }
+  20% { scale: 0.98; }
+  30% { scale: 1.06; }
+  44% { scale: 1; }
+}
+/* kept for older references */
 @keyframes pulse {
-  0%,100% { transform: translateY(0); box-shadow: 0 0 18px var(--neon-dim); }
-  50% { transform: translateY(-10px); box-shadow: 0 0 32px rgba(0,255,65,0.45); }
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+/* little hearts + kernels that float up when PB1 is tapped */
+.pb1-float {
+  position: fixed;
+  z-index: 1000000;
+  pointer-events: none;
+  font-size: 18px;
+  line-height: 1;
+  animation: pb1Float 1.1s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes pb1Float {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -70px))) scale(1.1) rotate(var(--rot, 0deg)); }
+}
+/* tiny beating heart beside the hub title */
+.pp-heart {
+  color: var(--pb1-heart);
+  font-size: 0.8em;
+  text-shadow: 0 0 8px rgba(255, 77, 125, 0.7);
+  display: inline-block;
+  animation: pb1Beat 2.8s infinite ease-in-out;
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  #popcorn-trigger, #popcorn-trigger::after, .pp-heart { animation: none; }
+  .pb1-float { display: none; }
 }
 
 /* ===== MAIN PANEL ===== */
@@ -549,6 +608,226 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   line-height: 1.45;
 }
 
+/* ===== PIX EMOJI BANDITS ===== */
+.pix-bandits {
+  margin: 10px 0 4px;
+  padding: 10px;
+  border: 1px solid rgba(0, 255, 65, 0.28);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 215, 0, 0.06), transparent 50%),
+    rgba(0, 20, 8, 0.55);
+  box-shadow: inset 0 0 18px rgba(0, 255, 65, 0.06);
+}
+.pix-bandits-header {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.pix-bandits-sub {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.68rem;
+  margin-left: 6px;
+}
+.pix-bandits-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pix-bandit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 65, 0.35);
+  background: rgba(0, 10, 4, 0.65);
+  min-width: 0;
+}
+.pix-bandit-label {
+  font-size: 0.62rem;
+  color: var(--bandit-accent, var(--neon-green));
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pix-bandit-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  justify-content: center;
+  max-height: 52px;
+  overflow: hidden;
+  padding: 3px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(0, 255, 65, 0.2);
+}
+.pix-bandit-pool-emoji {
+  font-size: 0.62rem;
+  line-height: 1.15;
+  opacity: 0.85;
+}
+.pix-bandit-reels {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.pix-bandit-reel {
+  width: 36px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 215, 0, 0.45);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+  transition: transform 0.25s var(--ease), border-color 0.25s;
+}
+.pix-bandit-reel.is-center {
+  border-color: var(--bandit-accent, var(--neon-green));
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
+  transform: scale(1.06);
+}
+.pix-bandit-landed {
+  font-size: 1.25rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.25));
+}
+.pix-bandit-reel.spinning .pix-bandit-landed {
+  animation: pixBanditPop 0.45s var(--ease);
+}
+@keyframes pixBanditPop {
+  0% { transform: translateY(-10px) scale(0.7); opacity: 0.3; }
+  60% { transform: translateY(2px) scale(1.12); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+.pix-bandit-reset {
+  width: 100%;
+  padding: 0.35rem 0.3rem !important;
+  font-size: 0.65rem !important;
+  margin-top: 2px;
+}
+.pix-bandits-spin-all {
+  width: 100%;
+  margin-top: 8px;
+  padding: 0.55rem 0.5rem !important;
+  font-size: 0.75rem !important;
+  background: rgba(255, 215, 0, 0.08);
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+@media (max-width: 420px) {
+  .pix-bandits-row { grid-template-columns: 1fr; }
+  .pix-bandit-pool { max-height: 40px; }
+}
+.pix-bandit-landed.is-zwj,
+.pix-bandit-pool-emoji.is-zwj { cursor: help; }
+
+/* ===== NESTED BANDIT WINDOW (window-in-window inside the PIX view) =====
+   Open/closed follows the player's active achievement targets (the three
+   landed centre emojis). Maximise fills ONLY the PIX panel: #view-pix is a
+   positioned, transformed .tab-view, so `position:absolute; inset:0` clips
+   to it — never the popcorn chrome / desktop. */
+.pix-nest { margin: 10px 0 8px; }
+.pix-nest-dock {
+  display: none;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 215, 0, 0.55);
+  background: rgba(255, 215, 0, 0.06);
+  color: var(--gold);
+  font: 700 0.75rem var(--font);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, transform 0.25s var(--ease);
+}
+.pix-nest-dock:hover { background: rgba(255, 215, 0, 0.13); transform: translateY(-1px); }
+.pix-nest-dock .pix-nest-dock-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pix-nest-dock .pix-nest-dock-targets { font-size: 1rem; letter-spacing: 2px; }
+.pix-nest.is-closed .pix-nest-dock { display: flex; }
+.pix-nest.is-closed .pix-nest-win { display: none; }
+.pix-nest-win {
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #010c05; /* opaque so a maximised window fully covers the PIX view */
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 215, 0, 0.16);
+  animation: pixNestIn 0.32s var(--ease);
+  display: flex;
+  flex-direction: column;
+}
+@keyframes pixNestIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.pix-nest-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 4px 0 10px;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.16), rgba(0, 40, 15, 0.6));
+  border-bottom: 1px solid rgba(255, 215, 0, 0.35);
+  color: var(--gold);
+  font: 700 0.72rem var(--font);
+  user-select: none;
+  flex: none;
+}
+.pix-nest-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pix-nest-targets { margin-left: 6px; letter-spacing: 2px; color: var(--text-main); font-weight: 400; }
+.pix-nest-bar button {
+  width: 28px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--gold);
+  font: 14px/1 var(--font);
+  cursor: pointer;
+}
+.pix-nest-bar button:hover { background: rgba(255, 215, 0, 0.15); }
+.pix-nest-bar button.pix-nest-x:hover { background: rgba(255, 42, 109, 0.3); color: #fff; }
+.pix-nest-body { padding: 0 8px 8px; overflow: auto; }
+.pix-nest-body .pix-bandits { margin-top: 8px; }
+.pix-zwj-hint {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  line-height: 1.4;
+}
+/* maximised: fill the PIX panel only (clipped to it) */
+#view-pix.pix-nest-max-on { overflow: hidden; }
+.pix-nest.is-max .pix-nest-win {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border-radius: 0;
+  border-width: 0;
+  animation: pixNestMax 0.28s var(--ease);
+}
+.pix-nest.is-max .pix-nest-body { flex: 1; min-height: 0; }
+.pix-nest.is-max .pix-bandit-reel { width: 48px; height: 56px; }
+.pix-nest.is-max .pix-bandit-landed { font-size: 1.7rem; }
+.pix-nest.is-max .pix-bandit-pool { max-height: 96px; }
+.pix-nest.is-max .pix-bandit-pool-emoji { font-size: 0.8rem; }
+@keyframes pixNestMax {
+  from { opacity: 0.6; transform: scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+.pix-title-badge.no-targets { border-style: dashed; opacity: 0.85; }
+@media (prefers-reduced-motion: reduce) {
+  .pix-nest-win, .pix-nest.is-max .pix-nest-win { animation: none; }
+}
+
 /* ===== BUNKER PANEL ===== */
 #bunker-panel {
   position: fixed;
@@ -897,17 +1176,18 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="embed/pix-bandits.js"></script>
 </head>
 
 <body>
 
 <!-- TRIGGER BUTTON -->
-<button id="popcorn-trigger" title="Popcorn Accessibility Hub">🍿</button>
+<button id="popcorn-trigger" type="button" title="PB1 · Popcorn Hub — freshly popped with ❤️" aria-label="Open the Popcorn Hub (PB1), made with love">🍿</button>
 
 <!-- MAIN PANEL -->
 <div id="popcorn-panel">
   <div class="pp-header">
-    <div data-rv-logo class="pp-title">🍿 POPCORN HUB</div>
+    <div data-rv-logo class="pp-title">🍿 POPCORN HUB <span class="pp-heart" title="popped with love" aria-hidden="true">❤</span></div>
     <div class="pp-header-actions">
       <button type="button" id="pb2-btn" class="pb2-btn" title="Open the bunker for secret movie making">🍿 PB2</button>
       <button class="pp-close" id="pp-close">×</button>
@@ -958,12 +1238,37 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
     <div class="tab-view" id="view-pix">
       <h3 style="color: var(--gold); margin-bottom: 8px;">📛 Pix Describer</h3>
       <p class="pix-hint">
-        Point your camera at the challenge. Match the picture indicators, then submit for random popCoins (1–200). Soft &amp; playful — no pressure, just popcorn vibes.
+        Spin the emoji bandits for 3 photo targets — they pop up in their own little window (close it any time, ⤢ to fill this panel). Point your camera at a matching scene, then submit for random popCoins (1–200). Soft &amp; playful — no pressure, just popcorn vibes.
       </p>
 
       <div class="pix-meta">
-        <span>Challenge <strong id="pix-challenge-num">1</strong> / <span id="pix-challenge-total">6</span></span>
+        <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
         <span>Earned <strong id="pix-earned">0</strong> popCoins</span>
+      </div>
+
+      <!-- Nested bandit window (window-in-window). Open while the player has
+           active achievement targets; closing keeps targets; ⤢ fills the PIX
+           panel only. Cheese Casino–style bandits: embed/pix-bandits.js -->
+      <div class="pix-nest is-closed" id="pix-nest">
+        <button type="button" class="pix-nest-dock" id="pix-nest-dock" onclick="pixNestOpen()" aria-controls="pix-nest-win">
+          <span>🎰</span>
+          <span class="pix-nest-dock-label" id="pix-nest-dock-label">Spin the bandits for your photo targets</span>
+          <span class="pix-nest-dock-targets" id="pix-nest-dock-targets"></span>
+          <span aria-hidden="true">▸</span>
+        </button>
+        <div class="pix-nest-win" id="pix-nest-win" role="region" aria-label="Emoji bandits window">
+          <div class="pix-nest-bar" id="pix-nest-bar" title="Double-click to maximise inside the PIX panel">
+            <span class="pix-nest-title">🎰 Emoji Bandits <span class="pix-nest-targets" id="pix-nest-targets"></span></span>
+            <button type="button" id="pix-nest-max" onclick="pixNestToggleMax()" title="Maximise inside the PIX panel" aria-label="Maximise bandits window">⤢</button>
+            <button type="button" class="pix-nest-x" id="pix-nest-close" onclick="pixNestClose()" title="Close (your targets stay active)" aria-label="Close bandits window">×</button>
+          </div>
+          <div class="pix-nest-body">
+            <div id="pix-bandits-root"></div>
+            <!-- Some targets are ZWJ emoji sequences (several emoji joined by
+                 U+200D), e.g. 👨‍👩‍👧 family, 🚴‍♀️ biker, 🏳️‍🌈 rainbow flag. -->
+            <p class="pix-zwj-hint">ℹ️ Some targets are emoji <em>sequences</em> (ZWJ) like 👨‍👩‍👧 family, 🚴‍♀️ biker or 🏳️‍🌈 rainbow flag — each counts as one target, even if your font draws it in pieces.</p>
+          </div>
+        </div>
       </div>
 
       <div class="pix-stage" id="pix-stage">
@@ -974,14 +1279,14 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
           <div style="color:var(--gold);font-size:0.75rem;">You can still browse the challenge and submit when ready.</div>
         </div>
         <div class="pix-overlay">
-          <div class="pix-title-badge" id="pix-title">📛 Picture of sunset on sea</div>
+          <div class="pix-title-badge" id="pix-title">📛 🌳 🚗 ☀️</div>
           <div class="pix-indicators" id="pix-indicators"></div>
         </div>
       </div>
 
       <div class="pix-controls">
         <button type="button" class="pp-btn" id="pix-cam-btn" onclick="pixEnableCamera()">📷 Enable camera</button>
-        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎲 New challenge</button>
+        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎰 New challenge</button>
         <button type="button" class="pp-btn" id="pix-submit-btn" onclick="pixSubmitChallenge()" style="grid-column:1/-1;background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);">✨ I took it — award popCoins</button>
       </div>
     </div>
@@ -1187,9 +1492,47 @@ const State = {
   mining: false
 };
 
+/* ===== PB1 HEART TOUCHES ===== */
+// A handful of hearts + kernels drift up from PB1 when it is tapped.
+function pb1Burst(btn) {
+  if (!btn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const r = btn.getBoundingClientRect();
+  const bits = ['❤️', '🍿', '💛', '🍿', '❤️'];
+  bits.forEach(function (ch, i) {
+    const s = document.createElement('span');
+    s.className = 'pb1-float';
+    s.textContent = ch;
+    s.style.left = (r.left + r.width / 2) + 'px';
+    s.style.top = (r.top + r.height / 2) + 'px';
+    s.style.setProperty('--dx', Math.round((i - 2) * 22 + (Math.random() * 14 - 7)) + 'px');
+    s.style.setProperty('--dy', Math.round(-60 - Math.random() * 50) + 'px');
+    s.style.setProperty('--rot', Math.round(Math.random() * 50 - 25) + 'deg');
+    s.style.animationDelay = (i * 45) + 'ms';
+    document.body.appendChild(s);
+    setTimeout(function () { s.remove(); }, 1400 + i * 45);
+  });
+}
+
+// One warm hello per session — no nagging.
+function pb1Greet() {
+  try {
+    if (sessionStorage.getItem('rudventur_pb1_hello')) return;
+    sessionStorage.setItem('rudventur_pb1_hello', '1');
+  } catch (e) {}
+  const lines = [
+    '🍿❤️ Freshly popped, just for you.',
+    '🍿 Warm batch ready — made with ❤️',
+    '🍿 Hello you! Butter’s on us ❤️'
+  ];
+  setTimeout(function () { showToast(lines[Math.floor(Math.random() * lines.length)], 'gold'); }, 350);
+}
+
 /* ===== PANEL TOGGLE ===== */
-document.getElementById('popcorn-trigger').onclick = () => {
-  document.getElementById('popcorn-panel').classList.toggle('active');
+document.getElementById('popcorn-trigger').onclick = function () {
+  const panel = document.getElementById('popcorn-panel');
+  panel.classList.toggle('active');
+  pb1Burst(this);
+  if (panel.classList.contains('active')) pb1Greet();
 };
 
 document.getElementById('pp-close').onclick = () => {
@@ -1620,40 +1963,146 @@ function toggleBunker() {
   else openBunker();
 }
 
-/* ===== PIX DESCRIBER ===== */
-const PIX_CHALLENGES = [
-  { title: 'Picture of sunset on sea', indicators: ['horizon line', 'sun', 'water', 'cloud'] },
-  { title: 'Forest path adventure', indicators: ['trees', 'path', 'leaves', 'shadow'] },
-  { title: 'Mountain morning glow', indicators: ['mountains', 'sky', 'rocks', 'mist'] },
-  { title: 'River picnic day', indicators: ['river', 'trees', 'grass', 'sky'] },
-  { title: 'City night lights', indicators: ['buildings', 'lights', 'street', 'skyline'] },
-  { title: 'Cozy café corner', indicators: ['cup', 'table', 'window', 'chair'] },
-  { title: 'Desert road horizon', indicators: ['sand', 'road', 'horizon line', 'sky'] },
-  { title: 'Rainy window story', indicators: ['raindrops', 'glass', 'blur', 'light'] }
-];
-
+/* ===== PIX DESCRIBER (emoji bandits) ===== */
 const Pix = {
-  index: 0,
+  spinCount: parseInt(localStorage.getItem('rudventur_pix_spins') || '0', 10) || 0,
   stream: null,
   earned: parseInt(localStorage.getItem('rudventur_popcoins_pix') || '0', 10) || 0,
-  camAsked: false
+  camAsked: false,
+  challenge: { title: '🌳 🚗 ☀️', indicators: ['🌳', '🚗', '☀️'] },
+  banditsReady: false,
+  // Active achievement targets = the landed centre emojis of the last spin.
+  // null until the player spins; cleared when they hit “I took it”.
+  targets: null,
+  justAchieved: false,
+  nestOpen: false,
+  nestMax: false
 };
 
+function pixHasTargets() {
+  return Array.isArray(Pix.targets) && Pix.targets.length > 0;
+}
+
+function pixIsSeq(e) {
+  return !!(window.PixBandits && typeof window.PixBandits.isSequence === 'function' && window.PixBandits.isSequence(e));
+}
+
+/* ----- Nested bandit window (window-in-window inside the PIX view) -----
+   Tied to targets: a spin / reset opens it with the result; × closes it but
+   keeps the targets (dock pill reopens); with no targets the dock spins.
+   ⤢ maximises only to the PIX panel (#view-pix), never past the hub chrome. */
+function pixNestSync() {
+  const nest = document.getElementById('pix-nest');
+  const view = document.getElementById('view-pix');
+  if (!nest) return;
+  const has = pixHasTargets();
+  if (!has) { Pix.nestOpen = false; }
+  if (!Pix.nestOpen) Pix.nestMax = false;
+  nest.classList.toggle('is-closed', !Pix.nestOpen);
+  nest.classList.toggle('is-max', Pix.nestOpen && Pix.nestMax);
+  if (view) view.classList.toggle('pix-nest-max-on', Pix.nestOpen && Pix.nestMax);
+
+  const label = document.getElementById('pix-nest-dock-label');
+  const dockT = document.getElementById('pix-nest-dock-targets');
+  const barT = document.getElementById('pix-nest-targets');
+  const maxBtn = document.getElementById('pix-nest-max');
+  const tStr = has ? Pix.targets.join(' ') : '';
+  if (label) {
+    label.textContent = has
+      ? 'Your targets — open the bandits'
+      : (Pix.justAchieved ? '🎉 Nailed it! Spin for your next targets' : 'Spin the bandits for your photo targets');
+  }
+  if (dockT) dockT.textContent = tStr;
+  if (barT) barT.textContent = tStr ? '· 🎯 ' + tStr : '';
+  if (maxBtn) {
+    maxBtn.textContent = Pix.nestMax ? '⤡' : '⤢';
+    maxBtn.title = Pix.nestMax ? 'Restore inside the PIX panel' : 'Maximise inside the PIX panel';
+    maxBtn.setAttribute('aria-label', Pix.nestMax ? 'Restore bandits window' : 'Maximise bandits window');
+  }
+}
+
+function pixNestOpen() {
+  pixEnsureBandits();
+  if (!pixHasTargets()) {
+    // No active targets yet: opening = spinning for some (opens on result)
+    pixNextChallenge();
+    return;
+  }
+  Pix.nestOpen = true;
+  pixNestSync();
+}
+
+function pixNestClose() {
+  Pix.nestOpen = false;
+  Pix.nestMax = false;
+  pixNestSync();
+}
+
+function pixNestToggleMax() {
+  if (!Pix.nestOpen) return;
+  Pix.nestMax = !Pix.nestMax;
+  const view = document.getElementById('view-pix');
+  if (Pix.nestMax && view) view.scrollTop = 0; // pin to the panel's top-left
+  pixNestSync();
+}
+
+function pixGetChallenge() {
+  if (window.PixBandits && typeof window.PixBandits.getChallenge === 'function') {
+    return window.PixBandits.getChallenge();
+  }
+  return Pix.challenge;
+}
+
+function pixApplyChallenge(ch) {
+  if (!ch) return;
+  Pix.challenge = ch;
+  pixRender();
+}
+
+function pixEnsureBandits() {
+  if (Pix.banditsReady) return;
+  const root = document.getElementById('pix-bandits-root');
+  if (!root || !window.PixBandits) return;
+  const ch = window.PixBandits.mount(root);
+  window.PixBandits.onChange(function (next) {
+    // Any spin / reset is a fresh result → active targets → show the window
+    if (next && next.reason !== 'mount') {
+      if (next.reason === 'spin') {
+        Pix.spinCount += 1;
+        try { localStorage.setItem('rudventur_pix_spins', String(Pix.spinCount)); } catch (e) {}
+      }
+      Pix.targets = (next.centers || next.indicators || []).slice();
+      Pix.justAchieved = false;
+      Pix.nestOpen = true;
+    }
+    pixApplyChallenge(next);
+  });
+  Pix.banditsReady = true;
+  if (ch) pixApplyChallenge(ch);
+}
+
 function pixRender() {
-  const c = PIX_CHALLENGES[Pix.index];
+  const c = pixGetChallenge();
   const title = document.getElementById('pix-title');
   const inds = document.getElementById('pix-indicators');
   const num = document.getElementById('pix-challenge-num');
   const total = document.getElementById('pix-challenge-total');
   const earned = document.getElementById('pix-earned');
-  if (title) title.textContent = '📛 ' + c.title;
+  const has = pixHasTargets();
+  if (title) {
+    title.textContent = has ? '📛 ' + Pix.targets.join(' ') : '📛 Spin the bandits for targets 🎰';
+    title.classList.toggle('no-targets', !has);
+  }
   if (inds) {
-    inds.innerHTML = c.indicators.map(function (x) {
-      return '<span class="pix-chip">📍 ' + escapeHtml(x) + '</span>';
+    const list = has ? Pix.targets : [];
+    inds.innerHTML = list.map(function (x) {
+      // ZWJ sequences (👨‍👩‍👧 🚴‍♀️ 🏳️‍🌈) are one target each
+      return '<span class="pix-chip"' + (pixIsSeq(x) ? ' title="Emoji sequence (ZWJ) — one target"' : '') + '>' + x + '</span>';
     }).join('');
   }
-  if (num) num.textContent = String(Pix.index + 1);
-  if (total) total.textContent = String(PIX_CHALLENGES.length);
+  pixNestSync();
+  if (num) num.textContent = String(Pix.spinCount);
+  if (total) total.textContent = 'emoji';
   if (earned) earned.textContent = String(Pix.earned);
 }
 
@@ -1692,7 +2141,7 @@ async function pixEnableCamera() {
       video.play().catch(function () {});
     }
     pixHideFallback();
-    showToast('📷 Camera live — find those indicators!', 'gold');
+    showToast('📷 Camera live — find those emoji vibes!', 'gold');
   } catch (err) {
     const denied = err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError');
     pixShowFallback(denied
@@ -1703,9 +2152,21 @@ async function pixEnableCamera() {
 }
 
 function pixNextChallenge() {
-  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
-  pixRender();
-  showToast('🎲 New challenge unlocked', 'normal');
+  pixEnsureBandits();
+  let ch;
+  if (window.PixBandits && typeof window.PixBandits.spinAll === 'function') {
+    // onChange (reason 'spin') counts the spin, sets targets, opens the window
+    ch = window.PixBandits.spinAll();
+  } else {
+    ch = Pix.challenge;
+    Pix.spinCount += 1;
+    try { localStorage.setItem('rudventur_pix_spins', String(Pix.spinCount)); } catch (e) {}
+    Pix.targets = (ch.indicators || []).slice();
+    Pix.justAchieved = false;
+    Pix.nestOpen = true;
+  }
+  pixApplyChallenge(ch);
+  showToast('🎰 Bandits spun — new emoji targets!', 'normal');
 }
 
 function awardPixPopCoins(reason) {
@@ -1733,14 +2194,20 @@ function awardPixPopCoins(reason) {
 }
 
 function pixSubmitChallenge() {
-  const c = PIX_CHALLENGES[Pix.index];
-  awardPixPopCoins('pix:' + c.title);
-  // Advance to keep the game moving
-  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
+  if (!pixHasTargets()) {
+    showToast('🎰 Spin the bandits first — then snap your targets!', 'normal');
+    return;
+  }
+  awardPixPopCoins('pix:' + Pix.targets.join(' '));
+  // Targets achieved → clear them; the nested bandit window closes with them.
+  // The dock pill (or 🎰 New challenge) spins the next set.
+  Pix.targets = null;
+  Pix.justAchieved = true;
   pixRender();
 }
 
 function pixOnShow() {
+  pixEnsureBandits();
   pixRender();
   if (!Pix.camAsked && !Pix.stream) {
     // Soft prompt — do not auto-request until the user agrees
@@ -1763,9 +2230,20 @@ if (bunkerPanel) {
   });
 }
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeBunker();
+  if (e.key !== 'Escape') return;
+  if (Pix.nestMax) { pixNestToggleMax(); return; } // restore nested window first
+  closeBunker();
 });
+const pixNestBar = document.getElementById('pix-nest-bar');
+if (pixNestBar) {
+  pixNestBar.addEventListener('dblclick', function (e) {
+    if (e.target.closest('button')) return;
+    pixNestToggleMax();
+  });
+}
+if (isEmbedded()) pb1Greet();
 
+pixEnsureBandits();
 pixRender();
 renderDescriptions();
 document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
