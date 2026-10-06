@@ -45,7 +45,7 @@ body {
   backdrop-filter: blur(12px);
   overflow: hidden;
   resize: both;
-  min-width: 400px;
+  min-width: min(400px, calc(100vw - 16px));
   min-height: 300px;
   z-index: 100;
   display: flex;
@@ -262,10 +262,14 @@ const WindowManager = {
     const win = document.createElement('div');
     win.className = 'window';
     win.id = id;
-    win.style.left = (options.x || 100) + 'px';
-    win.style.top = (options.y || 100) + 'px';
-    win.style.width = (options.width || 600) + 'px';
-    win.style.height = (options.height || 400) + 'px';
+    // Keep new windows on screen (on a phone they used to open past the
+    // right edge and stretch the whole page sideways).
+    const vw = window.innerWidth, vh = window.innerHeight - 60;
+    const ww = Math.min(options.width || 600, vw - 16), wh = Math.min(options.height || 400, vh - 16);
+    win.style.left = Math.max(8, Math.min(options.x || 100, vw - ww - 8)) + 'px';
+    win.style.top = Math.max(8, Math.min(options.y || 100, vh - wh - 8)) + 'px';
+    win.style.width = ww + 'px';
+    win.style.height = wh + 'px';
     
     // Special styling for ChemVentur
     const isChemVentur = options.title && options.title.includes('ChemVentur');
@@ -545,5 +549,7 @@ console.log('  Alt+W - Close active window');
 console.log('  Alt+M - Minimize active window');
 </script>
 
+<script src="js/panel-toggle.js"></script>
+<script src="js/w13-panels.js"></script>
 </body>
 </html>

@@ -350,6 +350,15 @@ body {
   background: var(--neon);
   border-radius: 3px;
 }
+
+/* ===== PANEL TOGGLES (js/panel-toggle.js) ===== */
+:root {
+  --sf-panel-accent: var(--neon); --sf-panel-text: var(--neon); --sf-panel-ink: #000;
+  --sf-panel-font: 'Courier New', monospace; --sf-panel-font-size: 0.8rem; --sf-panel-radius: 6px;
+}
+.userbox-header.sf-phead { display: block; position: relative; }
+.userbox-header .ubx-fold { position: absolute; top: -10px; right: -10px; font-weight: bold; padding: 3px 8px; }
+.userbox-container.sf-panel-collapsed .userbox-header { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
@@ -365,7 +374,8 @@ body {
 <div class="userbox-container">
   
   <!-- HEADER -->
-  <div class="userbox-header">
+  <div class="userbox-header sf-phead">
+    <button class="sf-ptoggle ubx-fold" type="button" data-panel-toggle="userbox"><span class="sf-pt-icon"></span><span class="sf-pt-label"></span></button>
     <div data-rv-logo class="userbox-title">
       <span>👤</span>
       <span>useRbox v2.0</span>
@@ -375,6 +385,7 @@ body {
       <span>👤</span>
     </div>
   </div>
+  <div class="sf-pbody">
 
   <!-- AVATAR -->
   <div class="avatar-section">
@@ -458,6 +469,7 @@ body {
 
   <!-- SAVE PROFILE BUTTON -->
   <button class="save-btn" onclick="saveProfile()">💾 SAVE PROFILE</button>
+  </div>
 
 </div>
 
@@ -622,5 +634,9 @@ console.log('👤 useRbox v2.0 - Ultimate Edition loaded!');
 console.log('All social media links ready! 🌐');
 </script>
 
+<script src="js/panel-toggle.js"></script>
+<script>
+sfPanels.register({ id: 'userbox', el: '.userbox-container', label: 'the useRbox', side: 'top' });
+</script>
 </body>
 </html>
