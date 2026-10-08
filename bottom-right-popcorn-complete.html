@@ -33,7 +33,15 @@ body {
   background-size: 45px 45px;
 }
 
-/* ===== FLOATING TRIGGER ===== */
+/* ===== FLOATING TRIGGER — PB1, popped with love ❤️ =====
+   Warm butter-gold glow + a soft "lub-dub" heartbeat (animates the
+   individual `scale` property so hover can still tilt via `rotate`).
+   A tiny ❤ badge beats along; clicks release a few rising hearts. */
+:root {
+  --pb1-butter: #ffcf5a;
+  --pb1-cream: #fff3d6;
+  --pb1-heart: #ff4d7d;
+}
 #popcorn-trigger {
   position: fixed;
   bottom: 32px;
@@ -41,29 +49,80 @@ body {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: #001a00;
-  border: 2.5px solid var(--neon-green);
-  box-shadow: 0 0 18px var(--neon-dim), inset 0 0 12px var(--neon-dim);
-  color: var(--neon-green);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 243, 214, 0.22), transparent 42%),
+    radial-gradient(circle at 50% 60%, #3a2100 0%, #160800 72%);
+  border: 2.5px solid var(--pb1-butter);
+  box-shadow: 0 0 16px rgba(255, 190, 80, 0.5), 0 0 34px rgba(255, 77, 125, 0.18), inset 0 0 14px rgba(255, 207, 90, 0.25);
+  color: var(--pb1-cream);
   font-size: 2.4rem;
   cursor: pointer;
   z-index: 999999;
   display: flex;
   align-items:center;
   justify-content:center;
-  transition: all 0.4s var(--ease);
-  animation: pulse 6.2s infinite ease-in-out;
+  transition: rotate 0.45s var(--ease), translate 0.45s var(--ease), box-shadow 0.35s ease;
+  animation: pb1Beat 2.8s infinite ease-in-out;
   user-select: none;
 }
-
-#popcorn-trigger:hover {
-  transform: scale(1.16) rotate(-12deg);
-  box-shadow: 0 0 36px var(--neon-green);
+#popcorn-trigger::after {
+  content: '❤';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: var(--pb1-heart);
+  text-shadow: 0 0 6px rgba(255, 77, 125, 0.8);
+  animation: pb1Beat 2.8s infinite ease-in-out;
+  pointer-events: none;
 }
-
+#popcorn-trigger:hover,
+#popcorn-trigger:focus-visible {
+  rotate: -10deg;
+  translate: 0 -4px;
+  outline: none;
+  box-shadow: 0 0 26px rgba(255, 207, 90, 0.85), 0 0 48px rgba(255, 77, 125, 0.4), inset 0 0 16px rgba(255, 207, 90, 0.35);
+}
+#popcorn-trigger:active { translate: 0 1px; }
+@keyframes pb1Beat {
+  0%, 100% { scale: 1; }
+  10% { scale: 1.09; }
+  20% { scale: 0.98; }
+  30% { scale: 1.06; }
+  44% { scale: 1; }
+}
+/* kept for older references */
 @keyframes pulse {
-  0%,100% { transform: translateY(0); box-shadow: 0 0 18px var(--neon-dim); }
-  50% { transform: translateY(-10px); box-shadow: 0 0 32px rgba(0,255,65,0.45); }
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+/* little hearts + kernels that float up when PB1 is tapped */
+.pb1-float {
+  position: fixed;
+  z-index: 1000000;
+  pointer-events: none;
+  font-size: 18px;
+  line-height: 1;
+  animation: pb1Float 1.1s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes pb1Float {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -70px))) scale(1.1) rotate(var(--rot, 0deg)); }
+}
+/* tiny beating heart beside the hub title */
+.pp-heart {
+  color: var(--pb1-heart);
+  font-size: 0.8em;
+  text-shadow: 0 0 8px rgba(255, 77, 125, 0.7);
+  display: inline-block;
+  animation: pb1Beat 2.8s infinite ease-in-out;
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  #popcorn-trigger, #popcorn-trigger::after, .pp-heart { animation: none; }
+  .pb1-float { display: none; }
 }
 
 /* ===== MAIN PANEL ===== */
@@ -448,7 +507,7 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 }
 .pp-header-actions { display: flex; align-items: center; gap: 10px; }
 
-/* ===== PIX DESCRIBER ===== */
+/* ===== PIX PANEL (pix describer) ===== */
 .pix-stage {
   position: relative;
   border: 1px solid var(--neon-green);
@@ -496,7 +555,7 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   flex-direction: column;
   justify-content: space-between;
   padding: 10px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 28%, transparent 72%, rgba(0,0,0,0.6) 100%);
+  background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 24%);
 }
 .pix-title-badge {
   align-self: flex-start;
@@ -514,8 +573,9 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  pointer-events: none;
+  margin-top: 8px;
 }
+.pix-indicators:empty { display: none; }
 .pix-chip {
   background: rgba(0, 30, 10, 0.78);
   border: 1px dashed rgba(0, 255, 65, 0.55);
@@ -534,9 +594,10 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 .pix-controls .pp-btn { width: 100%; padding: 0.65rem 0.6rem; font-size: 0.78rem; }
 .pix-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   margin: 10px 0 4px;
   color: var(--text-muted);
   font-size: 0.75rem;
@@ -547,6 +608,596 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   font-size: 0.78rem;
   margin-bottom: 12px;
   line-height: 1.45;
+}
+
+/* ===== PIX EMOJI BANDITS ===== */
+.pix-bandits {
+  margin: 10px 0 4px;
+  padding: 10px;
+  border: 1px solid rgba(0, 255, 65, 0.28);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 215, 0, 0.06), transparent 50%),
+    rgba(0, 20, 8, 0.55);
+  box-shadow: inset 0 0 18px rgba(0, 255, 65, 0.06);
+}
+.pix-bandits-header {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.pix-bandits-sub {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.68rem;
+  margin-left: 6px;
+}
+.pix-bandits-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pix-bandit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 65, 0.35);
+  background: rgba(0, 10, 4, 0.65);
+  min-width: 0;
+}
+.pix-bandit-label {
+  font-size: 0.62rem;
+  color: var(--bandit-accent, var(--neon-green));
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pix-bandit-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  justify-content: center;
+  max-height: 52px;
+  overflow: hidden;
+  padding: 3px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(0, 255, 65, 0.2);
+}
+.pix-bandit-pool-emoji {
+  font-size: 0.62rem;
+  line-height: 1.15;
+  opacity: 0.85;
+}
+.pix-bandit-reels {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.pix-bandit-reel {
+  width: 36px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 215, 0, 0.45);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+  transition: transform 0.25s var(--ease), border-color 0.25s;
+}
+.pix-bandit-reel.is-center {
+  border-color: var(--bandit-accent, var(--neon-green));
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
+  transform: scale(1.06);
+}
+.pix-bandit-landed {
+  font-size: 1.25rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.25));
+}
+.pix-bandit-reel.spinning .pix-bandit-landed {
+  animation: pixBanditPop 0.45s var(--ease);
+}
+@keyframes pixBanditPop {
+  0% { transform: translateY(-10px) scale(0.7); opacity: 0.3; }
+  60% { transform: translateY(2px) scale(1.12); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+.pix-bandit-reset {
+  width: 100%;
+  padding: 0.35rem 0.3rem !important;
+  font-size: 0.65rem !important;
+  margin-top: 2px;
+}
+.pix-bandits-spin-all {
+  width: 100%;
+  margin-top: 8px;
+  padding: 0.55rem 0.5rem !important;
+  font-size: 0.75rem !important;
+  background: rgba(255, 215, 0, 0.08);
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+@media (max-width: 420px) {
+  .pix-bandits-row { grid-template-columns: 1fr; }
+  .pix-bandit-pool { max-height: 40px; }
+}
+.pix-bandit-landed.is-zwj,
+.pix-bandit-pool-emoji.is-zwj { cursor: help; }
+
+/* ===== NESTED BANDIT WINDOW (window-in-window inside the PIX view) =====
+   Open/closed follows the player's active achievement targets (the three
+   landed centre emojis). Maximise fills ONLY the PIX PANEL: #view-pix is a
+   positioned, transformed .tab-view, so `position:absolute; inset:0` clips
+   to it — never the popcorn chrome / desktop. */
+.pix-nest { margin: 10px 0 8px; }
+.pix-nest-dock {
+  display: none;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 215, 0, 0.55);
+  background: rgba(255, 215, 0, 0.06);
+  color: var(--gold);
+  font: 700 0.75rem var(--font);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, transform 0.25s var(--ease);
+}
+.pix-nest-dock:hover { background: rgba(255, 215, 0, 0.13); transform: translateY(-1px); }
+.pix-nest-dock .pix-nest-dock-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pix-nest-dock .pix-nest-dock-targets { font-size: 1rem; letter-spacing: 2px; }
+.pix-nest.is-closed .pix-nest-dock { display: flex; }
+.pix-nest.is-closed .pix-nest-win { display: none; }
+.pix-nest-win {
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #010c05; /* opaque so a maximised window fully covers the PIX view */
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 215, 0, 0.16);
+  animation: pixNestIn 0.32s var(--ease);
+  display: flex;
+  flex-direction: column;
+}
+@keyframes pixNestIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.pix-nest-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 4px 0 10px;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.16), rgba(0, 40, 15, 0.6));
+  border-bottom: 1px solid rgba(255, 215, 0, 0.35);
+  color: var(--gold);
+  font: 700 0.72rem var(--font);
+  user-select: none;
+  flex: none;
+}
+.pix-nest-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pix-nest-targets { margin-left: 6px; letter-spacing: 2px; color: var(--text-main); font-weight: 400; }
+.pix-nest-bar button {
+  width: 28px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--gold);
+  font: 14px/1 var(--font);
+  cursor: pointer;
+}
+.pix-nest-bar button:hover { background: rgba(255, 215, 0, 0.15); }
+.pix-nest-bar button.pix-nest-x:hover { background: rgba(255, 42, 109, 0.3); color: #fff; }
+.pix-nest-body { padding: 0 8px 8px; overflow: auto; }
+.pix-nest-body .pix-bandits { margin-top: 8px; }
+.pix-zwj-hint {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  line-height: 1.4;
+}
+/* maximised: fill the PIX PANEL only (clipped to it) */
+#view-pix.pix-nest-max-on { overflow: hidden; }
+.pix-nest.is-max .pix-nest-win {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border-radius: 0;
+  border-width: 0;
+  animation: pixNestMax 0.28s var(--ease);
+}
+.pix-nest.is-max .pix-nest-body { flex: 1; min-height: 0; }
+.pix-nest.is-max .pix-bandit-reel { width: 48px; height: 56px; }
+.pix-nest.is-max .pix-bandit-landed { font-size: 1.7rem; }
+.pix-nest.is-max .pix-bandit-pool { max-height: 96px; }
+.pix-nest.is-max .pix-bandit-pool-emoji { font-size: 0.8rem; }
+@keyframes pixNestMax {
+  from { opacity: 0.6; transform: scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+.pix-title-badge.no-targets { border-style: dashed; opacity: 0.85; }
+@media (prefers-reduced-motion: reduce) {
+  .pix-nest-win, .pix-nest.is-max .pix-nest-win { animation: none; }
+}
+
+/* ===== PIX PANEL: green scenery indicators on the live feed =====
+   embed/pix-scene.js draws green line shapes on a canvas over the video and
+   pins one lucky emoji label to each (waves below the horizon are blue). */
+.pix-stage .pix-overlay { z-index: 4; }
+.pix-scene-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.pix-scene-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+.pix-scene-label {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px 2px 4px;
+  border-radius: 999px;
+  border: 1.5px solid #39ff7a;
+  background: rgba(0, 24, 8, 0.78);
+  color: #39ff7a;
+  white-space: nowrap;
+  box-shadow: 0 0 8px rgba(57, 255, 122, 0.35);
+  max-width: 70%;
+}
+.pix-scene-label b { font-size: 1.05rem; line-height: 1.1; font-weight: 400; }
+.pix-scene-label i { font-style: normal; font-size: 0.58rem; letter-spacing: 0.3px; overflow: hidden; text-overflow: ellipsis; }
+.pix-scene-label.is-bg { border-width: 2px; background: rgba(0, 40, 14, 0.85); }
+.pix-scene-label.is-unalloc { border-style: dashed; }
+.pix-scene-free {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.pix-scene-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 5px;
+  border-radius: 999px;
+  border: 1.5px dashed #39ff7a;
+  background: rgba(0, 24, 8, 0.7);
+  color: #39ff7a;
+  animation: pixChipFloat 3.2s ease-in-out infinite;
+}
+.pix-scene-chip:nth-child(2) { animation-delay: -1.1s; }
+.pix-scene-chip:nth-child(3) { animation-delay: -2.2s; }
+.pix-scene-chip b { font-size: 1rem; font-weight: 400; }
+.pix-scene-chip i { font-style: normal; font-size: 0.58rem; }
+@keyframes pixChipFloat {
+  0%, 100% { translate: 0 0; }
+  50% { translate: -4px -5px; }
+}
+.pix-chip.is-unalloc { border-style: dotted; }
+.pix-chip small { color: var(--text-muted); font-size: 0.58rem; margin-left: 3px; }
+.pix-jackpot-badge { display: block; margin-top: 3px; font-size: 0.62rem; color: var(--text-main); font-weight: 400; }
+
+/* ===== Spectrum-bracket sliders (bandit options + PIX PANEL settings) =====
+   A range input on a green → gold → rose spectrum track, with bracket labels
+   (⟦ low … high ⟧) underneath. --spec-pos is the thumb position in %. */
+.pix-spectrum { margin: 6px 0 4px; }
+.pix-spectrum-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.68rem;
+  color: var(--text-main);
+}
+.pix-spectrum-head strong { color: var(--gold); }
+.pix-spectrum input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 2px 0 0;
+  background: transparent;
+  cursor: pointer;
+}
+.pix-spectrum input[type=range]:disabled { opacity: 0.4; cursor: not-allowed; }
+.pix-spectrum input[type=range]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #00ff41, #ffd700 55%, #ff4d7d);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.pix-spectrum input[type=range]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #00ff41, #ffd700 55%, #ff4d7d);
+}
+.pix-spectrum input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 50%;
+  border: 2px solid #000;
+  background: var(--text-main);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+.pix-spectrum input[type=range]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #000;
+  background: var(--text-main);
+}
+.pix-spectrum input[type=range]:focus-visible { outline: 1px dashed var(--gold); outline-offset: 2px; }
+.pix-spectrum-brackets {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  padding: 0 2px;
+}
+.pix-opt-note { font-size: 0.62rem; color: var(--text-muted); line-height: 1.4; margin: 4px 0; }
+
+/* ===== Bandit options window (nested in the bandit window, clipped to it) ===== */
+.pix-nest-win { position: relative; }
+.pix-nest-bar button.pix-nest-gear.on { background: rgba(255, 215, 0, 0.22); }
+.pix-bopt {
+  position: absolute;
+  top: 30px; /* below the bandit window's title bar */
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  display: none;
+  flex-direction: column;
+  background: rgba(1, 12, 5, 0.97);
+  border-top: 1px solid rgba(255, 215, 0, 0.35);
+  animation: pixNestIn 0.25s var(--ease);
+}
+.pix-nest.opts-open .pix-bopt { display: flex; }
+.pix-nest.opts-open .pix-nest-win { min-height: 380px; }
+.pix-bopt-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 10px;
+  color: var(--gold);
+  font: 700 0.68rem var(--font);
+  border-bottom: 1px dashed rgba(255, 215, 0, 0.3);
+  flex: none;
+}
+.pix-bopt-bar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pix-bopt-bar button {
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--gold);
+  font: 14px/1 var(--font);
+  width: 28px;
+  height: 22px;
+  cursor: pointer;
+}
+.pix-bopt-bar button:hover { background: rgba(255, 42, 109, 0.3); color: #fff; }
+.pix-bopt-body { flex: 1; min-height: 0; overflow: auto; padding: 6px 10px 10px; }
+.pix-opt-bandit {
+  border: 1px solid var(--bandit-accent, var(--neon-green));
+  border-radius: 8px;
+  padding: 4px 6px 6px;
+  margin: 6px 0;
+}
+.pix-opt-bandit legend { font-size: 0.66rem; color: var(--bandit-accent, var(--neon-green)); padding: 0 4px; font-weight: 700; }
+.pix-opt-bandit legend span { color: var(--text-muted); font-weight: 400; }
+.pix-opt-kingdoms {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 3px 6px;
+}
+.pix-opt-k {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  min-width: 0;
+}
+.pix-opt-k span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pix-opt-k.on, .pix-opt-k:has(input:checked) { color: var(--text-main); }
+.pix-opt-k input, .pix-set-tick input { accent-color: var(--neon-green); flex: none; }
+.pix-jackpot {
+  margin-top: 8px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 0.66rem;
+  color: var(--gold);
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  background: rgba(255, 215, 0, 0.07);
+}
+.pix-jackpot.is-none { color: var(--text-muted); border-style: dashed; border-color: rgba(0, 255, 65, 0.25); background: none; }
+
+/* ===== PIX PANEL settings window (in-flow nested window) ===== */
+.pix-set { margin-top: 12px; }
+.pix-set[hidden] { display: none; }
+.pix-set-win {
+  border: 1px solid var(--neon-green);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #010c05;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55), 0 0 14px rgba(0, 255, 65, 0.14);
+  animation: pixNestIn 0.3s var(--ease);
+}
+.pix-set-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 4px 0 10px;
+  background: linear-gradient(90deg, rgba(0, 255, 65, 0.16), rgba(0, 40, 15, 0.6));
+  border-bottom: 1px solid rgba(0, 255, 65, 0.35);
+  color: var(--neon-green);
+  font: 700 0.72rem var(--font);
+}
+.pix-set-bar span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pix-set-bar button {
+  width: 28px;
+  height: 24px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--neon-green);
+  font: 14px/1 var(--font);
+  cursor: pointer;
+}
+.pix-set-bar button:hover { background: rgba(255, 42, 109, 0.3); color: #fff; }
+.pix-set-body {
+  padding: 6px 10px 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10px;
+}
+.pix-set-group {
+  border: 1px solid rgba(0, 255, 65, 0.25);
+  border-radius: 8px;
+  padding: 4px 8px 6px;
+  margin: 6px 0 0;
+  min-width: 0;
+}
+.pix-set-group legend { font-size: 0.66rem; color: var(--neon-green); padding: 0 4px; font-weight: 700; }
+.pix-set-tick { display: flex; align-items: center; gap: 6px; font-size: 0.66rem; color: var(--text-main); margin: 4px 0; cursor: pointer; }
+.pix-set-body > .pix-set-group:first-child,
+.pix-set-body > .pix-set-group:nth-last-child(3),
+.pix-set-actions,
+.pix-set-body > .pix-opt-note { grid-column: 1 / -1; }
+.pix-set-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pix-set-actions .pp-btn { flex: 1 1 120px; width: auto; padding: 0.5rem 0.5rem; font-size: 0.7rem; }
+
+/* ===== PIX casino: doubles / triples, mini triplet reel, illegal bandit,
+   winnings breakdown (embed/pix-bandits.js) ===== */
+.pix-bandit-landed { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 1px; max-width: 100%; }
+.pix-bandit-landed i { font-style: normal; }
+.pix-bandit-landed.n-2 { font-size: 0.82rem; }
+.pix-bandit-landed.n-3 { font-size: 0.7rem; line-height: 1.05; width: 2.2em; }
+.pix-bandit-reel.is-multi { border-style: double; border-width: 3px; }
+.pix-bandit-reel.is-triple { box-shadow: 0 0 14px rgba(255, 215, 0, 0.55); }
+.pix-nest.is-max .pix-bandit-landed.n-2 { font-size: 1.1rem; }
+.pix-nest.is-max .pix-bandit-landed.n-3 { font-size: 0.92rem; }
+.pix-casino {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;
+  margin: 0 0 8px; padding: 5px 8px; border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.35); background: rgba(255, 215, 0, 0.05);
+  font-size: 0.66rem; color: var(--text-muted);
+}
+.pix-casino-bal { color: var(--text-main); }
+.pix-casino b { color: var(--gold); font-size: 0.8rem; }
+.pix-casino b.is-neg, .pix-neg { color: #ff3b5c !important; }
+.pix-casino-cost { margin-left: auto; }
+.pix-casino-note { flex-basis: 100%; color: #ff8fa3; font-size: 0.6rem; }
+.pix-bandit-result {
+  font-size: 0.58rem; text-align: center; color: var(--text-muted);
+  padding: 2px 3px; border-radius: 5px; min-height: 1.5em;
+}
+.pix-bandit-result.tier-1 { color: rgba(0, 255, 65, 0.75); }
+.pix-bandit.is-jackpot { border-color: var(--gold); box-shadow: 0 0 14px rgba(255, 215, 0, 0.35); }
+.pix-bandit.is-jackpot .pix-bandit-result { color: #000; background: var(--gold); font-weight: 700; }
+.pix-mini {
+  border: 1px solid var(--gold); border-radius: 8px; padding: 4px 5px;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.18), rgba(0, 0, 0, 0.75));
+  transform-origin: top center; animation: pixMiniPop 0.4s var(--ease) both;
+}
+.pix-mini-head { font-size: 0.56rem; color: var(--gold); font-weight: 700; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px; }
+.pix-mini-head span { color: var(--text-main); font-weight: 400; }
+.pix-mini-row { display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+.pix-mini-window {
+  width: 30px; height: 32px; flex: none; border-radius: 6px; border: 1.5px solid var(--gold);
+  background: #000; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; overflow: hidden;
+}
+.pix-mini.is-spinning .pix-mini-window span { animation: pixMiniBlur 0.14s linear infinite; }
+.pix-mini-log { display: flex; flex-wrap: wrap; gap: 2px; min-width: 0; }
+.pix-mini-log b { font-size: 0.62rem; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; animation: pixMiniPop 0.25s var(--ease) both; }
+.pix-mini-log b.is-win { background: var(--gold); color: #000; }
+.pix-mini-log b.is-miss { background: rgba(255, 42, 109, 0.35); color: #fff; }
+.pix-mini-mult { font-size: 0.6rem; margin-top: 3px; color: var(--text-muted); }
+.pix-mini.has-win .pix-mini-mult { color: var(--gold); font-weight: 700; }
+@keyframes pixMiniPop { 0% { transform: scale(0.4) translateY(-8px); opacity: 0; } 70% { transform: scale(1.06); opacity: 1; } 100% { transform: none; } }
+@keyframes pixMiniBlur { 0% { transform: translateY(-40%); filter: blur(1px); } 100% { transform: translateY(40%); filter: blur(1px); } }
+.pix-bandit-illegal {
+  margin-top: 8px; border: 1.5px solid #ff2a6d;
+  background: repeating-linear-gradient(135deg, rgba(255, 42, 109, 0.1) 0 8px, rgba(0, 0, 0, 0.6) 8px 16px);
+  box-shadow: 0 0 18px rgba(255, 42, 109, 0.45);
+}
+.pix-bandit-illegal .pix-bandit-label { color: #ff6b8e; font-weight: 700; white-space: normal; }
+.pix-bandit-illegal .pix-bandit-reel { border-color: #ff2a6d; width: 52px; height: 52px; }
+.pix-bandit-illegal .pix-bandit-landed { font-size: 1.3rem; }
+.pix-bandit-illegal .pix-bandit-landed.n-2 { font-size: 1rem; }
+.pix-bandit-illegal .pix-bandit-landed.n-3 { font-size: 0.82rem; }
+.pix-bandit-result.is-illegal { color: #fff; background: rgba(255, 42, 109, 0.4); font-size: 0.62rem; }
+.pix-bandit-illegal.is-popping { animation: pixIllegalPop 0.7s var(--ease) both; }
+@keyframes pixIllegalPop {
+  0% { transform: translateY(30px) scale(0.3) rotate(-6deg); opacity: 0; }
+  55% { transform: translateY(-4px) scale(1.05) rotate(2deg); opacity: 1; }
+  75% { transform: rotate(-1.5deg); }
+  100% { transform: none; }
+}
+.pix-jackpot.is-illegal { color: #fff; border-color: #ff2a6d; background: rgba(255, 42, 109, 0.22); font-weight: 700; }
+.pix-win {
+  margin-top: 6px; padding: 6px 8px; border-radius: 8px; font-size: 0.64rem; line-height: 1.45;
+  border: 1px dashed rgba(255, 215, 0, 0.35); color: var(--text-muted); word-break: break-word;
+}
+.pix-win strong { color: var(--gold); font-size: 0.9rem; display: block; }
+.pix-win.is-win { border-style: solid; border-color: var(--gold); background: rgba(255, 215, 0, 0.08); color: var(--text-main); }
+.pix-win.is-pending { visibility: hidden; }
+.pix-scene-label.is-illegal { border-color: #ff2a6d; background: rgba(60, 0, 15, 0.88); }
+.pix-chip.is-illegal { border-color: #ff2a6d; background: rgba(255, 42, 109, 0.14); }
+.pix-jackpot-badge.is-illegal { color: #ff8fa3; font-weight: 700; }
+
+/* ===== Small screens ===== */
+.pp-tabs { overflow-x: auto; scrollbar-width: none; }
+.pp-tabs::-webkit-scrollbar { display: none; }
+@media (max-width: 520px) {
+  #popcorn-panel {
+    left: 2vw;
+    right: 2vw;
+    width: auto;
+    max-width: none;
+    bottom: 96px;
+    height: calc(100vh - 110px);
+    max-height: calc(100vh - 110px);
+  }
+  #popcorn-trigger { width: 62px; height: 62px; right: 16px; bottom: 20px; font-size: 2rem; }
+  .pp-header { padding: 0.75rem 1rem; }
+  .pp-tab { flex: 1 0 auto; padding: 0.6rem 0.5rem; font-size: 0.66rem; }
+  .tab-view { padding: 0.8rem; }
+  .pix-stage { min-height: 240px; height: min(48vh, 320px); }
+  .pix-set-body { grid-template-columns: 1fr; }
+  .pix-scene-label i { display: none; }
+  .pix-scene-label { padding: 1px 5px 1px 4px; }
+  .pix-casino-cost { margin-left: 0; }
+  .pix-bandit-illegal .pix-bandit-reel { width: 46px; height: 46px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pix-scene-chip, .pix-bopt, .pix-set-win { animation: none; }
+  .pix-mini, .pix-mini-log b, .pix-bandit-illegal.is-popping, .pix-bandit-reel.spinning .pix-bandit-landed { animation: none; }
+  .pix-mini.is-spinning .pix-mini-window span { animation: none; }
 }
 
 /* ===== BUNKER PANEL ===== */
@@ -897,17 +1548,19 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="embed/pix-bandits.js"></script>
+<script src="embed/pix-scene.js"></script>
 </head>
 
 <body>
 
 <!-- TRIGGER BUTTON -->
-<button id="popcorn-trigger" title="Popcorn Accessibility Hub">🍿</button>
+<button id="popcorn-trigger" type="button" title="PB1 · Popcorn Hub — freshly popped with ❤️" aria-label="Open the Popcorn Hub (PB1), made with love">🍿</button>
 
 <!-- MAIN PANEL -->
 <div id="popcorn-panel">
   <div class="pp-header">
-    <div data-rv-logo class="pp-title">🍿 POPCORN HUB</div>
+    <div data-rv-logo class="pp-title">🍿 POPCORN HUB <span class="pp-heart" title="popped with love" aria-hidden="true">❤</span></div>
     <div class="pp-header-actions">
       <button type="button" id="pb2-btn" class="pb2-btn" title="Open the bunker for secret movie making">🍿 PB2</button>
       <button class="pp-close" id="pp-close">×</button>
@@ -916,7 +1569,7 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 
   <div class="pp-tabs">
     <div class="pp-tab active" data-tab="maker">🍿 MAKER</div>
-    <div class="pp-tab" data-tab="pix">📛 PIX</div>
+    <div class="pp-tab" data-tab="pix">📛 PIX PANEL</div>
     <div class="pp-tab" data-tab="cookies">🍪 COOKIES</div>
     <div class="pp-tab" data-tab="popcoin">🍿 PopCOIN</div>
     <div class="pp-tab" data-tab="launch">🚀 LAUNCH</div>
@@ -954,16 +1607,56 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       <div class="saved-descriptions" id="saved-descriptions"></div>
     </div>
 
-    <!-- PIX DESCRIBER TAB -->
+    <!-- PIX PANEL TAB (the pix describer)
+         FUTURE (comments only, not built yet):
+           · popcorn window 0 — a gallery of other users' pix
+           · a face stage
+           · a sound mixing room bunker -->
     <div class="tab-view" id="view-pix">
-      <h3 style="color: var(--gold); margin-bottom: 8px;">📛 Pix Describer</h3>
+      <h3 style="color: var(--gold); margin-bottom: 8px;">📛 PIX PANEL</h3>
       <p class="pix-hint">
-        Point your camera at the challenge. Match the picture indicators, then submit for random popCoins (1–200). Soft &amp; playful — no pressure, just popcorn vibes.
+        Spin the emoji bandits for your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size). Frame the scene, then submit for random photo popCoins (1–200). A jackpot on the bandits makes the picture easier, but if all three hit a jackpot the illegal bandit pops out and the picture gets super extra hard. Each spin costs 1 casino popCoin; jackpots and the mini reel pay into your casino balance. ⚙️ changes the scene.
       </p>
 
       <div class="pix-meta">
-        <span>Challenge <strong id="pix-challenge-num">1</strong> / <span id="pix-challenge-total">6</span></span>
-        <span>Earned <strong id="pix-earned">0</strong> popCoins</span>
+        <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
+        <span title="popCoins from the “I took it” photo award (1–200 each)">📸 Photo popCoins <strong id="pix-earned">0</strong></span>
+        <span title="Bandit winnings minus spin costs; may go below zero (later: bank credit)">🎰 Casino popCoins <strong id="pix-casino">0</strong></span>
+      </div>
+
+      <!-- Nested bandit window (window-in-window). Open while the player has
+           active achievement targets; closing keeps targets; ⤢ fills the PIX
+           panel only. Cheese Casino–style bandits: embed/pix-bandits.js -->
+      <div class="pix-nest is-closed" id="pix-nest">
+        <button type="button" class="pix-nest-dock" id="pix-nest-dock" onclick="pixNestOpen()" aria-controls="pix-nest-win">
+          <span>🎰</span>
+          <span class="pix-nest-dock-label" id="pix-nest-dock-label">Spin the bandits for your photo targets</span>
+          <span class="pix-nest-dock-targets" id="pix-nest-dock-targets"></span>
+          <span aria-hidden="true">▸</span>
+        </button>
+        <div class="pix-nest-win" id="pix-nest-win" role="region" aria-label="Emoji bandits window">
+          <div class="pix-nest-bar" id="pix-nest-bar" title="Double-click to maximise inside the PIX PANEL">
+            <span class="pix-nest-title">🎰 Emoji Bandits <span class="pix-nest-targets" id="pix-nest-targets"></span></span>
+            <button type="button" class="pix-nest-gear" id="pix-nest-gear" onclick="pixBoptToggle()" title="Bandit options: kingdoms and jackpot ease" aria-label="Bandit options" aria-controls="pix-bopt" aria-expanded="false">⚙</button>
+            <button type="button" id="pix-nest-max" onclick="pixNestToggleMax()" title="Maximise inside the PIX PANEL" aria-label="Maximise bandits window">⤢</button>
+            <button type="button" class="pix-nest-x" id="pix-nest-close" onclick="pixNestClose()" title="Close (your targets stay active)" aria-label="Close bandits window">×</button>
+          </div>
+          <div class="pix-nest-body">
+            <div id="pix-bandits-root"></div>
+            <!-- A few targets are ZWJ emoji sequences (two emoji joined by
+                 U+200D): 🐕‍🦺 service dog, 🐈‍⬛ black cat, 🐻‍❄️ polar bear,
+                 😮‍💨 face exhaling. Only neutral, camera-findable ones are kept. -->
+            <p class="pix-zwj-hint">ℹ️ A few targets are emoji <em>sequences</em> (ZWJ) like 🐕‍🦺 service dog, 🐈‍⬛ black cat or 🐻‍❄️ polar bear — each counts as one target, even if your font draws it in pieces.</p>
+          </div>
+          <!-- Bandit options window: nested inside the bandit window and clipped
+               to it (absolute inside the relative, overflow-hidden window). -->
+          <div class="pix-bopt" id="pix-bopt" role="dialog" aria-label="Bandit options">
+            <div class="pix-bopt-bar"><span>⚙ Bandit options · kingdoms &amp; jackpot ease</span>
+              <button type="button" onclick="pixBoptToggle(false)" title="Close options" aria-label="Close bandit options">×</button>
+            </div>
+            <div class="pix-bopt-body" id="pix-bopt-body"></div>
+          </div>
+        </div>
       </div>
 
       <div class="pix-stage" id="pix-stage">
@@ -973,16 +1666,33 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
           <div id="pix-fallback-msg">Camera needs your OK to light up the stage.</div>
           <div style="color:var(--gold);font-size:0.75rem;">You can still browse the challenge and submit when ready.</div>
         </div>
+        <!-- embed/pix-scene.js inserts a canvas (green indicator shapes) and an
+             emoji label layer here, under the title and chips overlay -->
         <div class="pix-overlay">
-          <div class="pix-title-badge" id="pix-title">📛 Picture of sunset on sea</div>
-          <div class="pix-indicators" id="pix-indicators"></div>
+          <div class="pix-title-badge" id="pix-title">📛 🌳 🚗 ☀️</div>
         </div>
       </div>
+      <!-- challenge chips: every lucky emoji with its indicator type (kept
+           under the feed so they never cover the foreground shapes) -->
+      <div class="pix-indicators" id="pix-indicators" aria-label="Challenge indicators"></div>
 
       <div class="pix-controls">
         <button type="button" class="pp-btn" id="pix-cam-btn" onclick="pixEnableCamera()">📷 Enable camera</button>
-        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎲 New challenge</button>
+        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎰 New challenge</button>
+        <button type="button" class="pp-btn" id="pix-set-btn" onclick="pixSettingsToggle()" aria-controls="pix-set" aria-expanded="false" style="grid-column:1/-1;">⚙️ PIX PANEL settings</button>
         <button type="button" class="pp-btn" id="pix-submit-btn" onclick="pixSubmitChallenge()" style="grid-column:1/-1;background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);">✨ I took it — award popCoins</button>
+      </div>
+
+      <!-- PIX PANEL settings window: background, how many indicators of each
+           type, a size per type, and the chance of unallocated indicators.
+           Saved in localStorage (rudventur_pix_scene_v1) by embed/pix-scene.js -->
+      <div class="pix-set" id="pix-set" hidden>
+        <div class="pix-set-win" role="region" aria-label="PIX PANEL settings">
+          <div class="pix-set-bar"><span>⚙️ PIX PANEL settings · scene indicators</span>
+            <button type="button" onclick="pixSettingsToggle(false)" title="Close settings" aria-label="Close PIX PANEL settings">×</button>
+          </div>
+          <div class="pix-set-body" id="pix-set-body"></div>
+        </div>
       </div>
     </div>
 
@@ -1168,7 +1878,7 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
     </div>
     <div class="bunker-actions">
       <button type="button" class="pp-btn bunker-close-gold" onclick="closeBunker()">Leave bunker</button>
-      <button type="button" class="pp-btn" onclick="closeBunker(); switchToTab('pix')">📛 Pix instead</button>
+      <button type="button" class="pp-btn" onclick="closeBunker(); switchToTab('pix')">📛 PIX PANEL instead</button>
     </div>
   </div>
 </div>
@@ -1187,9 +1897,47 @@ const State = {
   mining: false
 };
 
+/* ===== PB1 HEART TOUCHES ===== */
+// A handful of hearts + kernels drift up from PB1 when it is tapped.
+function pb1Burst(btn) {
+  if (!btn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const r = btn.getBoundingClientRect();
+  const bits = ['❤️', '🍿', '💛', '🍿', '❤️'];
+  bits.forEach(function (ch, i) {
+    const s = document.createElement('span');
+    s.className = 'pb1-float';
+    s.textContent = ch;
+    s.style.left = (r.left + r.width / 2) + 'px';
+    s.style.top = (r.top + r.height / 2) + 'px';
+    s.style.setProperty('--dx', Math.round((i - 2) * 22 + (Math.random() * 14 - 7)) + 'px');
+    s.style.setProperty('--dy', Math.round(-60 - Math.random() * 50) + 'px');
+    s.style.setProperty('--rot', Math.round(Math.random() * 50 - 25) + 'deg');
+    s.style.animationDelay = (i * 45) + 'ms';
+    document.body.appendChild(s);
+    setTimeout(function () { s.remove(); }, 1400 + i * 45);
+  });
+}
+
+// One warm hello per session — no nagging.
+function pb1Greet() {
+  try {
+    if (sessionStorage.getItem('rudventur_pb1_hello')) return;
+    sessionStorage.setItem('rudventur_pb1_hello', '1');
+  } catch (e) {}
+  const lines = [
+    '🍿❤️ Freshly popped, just for you.',
+    '🍿 Warm batch ready — made with ❤️',
+    '🍿 Hello you! Butter’s on us ❤️'
+  ];
+  setTimeout(function () { showToast(lines[Math.floor(Math.random() * lines.length)], 'gold'); }, 350);
+}
+
 /* ===== PANEL TOGGLE ===== */
-document.getElementById('popcorn-trigger').onclick = () => {
-  document.getElementById('popcorn-panel').classList.toggle('active');
+document.getElementById('popcorn-trigger').onclick = function () {
+  const panel = document.getElementById('popcorn-panel');
+  panel.classList.toggle('active');
+  pb1Burst(this);
+  if (panel.classList.contains('active')) pb1Greet();
 };
 
 document.getElementById('pp-close').onclick = () => {
@@ -1620,41 +2368,274 @@ function toggleBunker() {
   else openBunker();
 }
 
-/* ===== PIX DESCRIBER ===== */
-const PIX_CHALLENGES = [
-  { title: 'Picture of sunset on sea', indicators: ['horizon line', 'sun', 'water', 'cloud'] },
-  { title: 'Forest path adventure', indicators: ['trees', 'path', 'leaves', 'shadow'] },
-  { title: 'Mountain morning glow', indicators: ['mountains', 'sky', 'rocks', 'mist'] },
-  { title: 'River picnic day', indicators: ['river', 'trees', 'grass', 'sky'] },
-  { title: 'City night lights', indicators: ['buildings', 'lights', 'street', 'skyline'] },
-  { title: 'Cozy café corner', indicators: ['cup', 'table', 'window', 'chair'] },
-  { title: 'Desert road horizon', indicators: ['sand', 'road', 'horizon line', 'sky'] },
-  { title: 'Rainy window story', indicators: ['raindrops', 'glass', 'blur', 'light'] }
-];
+/* ===== PIX PANEL (pix describer: emoji bandits + scenery) =====
+   Flow: the bandits spin a payline (embed/pix-bandits.js) → embed/pix-scene.js
+   turns it into a scene (background + big / medium / small / geo-nature
+   indicators, one lucky emoji each, fewer or looser when the payline hits a
+   jackpot) → green shapes on the camera feed → "I took it" → popCoins.
 
+   FUTURE (comments only, nothing built yet):
+   · popCoins will later come from other users' judgements of your pix
+     (people rate how well the photo matches the scene), not a random roll.
+   · popcorn window 0 — a gallery of other users' pix.
+   · a face stage (for the 😀 Emotions / Faces kingdom).
+   · a sound mixing room bunker (for the 🔔 Sounds kingdom). */
 const Pix = {
-  index: 0,
+  spinCount: parseInt(localStorage.getItem('rudventur_pix_spins') || '0', 10) || 0,
   stream: null,
   earned: parseInt(localStorage.getItem('rudventur_popcoins_pix') || '0', 10) || 0,
-  camAsked: false
+  camAsked: false,
+  challenge: { title: '🌳 🚗 ☀️', indicators: ['🌳', '🚗', '☀️'] },
+  banditsReady: false,
+  // Active achievement targets = every lucky emoji of the current scene
+  // (background + each indicator). null until the player spins; cleared when
+  // they hit “I took it”.
+  targets: null,
+  scene: null,
+  justAchieved: false,
+  nestOpen: false,
+  nestMax: false,
+  optsOpen: false,
+  setOpen: false,
+  sceneReady: false
 };
 
+function pixHasTargets() {
+  return Array.isArray(Pix.targets) && Pix.targets.length > 0;
+}
+
+function pixIsSeq(e) {
+  return !!(window.PixBandits && typeof window.PixBandits.isSequence === 'function' && window.PixBandits.isSequence(e));
+}
+
+/* ----- Nested bandit window (window-in-window inside the PIX PANEL) -----
+   Tied to targets: a spin / reset opens it with the result; × closes it but
+   keeps the targets (dock pill reopens); with no targets the dock spins.
+   ⤢ maximises only to the PIX PANEL (#view-pix), never past the hub chrome. */
+function pixNestSync() {
+  const nest = document.getElementById('pix-nest');
+  const view = document.getElementById('view-pix');
+  if (!nest) return;
+  const has = pixHasTargets();
+  if (!has) { Pix.nestOpen = false; }
+  if (!Pix.nestOpen) { Pix.nestMax = false; Pix.optsOpen = false; }
+  nest.classList.toggle('is-closed', !Pix.nestOpen);
+  nest.classList.toggle('is-max', Pix.nestOpen && Pix.nestMax);
+  nest.classList.toggle('opts-open', Pix.nestOpen && Pix.optsOpen);
+  if (view) view.classList.toggle('pix-nest-max-on', Pix.nestOpen && Pix.nestMax);
+
+  const label = document.getElementById('pix-nest-dock-label');
+  const dockT = document.getElementById('pix-nest-dock-targets');
+  const barT = document.getElementById('pix-nest-targets');
+  const maxBtn = document.getElementById('pix-nest-max');
+  const gear = document.getElementById('pix-nest-gear');
+  const tStr = has ? Pix.targets.join(' ') : '';
+  if (label) {
+    label.textContent = has
+      ? 'Your targets — open the bandits'
+      : (Pix.justAchieved ? '🎉 Nailed it! Spin for your next targets' : 'Spin the bandits for your photo targets');
+  }
+  if (dockT) dockT.textContent = tStr;
+  if (barT) barT.textContent = tStr ? '· 🎯 ' + tStr : '';
+  if (maxBtn) {
+    maxBtn.textContent = Pix.nestMax ? '⤡' : '⤢';
+    maxBtn.title = Pix.nestMax ? 'Restore inside the PIX PANEL' : 'Maximise inside the PIX PANEL';
+    maxBtn.setAttribute('aria-label', Pix.nestMax ? 'Restore bandits window' : 'Maximise bandits window');
+  }
+  if (gear) {
+    gear.classList.toggle('on', Pix.optsOpen);
+    gear.setAttribute('aria-expanded', Pix.optsOpen ? 'true' : 'false');
+  }
+}
+
+function pixNestOpen() {
+  pixEnsureBandits();
+  if (!pixHasTargets()) {
+    // No active targets yet: opening = spinning for some (opens on result)
+    pixNextChallenge();
+    return;
+  }
+  Pix.nestOpen = true;
+  pixNestSync();
+}
+
+function pixNestClose() {
+  Pix.nestOpen = false;
+  Pix.nestMax = false;
+  pixNestSync();
+}
+
+function pixNestToggleMax() {
+  if (!Pix.nestOpen) return;
+  Pix.nestMax = !Pix.nestMax;
+  const view = document.getElementById('view-pix');
+  if (Pix.nestMax && view) view.scrollTop = 0; // pin to the panel's top-left
+  pixNestSync();
+}
+
+/* ----- Bandit options window (inside the bandit window, clipped to it) ----- */
+function pixBoptToggle(force) {
+  if (!Pix.nestOpen) return;
+  Pix.optsOpen = typeof force === 'boolean' ? force : !Pix.optsOpen;
+  const body = document.getElementById('pix-bopt-body');
+  if (Pix.optsOpen && body && window.PixBandits && !body.childElementCount) {
+    window.PixBandits.mountOptions(body);
+  }
+  pixNestSync();
+}
+
+/* ----- PIX PANEL settings window ----- */
+function pixSettingsToggle(force) {
+  Pix.setOpen = typeof force === 'boolean' ? force : !Pix.setOpen;
+  const wrap = document.getElementById('pix-set');
+  const btn = document.getElementById('pix-set-btn');
+  if (!wrap) return;
+  wrap.hidden = !Pix.setOpen;
+  if (btn) btn.setAttribute('aria-expanded', Pix.setOpen ? 'true' : 'false');
+  if (Pix.setOpen) {
+    const body = document.getElementById('pix-set-body');
+    if (body && window.PixScene && !body.childElementCount) window.PixScene.mountSettings(body, pixOnSettings);
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try { wrap.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); } catch (e) {}
+  }
+}
+
+// Settings changed: counts need new indicators (and emojis); everything else
+// keeps the emojis and only re-rolls places / sizes.
+function pixOnSettings(kind) {
+  if (!window.PixScene) return;
+  if (kind === 'example') { pixLoadExample(); return; }
+  if (pixHasTargets() && Pix.scene) {
+    if ((kind === 'count' || kind === 'defaults') && !Pix.scene.fromSpec) {
+      pixSetScene(window.PixScene.build(pixGetChallenge()));
+    } else {
+      window.PixScene.relayout(Pix.scene);
+    }
+  }
+  pixRender();
+}
+
+// The worked example: unified 🏁 background, 2 big 🎲 🍦, 1 medium 🚗,
+// 1 geo-nature ⛰️. Also reachable with #pix-example in the URL.
+function pixLoadExample() {
+  if (!window.PixScene) return;
+  pixSetScene(window.PixScene.fromSpec(window.PixScene.EXAMPLE));
+  Pix.justAchieved = false;
+  Pix.nestOpen = false;
+  pixRender();
+  showToast('🏁 Worked example: ' + Pix.targets.join(' '), 'normal');
+}
+
+function pixSetScene(scene) {
+  Pix.scene = scene || null;
+  if (scene && window.PixScene) Pix.targets = window.PixScene.emojis(scene);
+}
+
+function pixGetChallenge() {
+  if (window.PixBandits && typeof window.PixBandits.getChallenge === 'function') {
+    return window.PixBandits.getChallenge();
+  }
+  return Pix.challenge;
+}
+
+function pixApplyChallenge(ch) {
+  if (!ch) return;
+  Pix.challenge = ch;
+  pixRender();
+}
+
+function pixEnsureScene() {
+  if (Pix.sceneReady || !window.PixScene) return;
+  const stage = document.getElementById('pix-stage');
+  if (!stage) return;
+  window.PixScene.mount(stage);
+  Pix.sceneReady = true;
+}
+
+function pixEnsureBandits() {
+  pixEnsureScene();
+  if (Pix.banditsReady) return;
+  const root = document.getElementById('pix-bandits-root');
+  if (!root || !window.PixBandits) return;
+  const ch = window.PixBandits.mount(root);
+  window.PixBandits.onChange(function (next) {
+    if (!next) return;
+    const fresh = next.reason === 'spin' || next.reason === 'reset' || next.reason === 'options';
+    if (fresh) {
+      // A spin / reset / new kingdoms is a fresh result → new scene → show it
+      if (next.reason === 'spin') {
+        Pix.spinCount += 1;
+        try { localStorage.setItem('rudventur_pix_spins', String(Pix.spinCount)); } catch (e) {}
+      }
+      if (window.PixScene) pixSetScene(window.PixScene.build(next));
+      else Pix.targets = (next.centers || next.indicators || []).slice();
+      Pix.justAchieved = false;
+      Pix.nestOpen = true;
+    } else if (next.reason === 'ease' && pixHasTargets() && Pix.scene && !Pix.scene.fromSpec && window.PixScene) {
+      // Jackpot ease moved: same payline, rebuilt indicators
+      pixSetScene(window.PixScene.build(next));
+    }
+    pixApplyChallenge(next);
+  });
+  Pix.banditsReady = true;
+  if (ch) pixApplyChallenge(ch);
+}
+
 function pixRender() {
-  const c = PIX_CHALLENGES[Pix.index];
   const title = document.getElementById('pix-title');
   const inds = document.getElementById('pix-indicators');
   const num = document.getElementById('pix-challenge-num');
   const total = document.getElementById('pix-challenge-total');
   const earned = document.getElementById('pix-earned');
-  if (title) title.textContent = '📛 ' + c.title;
+  const has = pixHasTargets();
+  const sc = has ? Pix.scene : null;
+  if (title) {
+    title.textContent = has ? '📛 ' + Pix.targets.join(' ') : '📛 Spin the bandits for targets 🎰';
+    if (sc && sc.jackpot) {
+      const j = sc.jackpot;
+      const b = document.createElement('span');
+      const ill = sc.illegal && sc.illegal.length;
+      b.className = 'pix-jackpot-badge' + (ill ? ' is-illegal' : '');
+      b.textContent = sc.fromSpec ? 'Worked example'
+        : ill ? '🚨 3 jackpots · illegal bandit → +' + sc.illegal.length + ' illegal indicators, no ease'
+        : j.tier ? '🎉 ' + j.label + ' → ' + (sc.removed ? sc.removed + ' fewer' : 'no fewer') + (sc.freed ? ', ' + sc.freed + ' freed' : '') + ' indicators'
+        : 'No jackpot · full challenge';
+      title.appendChild(b);
+    }
+    title.classList.toggle('no-targets', !has);
+  }
   if (inds) {
-    inds.innerHTML = c.indicators.map(function (x) {
-      return '<span class="pix-chip">📍 ' + escapeHtml(x) + '</span>';
+    let list;
+    if (sc && window.PixScene) list = window.PixScene.describe(sc);
+    else list = (has ? Pix.targets : []).map(function (x) { return { emoji: x, text: '' }; });
+    inds.innerHTML = list.map(function (d) {
+      // ZWJ sequences (🐕‍🦺 🐈‍⬛ 🐻‍❄️) are one target each
+      const seq = pixIsSeq(d.emoji);
+      return '<span class="pix-chip' + (d.unalloc ? ' is-unalloc' : '') + (d.illegal ? ' is-illegal' : '') + '"' +
+        (seq ? ' title="Emoji sequence (ZWJ) — one target"' : '') + '>' + d.emoji +
+        (d.text ? '<small>' + d.text + '</small>' : '') + '</span>';
     }).join('');
   }
-  if (num) num.textContent = String(Pix.index + 1);
-  if (total) total.textContent = String(PIX_CHALLENGES.length);
+  if (window.PixScene && Pix.sceneReady) window.PixScene.render(sc);
+  pixNestSync();
+  if (num) num.textContent = String(Pix.spinCount);
+  if (total) total.textContent = has ? Pix.targets.length + ' emoji' : 'emoji';
   if (earned) earned.textContent = String(Pix.earned);
+  pixRenderCasino();
+}
+
+// Casino popCoins (bandit winnings minus spin costs) live in
+// embed/pix-bandits.js (local storage rudventur_pix_casino_v1). They are a
+// separate balance from the photo popCoins above and from the shared wallet.
+// A negative casino balance shows in red. FUTURE (not built): bank credit —
+// going below zero will later need a bank credit line; the illegal bandit is
+// where losing popCoins will come in.
+function pixRenderCasino() {
+  const el = document.getElementById('pix-casino');
+  if (!el || !window.PixBandits || typeof window.PixBandits.getCasino !== 'function') return;
+  const c = window.PixBandits.getCasino();
+  el.textContent = c.balanceText;
+  el.classList.toggle('pix-neg', c.negative);
 }
 
 function pixShowFallback(msg) {
@@ -1692,7 +2673,7 @@ async function pixEnableCamera() {
       video.play().catch(function () {});
     }
     pixHideFallback();
-    showToast('📷 Camera live — find those indicators!', 'gold');
+    showToast('📷 Camera live — find those emoji vibes!', 'gold');
   } catch (err) {
     const denied = err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError');
     pixShowFallback(denied
@@ -1703,12 +2684,34 @@ async function pixEnableCamera() {
 }
 
 function pixNextChallenge() {
-  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
-  pixRender();
-  showToast('🎲 New challenge unlocked', 'normal');
+  pixEnsureBandits();
+  let ch;
+  if (window.PixBandits && typeof window.PixBandits.spinAll === 'function') {
+    // onChange (reason 'spin') counts the spin, sets targets, opens the window
+    ch = window.PixBandits.spinAll();
+  } else {
+    ch = Pix.challenge;
+    Pix.spinCount += 1;
+    try { localStorage.setItem('rudventur_pix_spins', String(Pix.spinCount)); } catch (e) {}
+    Pix.targets = (ch.indicators || []).slice();
+    Pix.justAchieved = false;
+    Pix.nestOpen = true;
+  }
+  pixApplyChallenge(ch);
+  const c = ch && ch.casino;
+  if (ch && ch.illegal && ch.illegal.active) {
+    showToast('🚨 3 jackpots! The illegal bandit popped out — super extra hard picture', 'gold');
+  } else if (c && c.total !== '0') {
+    showToast('💰 +' + c.totalText + ' casino popCoins!', 'gold');
+  } else {
+    showToast('🎰 Bandits spun — new emoji targets!', 'normal');
+  }
 }
 
 function awardPixPopCoins(reason) {
+  // FUTURE: popCoins will come from other users' judgements of the photo
+  // (how well it matches the scene's emojis, places and sizes). Until that
+  // exists this is a friendly random roll.
   const coins = 1 + Math.floor(Math.random() * 200); // 1–200
   Pix.earned += coins;
   try { localStorage.setItem('rudventur_popcoins_pix', String(Pix.earned)); } catch (e) {}
@@ -1733,15 +2736,24 @@ function awardPixPopCoins(reason) {
 }
 
 function pixSubmitChallenge() {
-  const c = PIX_CHALLENGES[Pix.index];
-  awardPixPopCoins('pix:' + c.title);
-  // Advance to keep the game moving
-  Pix.index = (Pix.index + 1) % PIX_CHALLENGES.length;
+  if (!pixHasTargets()) {
+    showToast('🎰 Spin the bandits first — then snap your targets!', 'normal');
+    return;
+  }
+  awardPixPopCoins('pix:' + Pix.targets.join(' '));
+  // Targets achieved → clear them; the nested bandit window closes with them.
+  // The dock pill (or 🎰 New challenge) spins the next set.
+  Pix.targets = null;
+  Pix.scene = null;
+  Pix.justAchieved = true;
   pixRender();
 }
 
 function pixOnShow() {
+  pixEnsureBandits();
   pixRender();
+  // the tab slides in; redraw the green shapes once it has its final size
+  setTimeout(function () { if (window.PixScene) window.PixScene.redraw(); }, 400);
   if (!Pix.camAsked && !Pix.stream) {
     // Soft prompt — do not auto-request until the user agrees
     pixShowFallback('Tap “Enable camera” when you are happy to share the live view. 📛');
@@ -1763,10 +2775,37 @@ if (bunkerPanel) {
   });
 }
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeBunker();
+  if (e.key !== 'Escape') return;
+  if (Pix.optsOpen) { pixBoptToggle(false); return; } // innermost window first
+  if (Pix.nestMax) { pixNestToggleMax(); return; } // then restore the bandit window
+  closeBunker();
 });
+const pixNestBar = document.getElementById('pix-nest-bar');
+if (pixNestBar) {
+  pixNestBar.addEventListener('dblclick', function (e) {
+    if (e.target.closest('button')) return;
+    pixNestToggleMax();
+  });
+}
+if (isEmbedded()) pb1Greet();
 
+pixEnsureBandits();
 pixRender();
+if (/pix-force-/.test(location.hash)) {
+  // Debug: #pix-force-triple, #pix-force-streak-3, #pix-force-3jackpots …
+  // (see embed/pix-bandits.js) opens the PIX PANEL and spins once with the
+  // forced outcome so every path can be checked.
+  document.getElementById('popcorn-panel').classList.add('active');
+  switchToTab('pix');
+  pixNextChallenge();
+}
+if (/pix-example/.test(location.hash)) {
+  // #pix-example: open the PIX PANEL on the worked example (handy for demos)
+  document.getElementById('popcorn-panel').classList.add('active');
+  switchToTab('pix');
+  pixLoadExample();
+  if (/settings/.test(location.hash)) pixSettingsToggle(true);
+}
 renderDescriptions();
 document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
 document.getElementById('multiplier').textContent = State.multiplier.toFixed(2) + '×';
