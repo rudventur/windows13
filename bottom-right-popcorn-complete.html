@@ -1200,20 +1200,7 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   .pix-mini.is-spinning .pix-mini-window span { animation: none; }
 }
 
-/* ===== BUNKER PANEL ===== */
-#bunker-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 1000001;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(ellipse at center, rgba(20, 8, 0, 0.2), rgba(0, 0, 0, 0.92)),
-    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 215, 0, 0.02) 3px, rgba(255, 215, 0, 0.02) 4px);
-  padding: 16px;
-}
-#bunker-panel.open { display: flex; }
+/* ===== BUNKER CARD (shown in the 🎬 Bunker view) ===== */
 .bunker-card {
   width: min(440px, 96vw);
   max-height: 92vh;
@@ -1278,6 +1265,153 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   background: rgba(255, 215, 0, 0.08) !important;
   border-color: var(--gold) !important;
   color: var(--gold) !important;
+}
+
+/* ===== POPCORN LAUNCHER — the main popcorn window =====
+   PB1 opens this window on its launcher: a few big friendly icons, each one
+   opening its own view inside the window, with a clear back button.
+   Views: 🎬 Bunker (secret movie making) · 🍿 popCoin Wallet · 📛 PIX PANEL.
+   The old tab strip is kept in the markup (switchToTab still uses the views)
+   but hidden; its extra views are small icons under the big three. */
+.pp-tabs { display: none !important; }
+html.embedded .pp-close { display: none; } /* the desktop window has its own close */
+/* the desktop around this window already has its own user box (R); a second one
+   inside the window would sit on top of PB2 */
+html.embedded #topRightUser { display: none !important; }
+.pp-backbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px dashed rgba(255, 215, 0, 0.35);
+  background: rgba(30, 20, 0, 0.35);
+}
+.pp-backbar[hidden] { display: none; }
+.pp-back {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 0.4rem 0.95rem;
+  font: 700 0.8rem var(--font);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, translate 0.25s var(--ease);
+}
+.pp-back:hover, .pp-back:focus-visible { background: var(--gold); color: #000; translate: -3px 0; outline: none; }
+.pp-backbar-title { color: var(--text-main); font-weight: bold; font-size: 0.85rem; letter-spacing: 0.6px; }
+
+#view-home { display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+.pl-text { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.pl-hello { text-align: center; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; }
+.pl-hello b { color: var(--gold); }
+.pl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.pl-icon {
+  --pl-c: var(--neon-green);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 190px;
+  padding: 18px 8px 16px;
+  border-radius: 18px;
+  border: 1.5px solid var(--pl-c);
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.06), transparent 60%), rgba(0, 0, 0, 0.45);
+  color: var(--text-main);
+  font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--pl-c) 30%, transparent);
+  transition: translate 0.35s var(--ease), box-shadow 0.3s, background 0.3s;
+}
+.pl-icon:hover, .pl-icon:focus-visible {
+  translate: 0 -5px;
+  outline: none;
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.1), transparent 60%), rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--pl-c) 60%, transparent), 0 0 46px rgba(255, 77, 125, 0.18);
+}
+.pl-icon:active { translate: 0 -1px; }
+.pl-icon.pl-bunker { --pl-c: #ff9f1c; }
+.pl-icon.pl-wallet { --pl-c: var(--gold); }
+.pl-icon.pl-pix { --pl-c: var(--neon-green); }
+.pl-emoji { font-size: 3.1rem; line-height: 1; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pl-c) 70%, transparent)); }
+.pl-icon:hover .pl-emoji, .pl-icon:focus-visible .pl-emoji { animation: plWiggle 0.6s var(--ease); }
+.pl-name { font-weight: bold; font-size: 0.95rem; color: var(--pl-c); letter-spacing: 0.5px; text-align: center; }
+.pl-desc { font-size: 0.68rem; color: var(--text-muted); text-align: center; line-height: 1.35; }
+.pl-icon::after {
+  content: '\2764';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.7rem;
+  color: #ff4d7d;
+  opacity: 0;
+  transition: opacity 0.3s;
+  animation: pb1Beat 2.8s infinite ease-in-out;
+}
+.pl-icon:hover::after, .pl-icon:focus-visible::after { opacity: 1; }
+@keyframes plWiggle { 0%, 100% { rotate: 0deg; scale: 1; } 30% { rotate: -9deg; scale: 1.12; } 60% { rotate: 6deg; scale: 1.05; } }
+.pl-more-label { color: var(--text-muted); font-size: 0.68rem; letter-spacing: 1px; text-align: center; margin-top: 4px; }
+.pl-more { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.pl-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 255, 65, 0.35);
+  background: rgba(0, 20, 5, 0.6);
+  color: var(--text-muted);
+  font: 700 0.7rem var(--font);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.pl-mini:hover, .pl-mini:focus-visible { color: var(--neon-green); border-color: var(--neon-green); outline: none; }
+
+/* 🍿 popCoin Wallet view: a short explanation on top, the shared wallet below */
+#view-popcoin.pc-view { padding: 0 !important; display: flex; flex-direction: column; }
+.pc-explain {
+  margin: 12px 12px 8px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  border-radius: 12px;
+  background: rgba(30, 22, 0, 0.45);
+  color: #f3e6b0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.pc-explain summary { cursor: pointer; color: var(--gold); font-weight: bold; font-size: 0.85rem; list-style: none; }
+.pc-explain summary::-webkit-details-marker { display: none; }
+.pc-explain summary::before { content: '▸ '; }
+.pc-explain[open] summary::before { content: '▾ '; }
+.pc-explain ul { margin: 8px 0 2px 1.1rem; }
+.pc-explain li { margin-bottom: 4px; }
+.pc-explain b { color: var(--gold); }
+.pc-explain small { color: #8a7a4a; display: block; margin-top: 6px; }
+.pc-wallet-frame { flex: 1; min-height: 420px; width: 100%; border: 0; display: block; background: #050607; }
+
+/* 🎬 Bunker view: the bunker card, inside the popcorn window */
+#view-bunker { display: flex; align-items: flex-start; justify-content: center; }
+#view-bunker .bunker-card { width: 100%; max-width: 480px; max-height: none; }
+.bunker-enter {
+  background: rgba(255, 159, 28, 0.14) !important;
+  border-color: #ff9f1c !important;
+  color: #ffcf5a !important;
+  font-weight: bold;
+}
+
+@media (max-width: 460px) {
+  .pl-grid { grid-template-columns: 1fr; gap: 10px; }
+  .pl-icon { flex-direction: row; justify-content: flex-start; min-height: 0; padding: 14px 16px; gap: 14px; text-align: left; }
+  .pl-icon .pl-text { align-items: flex-start; gap: 3px; }
+  .pl-name, .pl-desc { text-align: left; }
+  .pl-emoji { font-size: 2.4rem; }
+  .pp-header { padding: 0.8rem 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pl-icon, .pp-back { transition: none; }
+  .pl-icon:hover, .pl-icon:focus-visible, .pp-back:hover { translate: none; }
+  .pl-icon:hover .pl-emoji, .pl-icon:focus-visible .pl-emoji, .pl-icon::after { animation: none; }
 }
 
 /* ===== TOAST ===== */
@@ -1567,6 +1701,12 @@ html.embedded body { overflow: hidden; min-height: 100%; }
     </div>
   </div>
 
+  <!-- back to the launcher (hidden on the launcher itself) -->
+  <div class="pp-backbar" id="pp-backbar" hidden>
+    <button type="button" class="pp-back" id="pp-back" onclick="goHome()" aria-label="Back to the popcorn launcher">← Back</button>
+    <span class="pp-backbar-title" id="pp-backbar-title"></span>
+  </div>
+
   <div class="pp-tabs">
     <div class="pp-tab active" data-tab="maker">🍿 MAKER</div>
     <div class="pp-tab" data-tab="pix">📛 PIX PANEL</div>
@@ -1576,9 +1716,62 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   </div>
 
   <div class="pp-content-area">
+
+    <!-- LAUNCHER (home of the popcorn window): big friendly icons.
+         FUTURE icons go into .pl-grid (or .pl-more) the same way, each with its
+         own view and data-view:
+           · 🎚️ sound mixing room bunker (time axis + snap-to time grid for cuts)
+           · 🖼️ popcorn window 0 — a gallery of other users' pix -->
+    <div class="tab-view active-view" id="view-home" aria-label="Popcorn launcher">
+      <p class="pl-hello">Freshly popped, just for you ❤️<br>Pick a <b>popcorn</b>:</p>
+      <div class="pl-grid">
+        <button type="button" class="pl-icon pl-bunker" data-view="bunker" onclick="openView('bunker')">
+          <span class="pl-emoji" aria-hidden="true">🎬</span>
+          <span class="pl-text"><span class="pl-name">Bunker</span><span class="pl-desc">Secret movie making</span></span>
+        </button>
+        <button type="button" class="pl-icon pl-wallet" data-view="popcoin" onclick="openView('popcoin')">
+          <span class="pl-emoji" aria-hidden="true">🍿</span>
+          <span class="pl-text"><span class="pl-name">popCoin Wallet</span><span class="pl-desc">Your coins and how to earn them</span></span>
+        </button>
+        <button type="button" class="pl-icon pl-pix" data-view="pix" onclick="openView('pix')">
+          <span class="pl-emoji" aria-hidden="true">📛</span>
+          <span class="pl-text"><span class="pl-name">PIX</span><span class="pl-desc">Camera challenges with the emoji bandits</span></span>
+        </button>
+      </div>
+      <div class="pl-more-label">MORE POPCORN</div>
+      <div class="pl-more">
+        <button type="button" class="pl-mini" onclick="openView('maker')">✍️ Describer</button>
+        <button type="button" class="pl-mini" onclick="openView('cookies')">🍪 Cookies</button>
+        <button type="button" class="pl-mini" onclick="openView('launch')">🚀 Tools</button>
+      </div>
+    </div>
+
+    <!-- 🎬 BUNKER: secret movie making (PB2). The bunker itself is the sealed
+         popcorn window (embed/popcornWindow.js + embed/popcornMovie.js). On the
+         RUDVENTUR home desktop it opens full page from the desktop; anywhere else
+         it is loaded here and opens inside this popcorn window. -->
+    <div class="tab-view" id="view-bunker">
+      <div class="bunker-card" role="region" aria-label="Secret movie bunker">
+        <h2>🎬 Secret Movie Bunker</h2>
+        <div class="bunker-sub">Your sealed room for secret movie making. Camera and microphone only work on this device.</div>
+        <div class="bunker-grid">
+          <div class="bunker-tile"><span class="ico">⏪</span>Back-recording<br><span style="color:#8a7a4a">replay the last 10, 30 or 60 seconds</span></div>
+          <div class="bunker-tile"><span class="ico">✏️</span>Draw and type<br><span style="color:#8a7a4a">right on the live picture</span></div>
+          <div class="bunker-tile"><span class="ico">🎞️</span>Movie maker<br><span style="color:#8a7a4a">clips, sound, text, one movie file</span></div>
+          <div class="bunker-tile"><span class="ico">🗂️</span>Session<br><span style="color:#8a7a4a">everything stays on this device</span></div>
+        </div>
+        <div class="bunker-note">
+          Entering seals the page: while you are inside, the browser refuses every connection to the internet. Leaving reloads the page and brings you back to the popcorn launcher.
+        </div>
+        <div class="bunker-actions">
+          <button type="button" class="pp-btn bunker-enter" id="bunker-enter" onclick="enterBunker()">🔒 Enter the bunker</button>
+          <button type="button" class="pp-btn" onclick="openView('pix')">📛 PIX instead</button>
+        </div>
+      </div>
+    </div>
     
     <!-- POPCORN MAKER TAB -->
-    <div class="tab-view active-view" id="view-maker">
+    <div class="tab-view" id="view-maker">
       <h3 style="color: var(--gold); margin-bottom: 16px;">🌐 Accessibility Description Maker</h3>
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
         Make content accessible for everyone: blind, deaf, non-readers, bots, AIs, and more!
@@ -1801,9 +1994,24 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
 
     <!-- PopCOIN WALLET TAB — the shared wallet (popcoin/ in the RudVentur.com repo).
          The old MINNER / WALLET views below are kept but no longer have tabs. -->
-    <div class="tab-view" id="view-popcoin" style="padding:0">
-      <iframe src="https://rudventur.github.io/RudVentur.com/popcoin/" title="PopCOIN Wallet" loading="lazy" allow="clipboard-write"
-        style="width:100%;height:100%;border:0;display:block;background:#050607"></iframe>
+    <div class="tab-view pc-view" id="view-popcoin">
+      <!-- How popCoins are earned, in plain words. Based on the real rules in
+           popcoin/README.md, embed/popcoin.js and embed/popcoin-reward.js;
+           change this text when those rules change. -->
+      <details class="pc-explain" id="pc-explain" open>
+        <summary>How do I get popCoins?</summary>
+        <ul>
+          <li><b>Welcome gift:</b> a new wallet starts with 10 PopCOIN.</li>
+          <li><b>Mining:</b> open the ⛏️ Fun Mining tab in the wallet. It mines about 1.2 PopCOIN a minute while you wait, and you collect up to 6 at a time.</li>
+          <li><b>Photo challenges:</b> in 📛 PIX, every “I took it” gives 1 to 200 popCoins (that is 0.01 to 2 PopCOIN, because 100 popCoins make 1 PopCOIN).</li>
+          <li><b>Games and tools:</b> the typing game and the translator pay small rewards too.</li>
+          <li><b>Paid out slowly and safely:</b> rewards wait in a queue on this device and drop into the wallet at up to 3 PopCOIN every 30 seconds, and up to 50 a day. Nothing is lost if you close the page.</li>
+          <li><b>Casino winnings:</b> the 🎰 bandit winnings in PIX (minus 1 per spin) are a separate casino balance on this device. They do not go into the wallet yet.</li>
+        </ul>
+        <small>PopCOIN is RUDVENTUR site credit for fun, not real money.</small>
+      </details>
+      <iframe class="pc-wallet-frame" id="pc-wallet-frame" title="PopCOIN Wallet" allow="clipboard-write"
+        data-src="https://rudventur.github.io/RudVentur.com/popcoin/"></iframe>
     </div>
 
     <!-- TOOLS LAUNCHER TAB -->
@@ -1862,27 +2070,6 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
 </div>
 
 
-<!-- BUNKER: secret movie making (PB2) -->
-<div id="bunker-panel" aria-hidden="true">
-  <div class="bunker-card" role="dialog" aria-label="Secret movie bunker">
-    <h2>🛢️ Secret Movie Bunker</h2>
-    <div class="bunker-sub">PB2 · sealed vibe · neon gold on black · for playful clandestine clips</div>
-    <div class="bunker-grid">
-      <div class="bunker-tile"><span class="ico">🎬</span>Story board<br><span style="color:#6a6040">stub reel ready</span></div>
-      <div class="bunker-tile"><span class="ico">🤫</span>Quiet takes<br><span style="color:#6a6040">soft footsteps</span></div>
-      <div class="bunker-tile"><span class="ico">📼</span>Tape vault<br><span style="color:#6a6040">local only</span></div>
-      <div class="bunker-tile"><span class="ico">🍿</span>Popcorn lights<br><span style="color:#6a6040">action!</span></div>
-    </div>
-    <div class="bunker-note">
-      This bunker is the fun “secret movie making” room. On the RUDVENTUR home desktop, PB2 also wakes the sealed popcorn window when it is available. Stub content for now — polish over pulp.
-    </div>
-    <div class="bunker-actions">
-      <button type="button" class="pp-btn bunker-close-gold" onclick="closeBunker()">Leave bunker</button>
-      <button type="button" class="pp-btn" onclick="closeBunker(); switchToTab('pix')">📛 PIX PANEL instead</button>
-    </div>
-  </div>
-</div>
-
 <!-- TOAST NOTIFICATION -->
 <div id="toast"></div>
 
@@ -1937,7 +2124,7 @@ document.getElementById('popcorn-trigger').onclick = function () {
   const panel = document.getElementById('popcorn-panel');
   panel.classList.toggle('active');
   pb1Burst(this);
-  if (panel.classList.contains('active')) pb1Greet();
+  if (panel.classList.contains('active')) { goHome(); pb1Greet(); }
 };
 
 document.getElementById('pp-close').onclick = () => {
@@ -1945,15 +2132,63 @@ document.getElementById('pp-close').onclick = () => {
 };
 
 /* ===== TAB SWITCHING ===== */
+/* ===== VIEWS (launcher + one view per icon) =====
+   'home' is the launcher. Every other view gets the back bar. */
+const VIEW_TITLES = {
+  bunker: '🎬 Bunker · secret movie making',
+  popcoin: '🍿 popCoin Wallet',
+  pix: '📛 PIX PANEL',
+  maker: '✍️ Describer',
+  cookies: '🍪 Cookies',
+  launch: '🚀 Tools'
+};
+let currentView = 'home';
+
+// where the shared RUDVENTUR files live, taken from this page's useRbox.js tag
+// (embed/ here, ../embed/ in the windows13/ copy, the live site in the windows13 repo)
+function rvEmbedBase() {
+  const tag = document.querySelector('script[src*="useRbox.js"]');
+  try { return new URL('.', tag ? tag.src : 'https://rudventur.github.io/RudVentur.com/embed/useRbox.js').href; }
+  catch (e) { return 'https://rudventur.github.io/RudVentur.com/embed/'; }
+}
+
 function switchToTab(tabName) {
-  const tab = document.querySelector('.pp-tab[data-tab="' + tabName + '"]');
   const view = document.getElementById('view-' + tabName);
-  if (!tab || !view) return;
-  document.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
+  if (!view) return;
+  const leaving = currentView;
+  currentView = tabName;
+  document.querySelectorAll('.pp-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
   document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active-view'));
   view.classList.add('active-view');
+  const bar = document.getElementById('pp-backbar');
+  if (bar) bar.hidden = tabName === 'home';
+  const title = document.getElementById('pp-backbar-title');
+  if (title) title.textContent = VIEW_TITLES[tabName] || '';
+  if (leaving === 'pix' && tabName !== 'pix') pixPauseCamera();
   if (tabName === 'pix') pixOnShow();
+  if (tabName === 'popcoin') walletLoad();
+  view.scrollTop = 0;
+}
+function openView(name) {
+  const panel = document.getElementById('popcorn-panel');
+  if (panel) panel.classList.add('active');
+  switchToTab(name);
+  const back = document.getElementById('pp-back');
+  if (name !== 'home' && back) { try { back.focus({ preventScroll: true }); } catch (e) {} }
+}
+function goHome() {
+  switchToTab('home');
+  const first = document.querySelector('.pl-icon');
+  if (first) { try { first.focus({ preventScroll: true }); } catch (e) {} }
+}
+
+// the shared wallet loads the first time its view opens
+function walletLoad() {
+  const fr = document.getElementById('pc-wallet-frame');
+  if (!fr || fr.getAttribute('src')) return;
+  let src = fr.dataset.src;
+  try { src = new URL('../popcoin/', rvEmbedBase()).href; } catch (e) {}
+  fr.src = src;
 }
 
 document.querySelectorAll('.pp-tab').forEach(tab => {
@@ -2319,10 +2554,15 @@ function startTicker() {
 
 
 /* ===== PB2 BUNKER ===== */
+// The bunker is the sealed popcorn window (embed/popcornWindow.js, with the
+// movie maker embed/popcornMovie.js). The 🎬 icon (and PB2 in the header)
+// open the bunker view; "Enter the bunker" opens the sealed bunker itself.
 function isEmbedded() {
   try { return window.parent && window.parent !== window; } catch (e) { return true; }
 }
 
+// On the RUDVENTUR home desktop the page around this window already has the
+// sealed bunker: use it, so the whole page is sealed (not just this window).
 function openParentBunker() {
   try {
     if (window.parent && window.parent !== window && window.parent.rvPopcorn && typeof window.parent.rvPopcorn.open === 'function') {
@@ -2330,42 +2570,56 @@ function openParentBunker() {
       return true;
     }
   } catch (e) {}
-  try {
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'rudventur-open-bunker', source: 'popcorn-hub' }, '*');
-    }
-  } catch (e) {}
   return false;
 }
 
-function showLocalBunker(open) {
-  const panel = document.getElementById('bunker-panel');
-  const btn = document.getElementById('pb2-btn');
-  if (panel) {
-    panel.classList.toggle('open', !!open);
-    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+// Anywhere else (Windows 13 desktop, this page on its own) the bunker scripts
+// load here, so the bunker opens inside this popcorn window.
+let bunkerLoading = null;
+function loadScript(src) {
+  return new Promise(function (resolve, reject) {
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+function loadLocalBunker() {
+  if (window.rvPopcorn) return Promise.resolve(window.rvPopcorn);
+  if (!bunkerLoading) {
+    window.rvPopcornConfig = Object.assign({
+      button: false,          // the 🎬 icon opens it, no extra floating button
+      onPopcorn: function () { openView('home'); }  // its 🍿 brings you back to the launcher
+    }, window.rvPopcornConfig || {});
+    const base = rvEmbedBase();
+    bunkerLoading = loadScript(base + 'popcornWindow.js')
+      .then(function () { return loadScript(base + 'popcornMovie.js'); })
+      .then(function () { return window.rvPopcorn; });
+    bunkerLoading.catch(function () { bunkerLoading = null; });
   }
-  if (btn) btn.classList.toggle('on', !!open);
+  return bunkerLoading;
 }
 
-function openBunker() {
-  // Prefer the sealed desktop bunker (popcornWindow) when the hub is embedded.
+function enterBunker() {
   if (openParentBunker()) {
     showToast('🛢️ Sealed bunker opening — secret movie making', 'gold');
     return;
   }
-  showLocalBunker(true);
-  showToast('🛢️ Bunker open — secret movie making mode', 'gold');
+  const btn = document.getElementById('bunker-enter');
+  if (btn) btn.disabled = true;
+  loadLocalBunker().then(function (pc) {
+    if (btn) btn.disabled = false;
+    if (pc && typeof pc.open === 'function') pc.open();
+    else throw new Error('no bunker');
+  }).catch(function () {
+    if (btn) btn.disabled = false;
+    showToast('🛢️ The bunker could not load. Check the connection and try again.', 'normal');
+  });
 }
 
-function closeBunker() {
-  showLocalBunker(false);
-}
-
+function openBunker() { openView('bunker'); }
+function closeBunker() { if (currentView === 'bunker') goHome(); }
 function toggleBunker() {
-  const panel = document.getElementById('bunker-panel');
-  if (panel && panel.classList.contains('open')) closeBunker();
-  else openBunker();
+  if (currentView === 'bunker') goHome(); else openBunker();
 }
 
 /* ===== PIX PANEL (pix describer: emoji bandits + scenery) =====
@@ -2749,7 +3003,19 @@ function pixSubmitChallenge() {
   pixRender();
 }
 
+// Leaving the PIX view switches the camera off; coming back switches it on
+// again if it was on (the browser remembers the permission).
+function pixPauseCamera() {
+  if (!Pix.stream) return;
+  Pix.stream.getTracks().forEach(function (t) { t.stop(); });
+  Pix.stream = null;
+  Pix.camResume = true;
+  const video = document.getElementById('pix-video');
+  if (video) video.srcObject = null;
+}
+
 function pixOnShow() {
+  if (Pix.camResume) { Pix.camResume = false; pixEnableCamera(); }
   pixEnsureBandits();
   pixRender();
   // the tab slides in; redraw the green shapes once it has its final size
@@ -2768,17 +3034,12 @@ if (isEmbedded()) {
 
 const pb2 = document.getElementById('pb2-btn');
 if (pb2) pb2.addEventListener('click', toggleBunker);
-const bunkerPanel = document.getElementById('bunker-panel');
-if (bunkerPanel) {
-  bunkerPanel.addEventListener('click', function (e) {
-    if (e.target === bunkerPanel) closeBunker();
-  });
-}
 document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape') return;
   if (Pix.optsOpen) { pixBoptToggle(false); return; } // innermost window first
   if (Pix.nestMax) { pixNestToggleMax(); return; } // then restore the bandit window
-  closeBunker();
+  if (window.rvPopcorn && window.rvPopcorn.isOpen && window.rvPopcorn.isOpen()) return; // the bunker has its own way out
+  if (currentView !== 'home') goHome();
 });
 const pixNestBar = document.getElementById('pix-nest-bar');
 if (pixNestBar) {
@@ -2806,6 +3067,18 @@ if (/pix-example/.test(location.hash)) {
   pixLoadExample();
   if (/settings/.test(location.hash)) pixSettingsToggle(true);
 }
+// #pop-bunker, #pop-wallet, #pop-pix open a view straight away (links, demos)
+(function () {
+  const m = /pop-(bunker|wallet|pix)/.exec(location.hash);
+  if (m && !/pix-force-|pix-example/.test(location.hash)) openView(m[1] === 'wallet' ? 'popcoin' : m[1]);
+})();
+// back from the bunker: it left a note before reloading the page, so load it
+// again here and let it finish (its 🍿 / 💬 buttons)
+try { if (sessionStorage.getItem('rvpAfter') && !isEmbeddedHomeBunker()) loadLocalBunker(); } catch (e) {}
+function isEmbeddedHomeBunker() {
+  try { return !!(window.parent && window.parent !== window && window.parent.rvPopcorn); } catch (e) { return false; }
+}
+
 renderDescriptions();
 document.getElementById('wallet-balance').textContent = State.balance.toFixed(4);
 document.getElementById('multiplier').textContent = State.multiplier.toFixed(2) + '×';
