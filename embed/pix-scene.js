@@ -47,6 +47,16 @@
  *   emojis(scene) / describe(scene)
  *   getSettings() / setSettings(patch) / defaults()
  *   mountSettings(el, onChange) — the PIX PANEL settings window body
+ *   setDetails(on)              — on: every emoji pin also shows its type tag
+ *                                 (big / medium / geo-nature …); off (default,
+ *                                 the simple PIX view): emoji only, plus a
+ *                                 tag just for "any place / any size" and 🚨
+ *
+ * Emoji pins: every lucky emoji is drawn BIG in the middle of its green shape,
+ *   sized from the shape (a big foreground box gets a big emoji, a small
+ *   circle a small one), so the random place AND the random size read at a
+ *   glance. A new scene drops its pins in one after another (no animation
+ *   with reduced motion).
  *   EXAMPLE                     — the worked example spec
  */
 (function (global) {
@@ -337,7 +347,7 @@
   }
 
   // ── Rendering ───────────────────────────────────────────────────────────
-  var view = { stage: null, canvas: null, labels: null, scene: null, ro: null };
+  var view = { stage: null, canvas: null, labels: null, scene: null, ro: null, details: false, shown: null };
 
   function mount(stage) {
     stage = typeof stage === 'string' ? document.querySelector(stage) : stage;
@@ -409,7 +419,7 @@
       g.fillStyle = 'rgba(57, 255, 122, 0.07)';
       g.fillRect(m, m, W - 2 * m, H - 2 * m);
       g.beginPath(); roundRect(g, m, m, W - 2 * m, H - 2 * m, 10); stroke(GREEN);
-      if (bg.emoji) labels.push({ x: W - m - 4, y: m + 4, inside: true, right: true, emoji: bg.emoji, tag: 'background', cls: 'is-bg' });
+      if (bg.emoji) labels.push({ pin: true, cx: W - m - 34, cy: m + 34, size: 40, emoji: bg.emoji, type: 'background', tag: 'unified background', note: '', cls: 'is-bg' });
     } else {
       var hy = bg.horizonY * H, sx = bg.sunX * W, r = bg.sunR * Math.min(W, H) * 1.4;
       // green horizon
@@ -438,7 +448,7 @@
         stroke(BLUE);
         g.globalAlpha = 1;
       }
-      if (bg.emoji) labels.push({ x: sx, y: hy - r * 1.6, center: true, emoji: bg.emoji, tag: 'background', cls: 'is-bg' });
+      if (bg.emoji) labels.push({ pin: true, cx: sx, cy: hy - r * 0.5, size: clamp(r * 0.85, 26, 56), emoji: bg.emoji, type: 'background', tag: 'horizon background', note: '', cls: 'is-bg' });
     }
 
     // Objects
@@ -453,47 +463,66 @@
         g.beginPath(); g.arc(cx, cy, 14, 0, Math.PI * 2); stroke(GREEN, [4, 4]);
         g.beginPath(); g.moveTo(cx - 20, cy); g.lineTo(cx - 8, cy); g.moveTo(cx + 8, cy); g.lineTo(cx + 20, cy);
         g.moveTo(cx, cy - 20); g.lineTo(cx, cy - 8); g.moveTo(cx, cy + 8); g.lineTo(cx, cy + 20); stroke(GREEN);
-        labels.push({ x: cx + 18, y: cy - 30, emoji: it.emoji, tag: TYPE_LABEL[it.type] + ' · any size', cls: 'is-unalloc' });
+        labels.push({ pin: true, cx: cx, cy: cy - 34, size: 30, emoji: it.emoji, type: it.type,
+          tag: TYPE_LABEL[it.type] + ' · any size', note: 'any size', cls: 'is-unalloc' });
         return;
       }
       g.beginPath();
       shapePath(g, it.shape, x, y, w2, h2);
       stroke(GREEN, dash);
-      labels.push({ x: x, y: y, emoji: it.emoji,
+      labels.push({ pin: true, cx: x + w2 / 2, cy: y + h2 / 2, size: pinSize(it.shape, w2, h2), emoji: it.emoji, type: it.type,
         tag: (it.illegal ? '🚨 ' : '') + TYPE_LABEL[it.type] + (it.unalloc === 'noplace' ? ' · any place' : ''),
+        note: (it.illegal ? '🚨 illegal' : '') + (it.unalloc === 'noplace' ? 'any place' : ''),
         cls: (it.unalloc ? 'is-unalloc' : '') + (it.illegal ? ' is-illegal' : '') });
     });
 
-    // Labels (HTML so emojis stay crisp and selectable)
-    var html = '';
+    // Emoji pins (HTML so emojis stay crisp): centred in their shape, sized
+    // from it. A new scene drops them in one by one; a redraw (resize) doesn't.
+    var fresh = sc !== view.shown && !sc.empty;
+    view.shown = sc;
+    var html = '', n = 0;
     labels.forEach(function (l) {
-      var left = clamp(l.x, 2, W - 60), top = l.inside ? l.y : l.y - 24;
-      if (top < 2) top = Math.max(2, l.y + 4);
-      top = clamp(top, 2, H - 26);
-      var style = (l.right ? 'right:' + (W - l.x) + 'px;' : 'left:' + left + 'px;') + 'top:' + top + 'px;' +
-        (l.center ? 'transform:translateX(-50%);' : '');
-      html += '<span class="pix-scene-label ' + (l.cls || '') + '" style="' + style + '">' +
-        '<b>' + l.emoji + '</b><i>' + esc(l.tag) + '</i></span>';
+      var size = Math.round(clamp(l.size, 20, Math.min(96, H * 0.3)));
+      var tag = view.details ? l.tag : l.note;
+      // keep the whole pin (emoji and its little tag) inside the feed
+      var half = Math.max(size * 0.5, tag ? (tag.length * 6.2 + 14) / 2 : 0);
+      var cx = clamp(l.cx, half + 2, W - half - 2);
+      var cy = clamp(l.cy, size * 0.5 + 2, H - size * 0.5 - (tag ? 16 : 2));
+      var style = 'left:' + cx.toFixed(1) + 'px;top:' + cy.toFixed(1) + 'px;font-size:' + size + 'px;' +
+        (fresh ? '--pin-delay:' + (n * 110) + 'ms;' : '');
+      html += '<span class="pix-scene-label pix-scene-pin ' + (l.cls || '') + (fresh ? ' is-dropping' : '') +
+        '" data-type="' + esc(l.type || '') + '" style="' + style + '" title="' + esc(l.tag) + '">' +
+        '<b>' + l.emoji + '</b>' + (tag ? '<i>' + esc(tag) + '</i>' : '') + '</span>';
+      n++;
     });
     if (free.length) {
       html += '<div class="pix-scene-free">' + free.map(function (it) {
-        return '<span class="pix-scene-chip" title="Unallocated: anywhere, any size"><b>' + it.emoji + '</b><i>' +
-          esc(TYPE_LABEL[it.type]) + ' · anywhere</i></span>';
+        var st = fresh ? ' style="--pin-delay:' + ((n++) * 110) + 'ms"' : '';
+        return '<span class="pix-scene-chip' + (fresh ? ' is-dropping' : '') + '"' + st + ' title="Unallocated: anywhere, any size"><b>' + it.emoji + '</b><i>' +
+          (view.details ? esc(TYPE_LABEL[it.type]) + ' · ' : '') + 'anywhere</i></span>';
       }).join('') + '</div>';
     }
     view.labels.innerHTML = html;
     declutter(W, H);
   }
 
-  // Keep labels readable: nudge any label that sits under the title badge or
-  // on top of an earlier label a little further down.
+  // Emoji size from its green shape: about half the shape's smaller side
+  function pinSize(shape, w, h) {
+    var k = shape === 'mountain' || shape === 'tree' ? 0.42 : shape === 'river' ? 0.36 : 0.55;
+    return Math.min(w, h) * k;
+  }
+
+  // Keep pins readable: nudge any pin that sits under the overlay badges
+  // (the mood word, the title) or on top of an earlier pin a little lower.
+  // Pins are centred with a transform, so move by the overlap, not to a top.
   function declutter(W, H) {
     var st = view.stage, base = st.getBoundingClientRect();
     var boxes = [];
-    var title = st.querySelector('.pix-title-badge');
-    if (title && title.offsetParent) {
-      var t = title.getBoundingClientRect();
-      boxes.push({ l: t.left - base.left, t: t.top - base.top, r: t.right - base.left, b: t.bottom - base.top });
+    var badges = st.querySelectorAll('.pix-title-badge, .pix-mood');
+    for (var q = 0; q < badges.length; q++) {
+      if (!badges[q].offsetParent) continue;
+      var t = badges[q].getBoundingClientRect();
+      if (t.width && t.height) boxes.push({ l: t.left - base.left, t: t.top - base.top, r: t.right - base.left, b: t.bottom - base.top });
     }
     var els = view.labels.querySelectorAll('.pix-scene-label');
     for (var i = 0; i < els.length; i++) {
@@ -507,9 +536,9 @@
           if (me.l < o.r && me.r > o.l && me.t < o.b && me.b > o.t) { hit = o; break; }
         }
         if (!hit) { boxes.push(me); break; }
-        var top = Math.min(H - (me.b - me.t) - 2, hit.b + 3);
-        if (top <= me.t) { boxes.push(me); break; } // nowhere lower to go
-        el.style.top = top + 'px';
+        var dy = hit.b + 3 - me.t;
+        if (dy <= 0 || me.b + dy > H - 2) { boxes.push(me); break; } // nowhere lower to go
+        el.style.top = ((parseFloat(el.style.top) || 0) + dy).toFixed(1) + 'px';
       }
     }
   }
@@ -676,6 +705,7 @@
     mount: mount,
     render: render,
     redraw: draw,
+    setDetails: function (on) { on = !!on; if (on === view.details) return; view.details = on; draw(); },
     build: build,
     fromSpec: fromSpec,
     relayout: relayout,

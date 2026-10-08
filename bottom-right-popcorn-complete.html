@@ -610,6 +610,174 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   line-height: 1.45;
 }
 
+/* ===== SIMPLE PIX (main view) =====
+   Camera + green indicators + big emoji pins + one mood word + SPIN +
+   "I took it". The bandits, casino and settings live in .pix-adv (hidden
+   until 🎰⚙️). #view-pix gets .pix-adv-on while that panel is open. */
+.pix-head { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+.pix-head h3 { flex: 1; min-width: 0; margin: 0; color: var(--gold); font-size: 1.05rem; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.35); }
+.pix-head-coins { font-size: 0.74rem; color: var(--text-muted); white-space: nowrap; }
+.pix-head-coins strong { color: var(--gold); }
+.pix-adv-btn {
+  flex: none;
+  background: transparent;
+  border: 1px dashed rgba(255, 215, 0, 0.35);
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+}
+.pix-adv-btn:hover, .pix-adv-btn:focus-visible, .pix-adv-btn[aria-expanded="true"] {
+  opacity: 1; border-style: solid; border-color: var(--gold); background: rgba(255, 215, 0, 0.12);
+}
+.pix-lead { color: var(--text-muted); font-size: 0.72rem; margin: 0 0 8px; line-height: 1.4; }
+/* the camera stage fills whatever height the window has left, so SPIN and
+   "I took it" are always on screen without scrolling (the tucked-away panel
+   scrolls in below it when open) */
+#view-pix { display: flex; flex-direction: column; }
+#view-pix > * { flex-shrink: 0; }
+#view-pix .pix-stage { flex: 1 0 auto; height: auto; min-height: 240px; max-height: 760px; }
+#view-pix .pix-overlay { justify-content: flex-start; gap: 6px; background: linear-gradient(180deg, rgba(0,0,0,0.38) 0%, transparent 30%); }
+#view-pix:not(.pix-adv-on) .pix-title-badge { display: none; }
+#view-pix:not(.pix-adv-on) .pix-chip small { display: none; }
+.pix-mood {
+  align-self: center;
+  text-align: center;
+  max-width: 92%;
+  padding: 3px 18px 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 215, 0, 0.55);
+  background: rgba(0, 0, 0, 0.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.2);
+}
+.pix-mood small { display: block; font-size: 0.55rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255, 215, 0, 0.8); }
+.pix-mood span {
+  display: block;
+  font-size: clamp(1.5rem, 6vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: 1px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.65), 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+.pix-mood.is-empty { border-style: dashed; }
+.pix-mood.is-empty span { font-size: 0.95rem; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; }
+.pix-mood.is-rolling span { opacity: 0.75; filter: blur(0.6px); }
+.pix-mood.is-landed { animation: pixMoodLand 0.5s var(--ease); }
+@keyframes pixMoodLand {
+  0% { transform: scale(0.7); opacity: 0.4; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: none; }
+}
+/* emoji pins: big emoji in the middle of each green shape (embed/pix-scene.js) */
+.pix-scene-label.pix-scene-pin {
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  max-width: none;
+  line-height: 1;
+}
+.pix-scene-label.pix-scene-pin b {
+  font-size: 1em;
+  line-height: 1;
+  filter: drop-shadow(0 0 5px rgba(57, 255, 122, 0.9)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+}
+.pix-scene-label.pix-scene-pin i {
+  display: block;
+  margin-top: 2px;
+  padding: 0 6px;
+  font-size: 10px;
+  line-height: 1.5;
+  border-radius: 999px;
+  border: 1px solid #39ff7a;
+  background: rgba(0, 24, 8, 0.82);
+  color: #39ff7a;
+}
+.pix-scene-label.pix-scene-pin.is-unalloc i { border-style: dashed; }
+.pix-scene-label.pix-scene-pin.is-illegal b { filter: drop-shadow(0 0 6px rgba(255, 42, 109, 0.95)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85)); }
+.pix-scene-label.pix-scene-pin.is-illegal i { border-color: #ff2a6d; color: #ffb3c3; background: rgba(60, 0, 15, 0.88); }
+.pix-scene-pin.is-dropping { animation: pixPinDrop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both; animation-delay: var(--pin-delay, 0ms); }
+@keyframes pixPinDrop {
+  0% { opacity: 0; translate: 0 -70px; scale: 1.7; }
+  70% { opacity: 1; translate: 0 4px; scale: 0.94; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+#view-pix .pix-controls { grid-template-columns: 1.5fr 1fr; margin-top: 10px; }
+#view-pix .pix-controls .pix-spin-btn {
+  padding: 0.95rem 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #000;
+  border-color: var(--gold);
+  background: linear-gradient(180deg, #ffe45c, #ffb400);
+  box-shadow: 0 0 18px rgba(255, 200, 0, 0.35);
+  border-radius: 10px;
+}
+#view-pix .pix-controls .pix-spin-btn:hover { box-shadow: 0 0 26px rgba(255, 200, 0, 0.6); transform: translateY(-1px); }
+#view-pix .pix-controls .pix-spin-btn.is-calling { animation: pixSpinCall 2.4s ease-in-out infinite; }
+@keyframes pixSpinCall {
+  0%, 100% { box-shadow: 0 0 14px rgba(255, 200, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 200, 0, 0.75); }
+}
+#view-pix .pix-controls .pix-took-btn {
+  padding: 0.95rem 0.6rem;
+  font-size: 0.86rem;
+  border-radius: 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+#view-pix .pix-controls .pix-took-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 16px rgba(255, 215, 0, 0.5); }
+#view-pix .pix-controls .pix-took-btn.is-idle { opacity: 0.45; }
+.pix-fallback .pix-cam-btn { width: auto; padding: 0.55rem 1.1rem; font-size: 0.78rem; position: relative; z-index: 5; }
+/* the tucked-away panel */
+.pix-adv {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
+  background: rgba(0, 10, 4, 0.6);
+  animation: pixNestIn 0.3s var(--ease);
+}
+.pix-adv[hidden] { display: none; }
+.pix-adv-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.pix-adv-bar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pix-adv-bar button {
+  background: none; border: 1px solid rgba(255, 215, 0, 0.4); color: var(--gold);
+  width: 24px; height: 24px; border-radius: 6px; cursor: pointer; line-height: 1;
+}
+.pix-adv-bar button:hover { background: rgba(255, 42, 109, 0.3); color: #fff; }
+.pix-adv-body { padding: 8px 10px 10px; }
+.pix-adv-body .pix-hint { margin-bottom: 4px; font-size: 0.72rem; }
+@media (prefers-reduced-motion: reduce) {
+  .pix-mood.is-landed, .pix-scene-pin.is-dropping, .pix-adv,
+  #view-pix .pix-controls .pix-spin-btn.is-calling { animation: none; }
+  .pix-mood.is-rolling span { filter: none; }
+}
+
 /* ===== PIX EMOJI BANDITS ===== */
 .pix-bandits {
   margin: 10px 0 4px;
@@ -1191,6 +1359,11 @@ html.embedded body { overflow: hidden; min-height: 100%; }
   .pix-set-body { grid-template-columns: 1fr; }
   .pix-scene-label i { display: none; }
   .pix-scene-label { padding: 1px 5px 1px 4px; }
+  .pix-scene-label.pix-scene-pin { padding: 0; }
+  .pix-scene-label.pix-scene-pin i { display: block; font-size: 9px; }
+  #view-pix .pix-stage { min-height: 230px; }
+  #view-pix .pix-controls .pix-spin-btn { font-size: 1.05rem; letter-spacing: 2px; }
+  .pix-head-coins { font-size: 0.68rem; }
   .pix-casino-cost { margin-left: 0; }
   .pix-bandit-illegal .pix-bandit-reel { width: 46px; height: 46px; }
 }
@@ -1437,6 +1610,11 @@ html.embedded #topRightUser { display: none !important; }
   opacity:1;
   transform:translateX(-50%) translateY(0);
 }
+/* toasts never catch taps (they used to sit on top of buttons for 4 s) */
+#toast { pointer-events: none; }
+/* in PIX the bottom of the window is SPIN / "I took it": toast at the top */
+body.pix-on #toast { bottom: auto; top: 14px; transform: translateX(-50%) translateY(-140px); max-width: 94vw; overflow: hidden; text-overflow: ellipsis; }
+body.pix-on #toast.show { transform: translateX(-50%) translateY(0); }
 
 #toast.gold {
   border-color:var(--gold);
@@ -1684,6 +1862,7 @@ html.embedded #topRightUser { display: none !important; }
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
 <script src="embed/pix-bandits.js"></script>
 <script src="embed/pix-scene.js"></script>
+<script src="embed/pix-moods.js"></script>
 </head>
 
 <body>
@@ -1806,62 +1985,35 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
            · a face stage
            · a sound mixing room bunker -->
     <div class="tab-view" id="view-pix">
-      <h3 style="color: var(--gold); margin-bottom: 8px;">📛 PIX PANEL</h3>
-      <p class="pix-hint">
-        Spin the emoji bandits for your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size). Frame the scene, then submit for random photo popCoins (1–200). A jackpot on the bandits makes the picture easier, but if all three hit a jackpot the illegal bandit pops out and the picture gets super extra hard. Each spin costs 1 casino popCoin; jackpots and the mini reel pay into your casino balance. ⚙️ changes the scene.
-      </p>
-
-      <div class="pix-meta">
-        <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
-        <span title="popCoins from the “I took it” photo award (1–200 each)">📸 Photo popCoins <strong id="pix-earned">0</strong></span>
-        <span title="Bandit winnings minus spin costs; may go below zero (later: bank credit)">🎰 Casino popCoins <strong id="pix-casino">0</strong></span>
+      <!-- SIMPLE PIX (the main view): the live camera with the green
+           indicators, one big Spin, the emojis landing at random spots and
+           sizes on the feed (one emoji per green indicator), one mood word
+           for the feel of the photo, and "I took it". Everything else (the
+           bandit window, casino balance, winnings, bandit options and the
+           PIX PANEL settings) sits in the tucked-away panel behind 🎰⚙️. -->
+      <div class="pix-head">
+        <h3>📛 PIX</h3>
+        <span class="pix-head-coins" title="popCoins from your “I took it” photos (1–200 each)">📸 <strong id="pix-earned-mini">0</strong></span>
+        <button type="button" class="pix-adv-btn" id="pix-adv-btn" onclick="pixAdvToggle()" aria-controls="pix-adv" aria-expanded="false" title="Bandits, casino and settings" aria-label="Open the bandits, casino and settings">🎰⚙️</button>
       </div>
-
-      <!-- Nested bandit window (window-in-window). Open while the player has
-           active achievement targets; closing keeps targets; ⤢ fills the PIX
-           panel only. Cheese Casino–style bandits: embed/pix-bandits.js -->
-      <div class="pix-nest is-closed" id="pix-nest">
-        <button type="button" class="pix-nest-dock" id="pix-nest-dock" onclick="pixNestOpen()" aria-controls="pix-nest-win">
-          <span>🎰</span>
-          <span class="pix-nest-dock-label" id="pix-nest-dock-label">Spin the bandits for your photo targets</span>
-          <span class="pix-nest-dock-targets" id="pix-nest-dock-targets"></span>
-          <span aria-hidden="true">▸</span>
-        </button>
-        <div class="pix-nest-win" id="pix-nest-win" role="region" aria-label="Emoji bandits window">
-          <div class="pix-nest-bar" id="pix-nest-bar" title="Double-click to maximise inside the PIX PANEL">
-            <span class="pix-nest-title">🎰 Emoji Bandits <span class="pix-nest-targets" id="pix-nest-targets"></span></span>
-            <button type="button" class="pix-nest-gear" id="pix-nest-gear" onclick="pixBoptToggle()" title="Bandit options: kingdoms and jackpot ease" aria-label="Bandit options" aria-controls="pix-bopt" aria-expanded="false">⚙</button>
-            <button type="button" id="pix-nest-max" onclick="pixNestToggleMax()" title="Maximise inside the PIX PANEL" aria-label="Maximise bandits window">⤢</button>
-            <button type="button" class="pix-nest-x" id="pix-nest-close" onclick="pixNestClose()" title="Close (your targets stay active)" aria-label="Close bandits window">×</button>
-          </div>
-          <div class="pix-nest-body">
-            <div id="pix-bandits-root"></div>
-            <!-- A few targets are ZWJ emoji sequences (two emoji joined by
-                 U+200D): 🐕‍🦺 service dog, 🐈‍⬛ black cat, 🐻‍❄️ polar bear,
-                 😮‍💨 face exhaling. Only neutral, camera-findable ones are kept. -->
-            <p class="pix-zwj-hint">ℹ️ A few targets are emoji <em>sequences</em> (ZWJ) like 🐕‍🦺 service dog, 🐈‍⬛ black cat or 🐻‍❄️ polar bear — each counts as one target, even if your font draws it in pieces.</p>
-          </div>
-          <!-- Bandit options window: nested inside the bandit window and clipped
-               to it (absolute inside the relative, overflow-hidden window). -->
-          <div class="pix-bopt" id="pix-bopt" role="dialog" aria-label="Bandit options">
-            <div class="pix-bopt-bar"><span>⚙ Bandit options · kingdoms &amp; jackpot ease</span>
-              <button type="button" onclick="pixBoptToggle(false)" title="Close options" aria-label="Close bandit options">×</button>
-            </div>
-            <div class="pix-bopt-body" id="pix-bopt-body"></div>
-          </div>
-        </div>
-      </div>
+      <p class="pix-lead">Spin → emojis land on your camera → go and take that photo, in that mood.</p>
 
       <div class="pix-stage" id="pix-stage">
         <video id="pix-video" playsinline muted autoplay></video>
         <div class="pix-fallback" id="pix-fallback">
           <div style="font-size:1.6rem;">📷</div>
           <div id="pix-fallback-msg">Camera needs your OK to light up the stage.</div>
-          <div style="color:var(--gold);font-size:0.75rem;">You can still browse the challenge and submit when ready.</div>
+          <button type="button" class="pp-btn pix-cam-btn" id="pix-cam-btn" onclick="pixEnableCamera()">📷 Turn on camera</button>
+          <div style="color:var(--gold);font-size:0.72rem;">You can still spin and play without it.</div>
         </div>
         <!-- embed/pix-scene.js inserts a canvas (green indicator shapes) and an
              emoji label layer here, under the title and chips overlay -->
         <div class="pix-overlay">
+          <!-- one-word mood ("climate") for this photo: embed/pix-moods.js -->
+          <div class="pix-mood is-empty" id="pix-mood" aria-live="polite">
+            <small id="pix-mood-cap">mood</small>
+            <span id="pix-mood-word">Spin for a mood</span>
+          </div>
           <div class="pix-title-badge" id="pix-title">📛 🌳 🚗 ☀️</div>
         </div>
       </div>
@@ -1870,23 +2022,80 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       <div class="pix-indicators" id="pix-indicators" aria-label="Challenge indicators"></div>
 
       <div class="pix-controls">
-        <button type="button" class="pp-btn" id="pix-cam-btn" onclick="pixEnableCamera()">📷 Enable camera</button>
-        <button type="button" class="pp-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎰 New challenge</button>
-        <button type="button" class="pp-btn" id="pix-set-btn" onclick="pixSettingsToggle()" aria-controls="pix-set" aria-expanded="false" style="grid-column:1/-1;">⚙️ PIX PANEL settings</button>
-        <button type="button" class="pp-btn" id="pix-submit-btn" onclick="pixSubmitChallenge()" style="grid-column:1/-1;background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);">✨ I took it — award popCoins</button>
+        <button type="button" class="pp-btn pix-spin-btn" id="pix-next-btn" onclick="pixNextChallenge()">🎰 SPIN</button>
+        <button type="button" class="pp-btn pix-took-btn" id="pix-submit-btn" onclick="pixSubmitChallenge()">✨ I took it</button>
       </div>
 
-      <!-- PIX PANEL settings window: background, how many indicators of each
-           type, a size per type, and the chance of unallocated indicators.
-           Saved in localStorage (rudventur_pix_scene_v1) by embed/pix-scene.js -->
-      <div class="pix-set" id="pix-set" hidden>
-        <div class="pix-set-win" role="region" aria-label="PIX PANEL settings">
-          <div class="pix-set-bar"><span>⚙️ PIX PANEL settings · scene indicators</span>
-            <button type="button" onclick="pixSettingsToggle(false)" title="Close settings" aria-label="Close PIX PANEL settings">×</button>
+      <!-- TUCKED-AWAY PANEL (hidden by default, opened by 🎰⚙️): the long
+           how-it-works, spins / photo / casino popCoins, the nested bandit
+           window (bandits, casino winnings breakdown, mini reel, the illegal
+           bandit, bandit options) and the PIX PANEL settings. All of it still
+           runs on every spin, it is just out of sight. -->
+      <div class="pix-adv" id="pix-adv" hidden>
+        <div class="pix-adv-bar"><span>🎰⚙️ Bandits, casino &amp; settings</span>
+          <button type="button" onclick="pixAdvToggle(false)" title="Tuck away" aria-label="Close the bandits, casino and settings">×</button>
+        </div>
+        <div class="pix-adv-body" id="pix-adv-body">
+          <p class="pix-hint">
+            The emoji bandits pick your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size), and every spin also rolls one mood word for the feel of the photo. Frame the scene, then tap “I took it” for random photo popCoins (1–200). A jackpot on the bandits makes the picture easier, but if all three hit a jackpot the illegal bandit pops out and the picture gets super extra hard. Each spin costs 1 casino popCoin; jackpots and the mini reel pay into your casino balance.
+          </p>
+          <div class="pix-meta">
+            <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
+            <span title="popCoins from the “I took it” photo award (1–200 each)">📸 Photo popCoins <strong id="pix-earned">0</strong></span>
+            <span title="Bandit winnings minus spin costs; may go below zero (later: bank credit)">🎰 Casino popCoins <strong id="pix-casino">0</strong></span>
           </div>
-          <div class="pix-set-body" id="pix-set-body"></div>
+
+          <!-- Nested bandit window (window-in-window). Open while the player has
+               active achievement targets; closing keeps targets; ⤢ fills the PIX
+               panel only. Cheese Casino–style bandits: embed/pix-bandits.js -->
+          <div class="pix-nest is-closed" id="pix-nest">
+            <button type="button" class="pix-nest-dock" id="pix-nest-dock" onclick="pixNestOpen()" aria-controls="pix-nest-win">
+              <span>🎰</span>
+              <span class="pix-nest-dock-label" id="pix-nest-dock-label">Spin the bandits for your photo targets</span>
+              <span class="pix-nest-dock-targets" id="pix-nest-dock-targets"></span>
+              <span aria-hidden="true">▸</span>
+            </button>
+            <div class="pix-nest-win" id="pix-nest-win" role="region" aria-label="Emoji bandits window">
+              <div class="pix-nest-bar" id="pix-nest-bar" title="Double-click to maximise inside the PIX PANEL">
+                <span class="pix-nest-title">🎰 Emoji Bandits <span class="pix-nest-targets" id="pix-nest-targets"></span></span>
+                <button type="button" class="pix-nest-gear" id="pix-nest-gear" onclick="pixBoptToggle()" title="Bandit options: kingdoms and jackpot ease" aria-label="Bandit options" aria-controls="pix-bopt" aria-expanded="false">⚙</button>
+                <button type="button" id="pix-nest-max" onclick="pixNestToggleMax()" title="Maximise inside the PIX PANEL" aria-label="Maximise bandits window">⤢</button>
+                <button type="button" class="pix-nest-x" id="pix-nest-close" onclick="pixNestClose()" title="Close (your targets stay active)" aria-label="Close bandits window">×</button>
+              </div>
+              <div class="pix-nest-body">
+                <div id="pix-bandits-root"></div>
+                <!-- A few targets are ZWJ emoji sequences (two emoji joined by
+                     U+200D): 🐕‍🦺 service dog, 🐈‍⬛ black cat, 🐻‍❄️ polar bear,
+                     😮‍💨 face exhaling. Only neutral, camera-findable ones are kept. -->
+                <p class="pix-zwj-hint">ℹ️ A few targets are emoji <em>sequences</em> (ZWJ) like 🐕‍🦺 service dog, 🐈‍⬛ black cat or 🐻‍❄️ polar bear — each counts as one target, even if your font draws it in pieces.</p>
+              </div>
+              <!-- Bandit options window: nested inside the bandit window and clipped
+                   to it (absolute inside the relative, overflow-hidden window). -->
+              <div class="pix-bopt" id="pix-bopt" role="dialog" aria-label="Bandit options">
+                <div class="pix-bopt-bar"><span>⚙ Bandit options · kingdoms &amp; jackpot ease</span>
+                  <button type="button" onclick="pixBoptToggle(false)" title="Close options" aria-label="Close bandit options">×</button>
+                </div>
+                <div class="pix-bopt-body" id="pix-bopt-body"></div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="pp-btn" id="pix-set-btn" onclick="pixSettingsToggle()" aria-controls="pix-set" aria-expanded="false" style="width:100%;margin-top:6px;">⚙️ PIX PANEL settings</button>
+
+          <!-- PIX PANEL settings window: background, how many indicators of each
+               type, a size per type, and the chance of unallocated indicators.
+               Saved in localStorage (rudventur_pix_scene_v1) by embed/pix-scene.js -->
+          <div class="pix-set" id="pix-set" hidden>
+            <div class="pix-set-win" role="region" aria-label="PIX PANEL settings">
+              <div class="pix-set-bar"><span>⚙️ PIX PANEL settings · scene indicators</span>
+                <button type="button" onclick="pixSettingsToggle(false)" title="Close settings" aria-label="Close PIX PANEL settings">×</button>
+              </div>
+              <div class="pix-set-body" id="pix-set-body"></div>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
 
     <!-- COOKIES TAB -->
@@ -2165,6 +2374,7 @@ function switchToTab(tabName) {
   const title = document.getElementById('pp-backbar-title');
   if (title) title.textContent = VIEW_TITLES[tabName] || '';
   if (leaving === 'pix' && tabName !== 'pix') pixPauseCamera();
+  document.body.classList.toggle('pix-on', tabName === 'pix');
   if (tabName === 'pix') pixOnShow();
   if (tabName === 'popcoin') walletLoad();
   view.scrollTop = 0;
@@ -2651,8 +2861,100 @@ const Pix = {
   nestMax: false,
   optsOpen: false,
   setOpen: false,
-  sceneReady: false
+  sceneReady: false,
+  // One random mood word per spin (embed/pix-moods.js): the "climate" of the
+  // photo, shown big on top of the camera feed. null until the first spin.
+  mood: null,
+  moodTimer: null,
+  moodRolling: false,
+  // The tucked-away panel (bandits, casino, options, settings) behind 🎰⚙️
+  advOpen: false
 };
+
+/* ----- Tucked-away panel: bandits, casino and settings (hidden by default) -----
+   The simple PIX view is just camera + SPIN + emojis on the feed + mood word
+   + "I took it". The bandits still spin (and the illegal bandit can still pop
+   out) on every SPIN; this panel only shows the machinery. */
+function pixAdvToggle(force) {
+  Pix.advOpen = typeof force === 'boolean' ? force : !Pix.advOpen;
+  const adv = document.getElementById('pix-adv');
+  const btn = document.getElementById('pix-adv-btn');
+  const view = document.getElementById('view-pix');
+  if (adv) adv.hidden = !Pix.advOpen;
+  if (btn) {
+    btn.setAttribute('aria-expanded', Pix.advOpen ? 'true' : 'false');
+    btn.setAttribute('aria-label', Pix.advOpen ? 'Tuck away the bandits, casino and settings' : 'Open the bandits, casino and settings');
+  }
+  if (view) view.classList.toggle('pix-adv-on', Pix.advOpen);
+  if (!Pix.advOpen) { Pix.nestMax = false; Pix.optsOpen = false; }
+  if (window.PixScene && window.PixScene.setDetails) window.PixScene.setDetails(Pix.advOpen);
+  pixEnsureBandits();
+  pixRender();
+  if (Pix.advOpen && adv) {
+    setTimeout(function () {
+      try { adv.scrollIntoView({ behavior: pixReduceMotion() ? 'auto' : 'smooth', block: 'start' }); } catch (e) {}
+    }, 40);
+  }
+}
+
+function pixReduceMotion() {
+  return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
+/* ----- One-word mood ("climate") ----- */
+function pixPickMood() {
+  if (window.PixMoods && typeof window.PixMoods.pick === 'function') return window.PixMoods.pick();
+  const fallback = ['Golden', 'Misty', 'Calm', 'Stormy', 'Cosy', 'Electric', 'Dreamy', 'Lonely'];
+  return fallback[Math.floor(Math.random() * fallback.length)];
+}
+
+function pixMoodPaint() {
+  const box = document.getElementById('pix-mood');
+  const word = document.getElementById('pix-mood-word');
+  const cap = document.getElementById('pix-mood-cap');
+  if (!box || !word) return;
+  const has = pixHasTargets() && !!Pix.mood;
+  box.classList.toggle('is-empty', !has);
+  if (has) {
+    word.textContent = Pix.mood;
+    if (cap) cap.textContent = 'mood';
+    box.title = 'Make the photo feel ' + Pix.mood.toLowerCase();
+  } else {
+    word.textContent = Pix.justAchieved ? '🎉 Nailed it! Spin again' : 'Spin for your photo';
+    if (cap) cap.textContent = 'mood';
+    box.removeAttribute('title');
+  }
+}
+
+// A short slot-machine roll of mood words, then the real one lands
+function pixRollMood() {
+  const box = document.getElementById('pix-mood');
+  const word = document.getElementById('pix-mood-word');
+  clearInterval(Pix.moodTimer);
+  Pix.moodRolling = false;
+  if (!box || !word || pixReduceMotion() || !window.PixMoods) {
+    pixMoodPaint();
+    return;
+  }
+  const list = window.PixMoods.LIST;
+  let ticks = 0;
+  Pix.moodRolling = true;
+  box.classList.remove('is-empty', 'is-landed');
+  box.classList.add('is-rolling');
+  Pix.moodTimer = setInterval(function () {
+    ticks += 1;
+    word.textContent = list[Math.floor(Math.random() * list.length)];
+    if (ticks >= 9) {
+      clearInterval(Pix.moodTimer);
+      Pix.moodRolling = false;
+      box.classList.remove('is-rolling');
+      pixMoodPaint();
+      void box.offsetWidth; // restart the landing pop
+      box.classList.add('is-landed');
+      if (window.PixScene) window.PixScene.redraw();
+    }
+  }, 60);
+}
 
 function pixHasTargets() {
   return Array.isArray(Pix.targets) && Pix.targets.length > 0;
@@ -2741,6 +3043,7 @@ function pixBoptToggle(force) {
 /* ----- PIX PANEL settings window ----- */
 function pixSettingsToggle(force) {
   Pix.setOpen = typeof force === 'boolean' ? force : !Pix.setOpen;
+  if (Pix.setOpen && !Pix.advOpen) pixAdvToggle(true);
   const wrap = document.getElementById('pix-set');
   const btn = document.getElementById('pix-set-btn');
   if (!wrap) return;
@@ -2774,6 +3077,7 @@ function pixOnSettings(kind) {
 function pixLoadExample() {
   if (!window.PixScene) return;
   pixSetScene(window.PixScene.fromSpec(window.PixScene.EXAMPLE));
+  Pix.mood = pixPickMood();
   Pix.justAchieved = false;
   Pix.nestOpen = false;
   pixRender();
@@ -2823,8 +3127,10 @@ function pixEnsureBandits() {
       }
       if (window.PixScene) pixSetScene(window.PixScene.build(next));
       else Pix.targets = (next.centers || next.indicators || []).slice();
+      Pix.mood = pixPickMood();
       Pix.justAchieved = false;
       Pix.nestOpen = true;
+      pixRollMood();
     } else if (next.reason === 'ease' && pixHasTargets() && Pix.scene && !Pix.scene.fromSpec && window.PixScene) {
       // Jackpot ease moved: same payline, rebuilt indicators
       pixSetScene(window.PixScene.build(next));
@@ -2870,11 +3176,24 @@ function pixRender() {
         (d.text ? '<small>' + d.text + '</small>' : '') + '</span>';
     }).join('');
   }
+  if (!Pix.moodRolling) pixMoodPaint();
   if (window.PixScene && Pix.sceneReady) window.PixScene.render(sc);
   pixNestSync();
   if (num) num.textContent = String(Pix.spinCount);
   if (total) total.textContent = has ? Pix.targets.length + ' emoji' : 'emoji';
   if (earned) earned.textContent = String(Pix.earned);
+  const mini = document.getElementById('pix-earned-mini');
+  if (mini) mini.textContent = String(Pix.earned);
+  const spinBtn = document.getElementById('pix-next-btn');
+  if (spinBtn) {
+    spinBtn.textContent = has ? '🎰 SPIN AGAIN' : '🎰 SPIN';
+    spinBtn.classList.toggle('is-calling', !has);
+  }
+  const took = document.getElementById('pix-submit-btn');
+  if (took) {
+    took.classList.toggle('is-idle', !has);
+    took.title = has ? 'Took the photo? Get 1–200 popCoins' : 'Spin first, then take the photo';
+  }
   pixRenderCasino();
 }
 
@@ -2948,18 +3267,20 @@ function pixNextChallenge() {
     Pix.spinCount += 1;
     try { localStorage.setItem('rudventur_pix_spins', String(Pix.spinCount)); } catch (e) {}
     Pix.targets = (ch.indicators || []).slice();
+    Pix.mood = pixPickMood();
     Pix.justAchieved = false;
     Pix.nestOpen = true;
+    pixRollMood();
   }
   pixApplyChallenge(ch);
   const c = ch && ch.casino;
   if (ch && ch.illegal && ch.illegal.active) {
     showToast('🚨 3 jackpots! The illegal bandit popped out — super extra hard picture', 'gold');
-  } else if (c && c.total !== '0') {
+  } else if (Pix.advOpen && c && c.total !== '0') {
+    // casino winnings only shout while the bandits panel is open
     showToast('💰 +' + c.totalText + ' casino popCoins!', 'gold');
-  } else {
-    showToast('🎰 Bandits spun — new emoji targets!', 'normal');
   }
+  // (a normal spin needs no toast: the mood word and the emojis land on the feed)
 }
 
 function awardPixPopCoins(reason) {
@@ -2985,20 +3306,23 @@ function awardPixPopCoins(reason) {
   }
   const earned = document.getElementById('pix-earned');
   if (earned) earned.textContent = String(Pix.earned);
+  const mini = document.getElementById('pix-earned-mini');
+  if (mini) mini.textContent = String(Pix.earned);
   showToast('📛 +' + coins + ' popCoins! Nice shot!', 'gold');
   return coins;
 }
 
 function pixSubmitChallenge() {
   if (!pixHasTargets()) {
-    showToast('🎰 Spin the bandits first — then snap your targets!', 'normal');
+    showToast('🎰 Spin first — then snap your emojis!', 'normal');
     return;
   }
-  awardPixPopCoins('pix:' + Pix.targets.join(' '));
+  awardPixPopCoins('pix:' + (Pix.mood ? Pix.mood + ' ' : '') + Pix.targets.join(' '));
   // Targets achieved → clear them; the nested bandit window closes with them.
   // The dock pill (or 🎰 New challenge) spins the next set.
   Pix.targets = null;
   Pix.scene = null;
+  Pix.mood = null;
   Pix.justAchieved = true;
   pixRender();
 }
@@ -3022,7 +3346,7 @@ function pixOnShow() {
   setTimeout(function () { if (window.PixScene) window.PixScene.redraw(); }, 400);
   if (!Pix.camAsked && !Pix.stream) {
     // Soft prompt — do not auto-request until the user agrees
-    pixShowFallback('Tap “Enable camera” when you are happy to share the live view. 📛');
+    pixShowFallback('Turn on the camera when you are happy to share the live view. 📛');
   }
 }
 
@@ -3038,6 +3362,7 @@ document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape') return;
   if (Pix.optsOpen) { pixBoptToggle(false); return; } // innermost window first
   if (Pix.nestMax) { pixNestToggleMax(); return; } // then restore the bandit window
+  if (Pix.advOpen && currentView === 'pix') { pixAdvToggle(false); return; } // then tuck the panel away
   if (window.rvPopcorn && window.rvPopcorn.isOpen && window.rvPopcorn.isOpen()) return; // the bunker has its own way out
   if (currentView !== 'home') goHome();
 });
@@ -3058,6 +3383,7 @@ if (/pix-force-/.test(location.hash)) {
   // forced outcome so every path can be checked.
   document.getElementById('popcorn-panel').classList.add('active');
   switchToTab('pix');
+  pixAdvToggle(true); // forced casino outcomes are for checking the machinery
   pixNextChallenge();
 }
 if (/pix-example/.test(location.hash)) {
@@ -3067,10 +3393,16 @@ if (/pix-example/.test(location.hash)) {
   pixLoadExample();
   if (/settings/.test(location.hash)) pixSettingsToggle(true);
 }
+if (/pix-advanced/.test(location.hash)) {
+  // #pix-advanced: open PIX with the bandits, casino and settings panel open
+  document.getElementById('popcorn-panel').classList.add('active');
+  switchToTab('pix');
+  pixAdvToggle(true);
+}
 // #pop-bunker, #pop-wallet, #pop-pix open a view straight away (links, demos)
 (function () {
   const m = /pop-(bunker|wallet|pix)/.exec(location.hash);
-  if (m && !/pix-force-|pix-example/.test(location.hash)) openView(m[1] === 'wallet' ? 'popcoin' : m[1]);
+  if (m && !/pix-force-|pix-example|pix-advanced/.test(location.hash)) openView(m[1] === 'wallet' ? 'popcoin' : m[1]);
 })();
 // back from the bunker: it left a note before reloading the page, so load it
 // again here and let it finish (its 🍿 / 💬 buttons)
