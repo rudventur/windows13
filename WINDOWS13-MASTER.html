@@ -858,6 +858,16 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
   border: none;
 }
 
+/* ===== SHORT SCREENS (panoramic, phones on their side) =====
+   slimmer window title bars so the popcorn window keeps its height */
+@media (max-height: 560px) {
+  .window-header { padding: 4px 10px; }
+  .window-title { font-size: 0.85rem; }
+  .window-btn { width: 26px; height: 26px; }
+  #notch { padding: 6px 14px; font-size: 1rem; }
+}
+.window:fullscreen { border-width: 0; border-radius: 0; }
+
 /* ===== TOAST ===== */
 #toast {
   position: fixed;
@@ -2131,6 +2141,71 @@ const WindowManager = {
   }
 };
 
+/* ===== POPCORN WINDOW: panoramic fit + full screen choices =====
+   popcornView('max' | 'fullscreen' | 'camera' | 'normal'), also in the
+   WINDOWS 13 logo menu. The Popcorn Hub inside asks for 'max' / 'normal'
+   itself with a message { type: 'rudventur-popcorn-view', mode } (same site). */
+function popcornFits() {
+  return window.innerHeight - 60 < 640 && window.innerWidth > window.innerHeight;
+}
+function popcornFsEl() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+function popcornSetMax(on) {
+  const w = WindowManager.windows.popcorn;
+  if (w && !!w.maximized !== !!on) WindowManager.toggleMaximize('popcorn');
+}
+function popcornExitFS(el) {
+  if (!el || popcornFsEl() !== el) return;
+  const fn = document.exitFullscreen || document.webkitExitFullscreen;
+  try { if (fn) Promise.resolve(fn.call(document)).catch(() => {}); } catch (e) {}
+}
+function popcornFrameCmd(cmd) {
+  const w = WindowManager.windows.popcorn;
+  const fr = w && w.element.querySelector('iframe');
+  if (!fr) return;
+  const send = () => { try { fr.contentWindow.postMessage({ type: 'rudventur-popcorn-cmd', cmd: cmd }, location.origin); } catch (e) {} };
+  let ready = false;
+  try { const d = fr.contentDocument; ready = !!d && d.readyState === 'complete' && d.URL !== 'about:blank'; } catch (e) {}
+  if (ready) send(); else fr.addEventListener('load', () => setTimeout(send, 300), { once: true });
+}
+// only ever called from a tap or click (browsers need one for full screen)
+function popcornView(mode) {
+  let w = WindowManager.windows.popcorn;
+  if (mode === 'normal') {
+    if (!w) return;
+    popcornExitFS(w.element);
+    popcornSetMax(false);
+    popcornFrameCmd('normal');
+    return;
+  }
+  if (!w) openWindow('popcorn'); else if (w.minimized) WindowManager.restore('popcorn');
+  w = WindowManager.windows.popcorn;
+  if (!w) return;
+  WindowManager.bringToFront('popcorn');
+  popcornSetMax(true);
+  if (mode === 'fullscreen' || mode === 'camera') {
+    const el = w.element, fn = el.requestFullscreen || el.webkitRequestFullscreen;
+    try { if (fn) Promise.resolve(fn.call(el)).catch(() => {}); } catch (e) {}
+  }
+  if (mode === 'camera') popcornFrameCmd('camera-fill');
+}
+window.addEventListener('message', (ev) => {
+  if (ev.origin !== location.origin) return;
+  const d = ev.data || {};
+  if (d.type !== 'rudventur-popcorn-view') return;
+  const w = WindowManager.windows.popcorn;
+  const fr = w && w.element.querySelector('iframe');
+  if (!fr || fr.contentWindow !== ev.source) return;
+  if (d.mode === 'max') { if (w.minimized) WindowManager.restore('popcorn'); popcornSetMax(true); WindowManager.bringToFront('popcorn'); }
+  else if (d.mode === 'normal') { popcornExitFS(w.element); popcornSetMax(false); }
+});
+// the WINDOWS 13 logo menu (shared view menu) gets the popcorn choices too
+if (window.rvView && typeof rvView.addMenuItem === 'function') {
+  [['max', '🍿 Popcorn — Fill the Screen'], ['fullscreen', '🍿 Popcorn — True Full Screen'],
+   ['camera', '📷 Popcorn — Full Screen Camera'], ['normal', '🍿 Popcorn — Normal Size']].forEach(([m, label]) => {
+    rvView.addMenuItem({ id: 'w13-popcorn-' + m, label: label, onClick: () => popcornView(m) });
+  });
+}
+
 /* ===== OPEN WINDOW SHORTCUTS ===== */
 const WINDOW_TYPES = ['keyboard', 'chat', 'popcorn'];
 
@@ -2164,10 +2239,13 @@ function openWindow(type) {
       id: 'popcorn',
       title: '🍿 Popcorn Hub',
       icon: '🍿',
-      x: 120,
-      y: 60,
-      width: 600,
-      height: 760,
+      // wide, short screens (panoramic): fill the height and widen, so the
+      // popcorn title and PIX (camera left, SPIN right) fit without scrolling
+      // (it starts under the slimmed RUDVENTUR notch, about 34px tall)
+      x: popcornFits() ? Math.round((window.innerWidth - Math.min(window.innerWidth - 16, Math.max(600, Math.round((window.innerHeight - 100) * 2.1)))) / 2) : 120,
+      y: popcornFits() ? 36 : 60,
+      width: popcornFits() ? Math.max(600, Math.round((window.innerHeight - 100) * 2.1)) : 600,
+      height: popcornFits() ? window.innerHeight - 100 : 760,
       noPadding: true,
       // PB1 opens the main popcorn window: a launcher with 🎬 Bunker, 🍿 popCoin Wallet and 📛 PIX (bottom-right-popcorn-complete.html)
       content: '<iframe src="bottom-right-popcorn-complete.html" title="Popcorn Hub" allow="camera; microphone; clipboard-write; fullscreen" allowfullscreen loading="eager" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'

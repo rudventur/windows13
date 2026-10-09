@@ -134,6 +134,7 @@ body {
   max-width: 94vw;
   height: 680px;
   max-height: 88vh;
+  max-height: min(88vh, calc(100vh - 140px));
   background: var(--bg-panel);
   border: 1px solid var(--neon-green);
   border-radius: 16px;
@@ -1852,6 +1853,151 @@ body.pix-on #toast.show { transform: translateX(-50%) translateY(0); }
   background: var(--neon-green);
   border-radius: 4px;
 }
+
+/* ===== PANORAMIC / SHORT SCREENS + FULL SCREEN OPTIONS =====
+   On wide, short screens (Full Screen Panoramic, phones on their side) the
+   window used to lose its title bar above the top of the screen, and the big
+   title bar + back bar ate half the height, pushing SPIN out of sight.
+   html.pp-short      : the window is less than 560px tall → slim title bar,
+                        the back button sits beside the title, smaller launcher
+   html.pp-wide-short : wide and short → PIX side by side, camera on the left,
+                        SPIN / I took it on the right
+   (both set by the script near the end of this page from the window's size) */
+@media (max-height: 560px) {
+  html:not(.embedded):not(.pp-max) #popcorn-panel {
+    top: auto;
+    bottom: 8px;
+    right: 96px;
+    width: min(980px, calc(100vw - 112px));
+    max-width: none;
+    height: calc(100vh - 16px);
+    max-height: calc(100vh - 16px);
+  }
+  html:not(.embedded) #popcorn-trigger { width: 60px; height: 60px; right: 18px; bottom: 16px; font-size: 1.9rem; }
+}
+@media (max-height: 560px) and (max-width: 520px) {
+  html:not(.embedded):not(.pp-max) #popcorn-panel { left: 2vw; right: 2vw; width: auto; bottom: 84px; height: calc(100vh - 92px); max-height: calc(100vh - 92px); }
+}
+html.pp-short .pp-header { height: 40px; padding: 0 6px 0 12px; gap: 10px; justify-content: flex-start; }
+html.pp-short .pp-title { flex: none; font-size: 1rem; gap: 8px; letter-spacing: 1px; white-space: nowrap; }
+html.pp-short .pp-header-actions { margin-left: auto; flex: none; gap: 6px; }
+html.pp-short .pb2-btn { padding: 0.2rem 0.6rem; font-size: 0.66rem; }
+html.pp-short .pp-close { font-size: 1.5rem; line-height: 1; }
+html.pp-short .pp-header .pp-backbar { flex: 1 1 auto; min-width: 0; padding: 0; gap: 8px; border: 0; background: none; }
+html.pp-short .pp-back { padding: 0.2rem 0.7rem; font-size: 0.72rem; }
+html.pp-short .pp-backbar-title { min-width: 0; font-size: 0.76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.pp-short .tab-view { padding: 0.6rem 0.8rem; }
+/* the launcher: centred, but never cut off at the top when it is taller than the window */
+#view-home { justify-content: center; justify-content: safe center; }
+html.pp-short #view-home { gap: 10px; }
+html.pp-short .pl-hello { font-size: 0.72rem; line-height: 1.35; }
+html.pp-short .pl-grid { gap: 8px; }
+html.pp-short .pl-icon { min-height: 0; flex-direction: row; justify-content: flex-start; gap: 10px; padding: 10px 12px; }
+html.pp-short .pl-icon .pl-text { align-items: flex-start; gap: 2px; }
+html.pp-short .pl-name, html.pp-short .pl-desc { text-align: left; }
+html.pp-short .pl-emoji { font-size: 2.1rem; }
+html.pp-short .pix-mood span { font-size: clamp(1.2rem, 8vh, 2.2rem); }
+html.pp-short .pix-head h3 { font-size: 0.95rem; }
+html.pp-short #view-pix .pix-stage { min-height: 170px; }
+/* PIX side by side: camera left (filling the height), controls right */
+html.pp-wide-short #view-pix {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(170px, 30%, 280px);
+  grid-template-rows: auto auto auto 1fr;
+  column-gap: 12px;
+  align-content: start;
+  align-items: start;
+}
+html.pp-wide-short #view-pix > .pix-stage { grid-column: 1; grid-row: 1 / span 4; height: var(--pix-stage-h, 240px); min-height: 150px; max-height: none; }
+html.pp-wide-short #view-pix > .pix-head { grid-column: 2; grid-row: 1; }
+html.pp-wide-short #view-pix > .pix-lead { grid-column: 2; grid-row: 2; font-size: 0.68rem; margin-bottom: 4px; }
+html.pp-wide-short #view-pix > .pix-controls { grid-column: 2; grid-row: 3; grid-template-columns: 1fr; gap: 6px; margin-top: 4px; }
+html.pp-wide-short #view-pix > .pix-indicators { grid-column: 2; grid-row: 4; }
+html.pp-wide-short #view-pix > .pix-adv { grid-column: 1 / -1; grid-row: 5; }
+html.pp-wide-short #view-pix .pix-controls .pix-spin-btn { padding: 0.8rem 0.5rem; font-size: 1.05rem; letter-spacing: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.pp-wide-short #view-pix .pix-controls .pix-took-btn { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.pp-wide-short #view-pix .pix-controls .pix-took-btn { padding: 0.7rem 0.5rem; }
+
+/* ⛶ full screen options in the popcorn title bar */
+.pp-fs { position: relative; display: flex; }
+.pp-fs-btn {
+  width: 34px; height: 30px; padding: 0;
+  border: 1px solid rgba(0, 255, 65, 0.5); border-radius: 7px;
+  background: rgba(0, 20, 6, 0.6); color: var(--neon-green);
+  font: 16px/1 var(--font); cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.pp-fs-btn:hover, .pp-fs-btn:focus-visible, .pp-fs-btn[aria-expanded="true"] {
+  background: rgba(0, 255, 65, 0.16); border-color: var(--neon-green); outline: none;
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
+}
+html.pp-short .pp-fs-btn { width: 30px; height: 26px; font-size: 14px; }
+.pp-fs-menu {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 60; display: none;
+  min-width: 220px; padding: 4px; text-align: left;
+  background: #0e0e10; border: 1px solid #333; border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75);
+}
+.pp-fs-menu.open { display: block; }
+.pp-fs-menu button {
+  display: block; width: 100%; text-align: left; margin: 0;
+  padding: 9px 11px; border: 0; border-radius: 4px; background: none;
+  color: #ccc; font: 12px var(--font); letter-spacing: 0.5px; cursor: pointer; white-space: nowrap;
+}
+.pp-fs-menu button:hover, .pp-fs-menu button:focus-visible { background: rgba(255, 255, 255, 0.07); color: #fff; outline: none; }
+.pp-fs-menu button[hidden] { display: none; }
+/* "fill the screen" on the page itself (not inside a desktop window) */
+html.pp-max #popcorn-panel {
+  inset: 0 !important; width: 100% !important; height: 100% !important;
+  max-width: none !important; max-height: none !important; border-radius: 0 !important;
+}
+html.pp-max #popcorn-trigger { display: none !important; }
+/* true full screen of the whole popcorn window */
+#popcorn-panel:fullscreen { inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; border-radius: 0; opacity: 1; transform: none; pointer-events: auto; }
+#popcorn-panel:-webkit-full-screen { width: 100%; height: 100%; max-width: none; max-height: none; border-radius: 0; opacity: 1; transform: none; pointer-events: auto; }
+/* 📷 full screen camera */
+.pix-fs-cam {
+  position: absolute; right: 8px; bottom: 8px; z-index: 6;
+  width: 34px; height: 34px; padding: 0;
+  border: 1px solid rgba(255, 215, 0, 0.7); border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55); color: var(--gold);
+  font: 17px/1 var(--font); cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.pix-fs-cam:hover, .pix-fs-cam:focus-visible { background: rgba(255, 215, 0, 0.2); box-shadow: 0 0 14px rgba(255, 215, 0, 0.5); outline: none; }
+.pix-stage-fsbar {
+  position: absolute; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 7;
+  display: none; gap: 8px; max-width: calc(100% - 20px);
+}
+.pix-stage-fsbar button {
+  flex: none; padding: 0.7rem 1rem; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  font: 700 0.9rem var(--font); border: 1px solid var(--gold); background: rgba(0, 0, 0, 0.65); color: var(--gold);
+}
+.pix-stage-fsbar .pix-fsbar-spin { background: linear-gradient(180deg, #ffe45c, #ffb400); color: #000; letter-spacing: 2px; font-size: 1.05rem; }
+.pix-stage-fsbar .pix-fsbar-exit { border-color: rgba(255, 255, 255, 0.4); color: #ddd; }
+.pix-stage:fullscreen { border: 0; border-radius: 0; box-shadow: none; }
+.pix-stage:-webkit-full-screen { border: 0; border-radius: 0; box-shadow: none; }
+.pix-stage.pix-fake-fs {
+  position: fixed !important; inset: 0 !important; z-index: 2147483000;
+  width: auto !important; height: auto !important; min-height: 0 !important; max-height: none !important;
+  border: 0; border-radius: 0; box-shadow: none;
+}
+.pix-stage:fullscreen .pix-stage-fsbar, .pix-stage:-webkit-full-screen .pix-stage-fsbar, .pix-stage.pix-fake-fs .pix-stage-fsbar { display: flex; }
+.pix-stage:fullscreen .pix-fs-cam, .pix-stage:-webkit-full-screen .pix-fs-cam, .pix-stage.pix-fake-fs .pix-fs-cam { display: none; }
+.pix-stage:fullscreen .pix-mood span, .pix-stage.pix-fake-fs .pix-mood span { font-size: clamp(1.6rem, 7vmin, 3.4rem); }
+@media (max-width: 420px) { .pix-stage-fsbar button { padding: 0.6rem 0.7rem; font-size: 0.8rem; } }
+/* narrow phones: the title stays on one line, and on its own page it keeps
+   clear of the profile R in the top-right corner */
+@media (max-width: 460px) {
+  .pp-title { font-size: 0.9rem; gap: 5px; letter-spacing: 0.3px; white-space: nowrap; }
+  .pp-header-actions { gap: 4px; }
+  .pp-close { font-size: 1.6rem; }
+  .pb2-btn { white-space: nowrap; padding: 0.3rem 0.6rem; }
+  .pp-fs-btn { width: 30px; }
+}
+@media (max-width: 520px) {
+  html:not(.embedded):not(.pp-max) .pp-header { padding-left: 0.8rem; padding-right: 64px; }
+}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
@@ -1875,6 +2021,18 @@ body.pix-on #toast.show { transform: translateX(-50%) translateY(0); }
   <div class="pp-header">
     <div data-rv-logo class="pp-title">🍿 POPCORN HUB <span class="pp-heart" title="popped with love" aria-hidden="true">❤</span></div>
     <div class="pp-header-actions">
+      <!-- ⛶ full-screen choices for this popcorn window (also in the
+           POPCORN HUB logo menu): fill the screen, true full screen,
+           full screen camera, back to normal -->
+      <div class="pp-fs" id="pp-fs">
+        <button type="button" class="pp-fs-btn" id="pp-fs-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="pp-fs-menu" title="Full screen options">⛶</button>
+        <div class="pp-fs-menu" id="pp-fs-menu" role="menu" aria-label="Full screen options">
+          <button type="button" role="menuitem" data-pp-fs="max">⤢ Fill the screen</button>
+          <button type="button" role="menuitem" data-pp-fs="fullscreen">⛶ True full screen</button>
+          <button type="button" role="menuitem" data-pp-fs="camera">📷 Full screen camera</button>
+          <button type="button" role="menuitem" data-pp-fs="normal">↙ Back to normal</button>
+        </div>
+      </div>
       <button type="button" id="pb2-btn" class="pb2-btn" title="Open the bunker for secret movie making">🍿 PB2</button>
       <button class="pp-close" id="pp-close">×</button>
     </div>
@@ -2015,6 +2173,14 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
             <span id="pix-mood-word">Spin for a mood</span>
           </div>
           <div class="pix-title-badge" id="pix-title">📛 🌳 🚗 ☀️</div>
+        </div>
+        <!-- 📷 full screen camera: the camera, the green shapes, the emojis and
+             the mood fill the whole screen; SPIN / I took it / Exit float on top -->
+        <button type="button" class="pix-fs-cam" id="pix-fs-cam" title="Full screen camera" aria-label="Full screen camera">⛶</button>
+        <div class="pix-stage-fsbar" id="pix-stage-fsbar">
+          <button type="button" class="pix-fsbar-spin" onclick="pixNextChallenge()">🎰 SPIN</button>
+          <button type="button" class="pix-fsbar-took" onclick="pixSubmitChallenge()">✨ I took it</button>
+          <button type="button" class="pix-fsbar-exit" data-pp-fs="normal" title="Leave full screen camera">✕ Exit</button>
         </div>
       </div>
       <!-- challenge chips: every lucky emoji with its indicator type (kept
@@ -3404,6 +3570,194 @@ if (/pix-advanced/.test(location.hash)) {
   const m = /pop-(bunker|wallet|pix)/.exec(location.hash);
   if (m && !/pix-force-|pix-example|pix-advanced/.test(location.hash)) openView(m[1] === 'wallet' ? 'popcoin' : m[1]);
 })();
+
+/* ===== PANORAMIC FIT + FULL SCREEN OPTIONS =====
+   Watches the window's size and switches the compact layouts on (see the
+   PANORAMIC / SHORT SCREENS styles), and runs the ⛶ full screen choices:
+     max        fill the screen (inside a desktop: asks the desktop window to
+                maximise; on its own page: fills the page)
+     fullscreen true browser full screen of the whole popcorn window
+     camera     true browser full screen of the PIX camera (camera, green
+                shapes, emojis, mood, with SPIN / I took it / Exit on top)
+     normal     back to the normal size
+   Full screen is only ever asked for from a tap or click; when the browser
+   says no (or has no full screen, like iPhone), it fills the window instead.
+   The same choices are added to the POPCORN HUB logo menu (embed/rvView.js). */
+const PopFS = (function () {
+  const html = document.documentElement;
+  const panel = document.getElementById('popcorn-panel');
+  const header = panel && panel.querySelector('.pp-header');
+  const actions = panel && panel.querySelector('.pp-header-actions');
+  const backbar = document.getElementById('pp-backbar');
+  const area = panel && panel.querySelector('.pp-content-area');
+  const stage = document.getElementById('pix-stage');
+  const fsBtn = document.getElementById('pp-fs-btn');
+  const fsMenu = document.getElementById('pp-fs-menu');
+  const toast = document.getElementById('toast');
+  if (!panel || !header) return null;
+
+  function fit() {
+    const w = panel.clientWidth, h = panel.clientHeight;
+    if (!w || !h) return;
+    const short = h < 560;
+    const wideShort = w >= 480 && h < 620 && w >= h * 1.25;
+    html.classList.toggle('pp-short', short);
+    html.classList.toggle('pp-wide-short', wideShort);
+    // slim title bar: the back button moves up beside the title
+    if (backbar && actions) {
+      if (short && backbar.parentNode !== header) header.insertBefore(backbar, actions);
+      else if (!short && backbar.parentNode === header) panel.insertBefore(backbar, header.nextSibling);
+    }
+    const view = document.getElementById('view-pix');
+    if (view) {
+      const cs = getComputedStyle(view);
+      const avail = view.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
+      if (avail > 0) view.style.setProperty('--pix-stage-h', Math.max(150, Math.round(avail)) + 'px');
+    }
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(function () { fit(); });
+    ro.observe(panel);
+    if (area) ro.observe(area);
+  } else {
+    window.addEventListener('resize', fit);
+  }
+  fit();
+
+  function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function canFS(el) { return !!(el && (el.requestFullscreen || el.webkitRequestFullscreen)); }
+  function reqFS(el) {
+    const fn = el && (el.requestFullscreen || el.webkitRequestFullscreen);
+    if (!fn) return Promise.reject(new Error('no full screen here'));
+    try { return Promise.resolve(fn.call(el)); } catch (e) { return Promise.reject(e); }
+  }
+  function exitFS() {
+    const fn = document.exitFullscreen || document.webkitExitFullscreen;
+    if (!fsEl() || !fn) return Promise.resolve();
+    try { return Promise.resolve(fn.call(document)).catch(function () {}); } catch (e) { return Promise.resolve(); }
+  }
+  // the desktop around this window (RUDVENTUR home, Windows 13) maximises it
+  function tellHost(mode) {
+    if (!isEmbedded()) return false;
+    try { window.parent.postMessage({ type: 'rudventur-popcorn-view', mode: mode }, location.origin); return true; }
+    catch (e) { return false; }
+  }
+
+  function max() {
+    panel.classList.add('active');
+    if (!tellHost('max')) html.classList.add('pp-max');
+  }
+  function fullscreen() {
+    panel.classList.add('active');
+    if (stage) stage.classList.remove('pix-fake-fs');
+    return reqFS(panel).catch(function () {
+      max();
+      showToast('⤢ Full screen is not allowed here, so the window fills the screen instead', 'normal');
+    });
+  }
+  function camera() {
+    panel.classList.add('active');
+    if (currentView !== 'pix') openView('pix');
+    if (!stage) return Promise.resolve();
+    return reqFS(stage).catch(function () { cameraFill(); });
+  }
+  // camera filling the whole window (no browser full screen): used when the
+  // browser has none, and when the desktop around asks for it
+  function cameraFill() {
+    panel.classList.add('active');
+    if (currentView !== 'pix') openView('pix');
+    if (!stage) return;
+    stage.classList.add('pix-fake-fs');
+    tellHost('max');
+    try { stage.querySelector('.pix-fsbar-spin').focus({ preventScroll: true }); } catch (e) {}
+  }
+  function normal() {
+    html.classList.remove('pp-max');
+    const wasFake = stage && stage.classList.contains('pix-fake-fs');
+    if (stage) stage.classList.remove('pix-fake-fs');
+    const el = fsEl();
+    if (el && (el === panel || el === stage)) exitFS();
+    tellHost('normal');
+    if (wasFake && window.PixScene) setTimeout(function () { window.PixScene.redraw(); }, 50);
+  }
+  const ACTIONS = { max: max, fullscreen: fullscreen, camera: camera, normal: normal };
+  function run(mode) { const fn = ACTIONS[mode]; if (fn) fn(); }
+
+  // ⛶ menu in the title bar
+  function closeMenu() {
+    if (!fsMenu) return;
+    fsMenu.classList.remove('open');
+    if (fsBtn) fsBtn.setAttribute('aria-expanded', 'false');
+  }
+  function syncMenu() {
+    if (!fsMenu) return;
+    const fill = fsMenu.querySelector('[data-pp-fs="max"]');
+    if (fill) fill.textContent = isEmbedded() ? '⤢ Fill the desktop' : '⤢ Fill the page';
+    const real = fsMenu.querySelector('[data-pp-fs="fullscreen"]');
+    if (real) real.hidden = !canFS(panel);
+  }
+  if (fsBtn && fsMenu) {
+    fsBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      syncMenu();
+      const open = !fsMenu.classList.contains('open');
+      fsMenu.classList.toggle('open', open);
+      fsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) { const first = fsMenu.querySelector('button:not([hidden])'); if (first) try { first.focus({ preventScroll: true }); } catch (err) {} }
+    });
+    document.addEventListener('click', function (e) { if (!fsMenu.contains(e.target) && e.target !== fsBtn) closeMenu(); });
+  }
+  document.addEventListener('click', function (e) {
+    const b = e.target && e.target.closest && e.target.closest('[data-pp-fs]');
+    if (!b) return;
+    e.stopPropagation();
+    closeMenu();
+    run(b.getAttribute('data-pp-fs'));
+  });
+  const camBtn = document.getElementById('pix-fs-cam');
+  if (camBtn) camBtn.addEventListener('click', function (e) { e.stopPropagation(); camera(); });
+
+  // Escape: close the ⛶ menu, then leave the camera that fills the window
+  // (a real full screen is left by the browser itself)
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (fsMenu && fsMenu.classList.contains('open')) { closeMenu(); e.stopImmediatePropagation(); return; }
+    if (stage && stage.classList.contains('pix-fake-fs')) { normal(); e.stopImmediatePropagation(); }
+  }, true);
+
+  // toasts show inside whatever is full screen (else they would be hidden)
+  function onFSChange() {
+    if (!toast) return;
+    const el = fsEl();
+    const host = el && (el === panel || el === stage) ? el : document.body;
+    if (toast.parentNode !== host) host.appendChild(toast);
+    if (window.PixScene) setTimeout(function () { window.PixScene.redraw(); }, 80);
+    fit();
+  }
+  document.addEventListener('fullscreenchange', onFSChange);
+  document.addEventListener('webkitfullscreenchange', onFSChange);
+
+  // the desktop around this window can ask for the camera filling the window
+  window.addEventListener('message', function (ev) {
+    if (ev.origin !== location.origin || ev.source !== window.parent) return;
+    const d = ev.data || {};
+    if (d.type !== 'rudventur-popcorn-cmd') return;
+    if (d.cmd === 'camera-fill') cameraFill();
+    else if (d.cmd === 'normal') { html.classList.remove('pp-max'); if (stage) stage.classList.remove('pix-fake-fs'); }
+  });
+
+  // the same choices in the POPCORN HUB logo menu (shared view menu)
+  if (window.rvView && typeof window.rvView.addMenuItem === 'function') {
+    [['max', '🍿 Popcorn — Fill the Screen'], ['fullscreen', '🍿 Popcorn — True Full Screen'],
+     ['camera', '📷 Popcorn — Full Screen Camera'], ['normal', '🍿 Popcorn — Normal Size']].forEach(function (it) {
+      window.rvView.addMenuItem({ id: 'popcorn-' + it[0], label: it[1], onClick: function () { run(it[0]); } });
+    });
+  }
+
+  return { fit: fit, run: run, max: max, fullscreen: fullscreen, camera: camera, cameraFill: cameraFill, normal: normal };
+})();
+window.PopFS = PopFS;
+
 // back from the bunker: it left a note before reloading the page, so load it
 // again here and let it finish (its 🍿 / 💬 buttons)
 try { if (sessionStorage.getItem('rvpAfter') && !isEmbeddedHomeBunker()) loadLocalBunker(); } catch (e) {}
