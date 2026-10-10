@@ -3083,7 +3083,8 @@ function pixMoodPaint() {
   box.classList.toggle('is-empty', !has);
   if (has) {
     word.textContent = Pix.mood;
-    if (cap) cap.textContent = 'mood';
+    const scName = (window.PixScene && window.PixScene.sceneLabel && Pix.scene) ? window.PixScene.sceneLabel(Pix.scene) : '';
+    if (cap) cap.textContent = scName ? 'mood · ' + scName : 'mood';
     box.title = 'Make the photo feel ' + Pix.mood.toLowerCase();
   } else {
     word.textContent = Pix.justAchieved ? '🎉 Nailed it! Spin again' : 'Spin for your photo';
@@ -3232,6 +3233,7 @@ function pixOnSettings(kind) {
     if ((kind === 'count' || kind === 'defaults') && !Pix.scene.fromSpec) {
       pixSetScene(window.PixScene.build(pixGetChallenge()));
     } else {
+      if (kind === 'relayout' && Pix.scene.background) Pix.scene.background.kind = null; // re-roll = new scene too
       window.PixScene.relayout(Pix.scene);
     }
   }

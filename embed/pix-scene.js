@@ -7,7 +7,9 @@
  * green shape says, at roughly that size.
  *
  * Indicator types
- *   background   horizon line (default: sunrise on the sea — a green horizon,
+ *   background   horizon scene picked at random each spin from the scene
+ *                registry (sea, city, garden, house interior, forest; see
+ *                SCENES below). Sea is the original sunrise on the sea — a green horizon,
  *                a green half-sun above it, and BLUE wave lines below it; the
  *                waves are the only non-green lines) OR a unified background
  *                (a green frame + light green tint). The background carries an
@@ -78,6 +80,8 @@
   function defaults() {
     return {
       background: 'horizon',                        // 'horizon' | 'unified'
+      scene: 'random',                              // 'random' | a scene id (pinned)
+      scenes: { sea: true, city: true, garden: true, interior: true, forest: true }, // which can come up
       counts: { big: 1, medium: 1, small: 1, geo: 0 }, // 0..3 each
       sizes: { big: 100, medium: 100, small: 100, geo: 100 }, // 50..150 %
       unallocOn: true,
@@ -90,10 +94,13 @@
     s = s || {};
     var out = {
       background: s.background === 'unified' ? 'unified' : 'horizon',
+      scene: (s.scene === 'random' || ['sea', 'city', 'garden', 'interior', 'forest'].indexOf(s.scene) !== -1) ? s.scene : 'random',
+      scenes: {},
       counts: {}, sizes: {},
       unallocOn: s.unallocOn !== false,
       unalloc: clamp(Math.round(+s.unalloc >= 0 ? +s.unalloc : d.unalloc), 0, 100)
     };
+    for (var sk in d.scenes) out.scenes[sk] = !(s.scenes && s.scenes[sk] === false);
     TYPES.forEach(function (t) {
       var c = s.counts && s.counts[t] != null ? +s.counts[t] : d.counts[t];
       var z = s.sizes && s.sizes[t] != null ? +s.sizes[t] : d.sizes[t];
@@ -140,15 +147,245 @@
     return 'mountain';
   }
 
+  // ── Scene registry ──────────────────────────────────────────────────────
+  // Every horizon scene is one entry: { id, icon, name, setup(bg), draw(ctx),
+  // geo(it, bg) }. setup() rolls the random details ONCE per spin (stored on
+  // bg.detail so a resize redraws the same picture); draw() paints the green
+  // line art; geo() may move or reshape the geo-nature indicator so it fits
+  // the scene (for example a window view or a plant indoors).
+  // To add a scene: write one more entry below and add its id to SCENE_ORDER.
+  // Future ideas: mountains, beach, kitchen, market, park, night sky.
+  var SCENES = {};
+  var SCENE_ORDER = ['sea', 'city', 'garden', 'interior', 'forest'];
+
+  SCENES.sea = {
+    id: 'sea', icon: '🌅', name: 'Sea',
+    setup: function (bg) {
+      bg.horizonY = rnd(0.44, 0.6); bg.sunX = rnd(0.22, 0.78); bg.sunR = rnd(0.09, 0.13);
+      bg.detail = { rows: 3 + Math.floor(Math.random() * 3) };
+    },
+    draw: function (c) {
+      var g = c.g, W = c.W, H = c.H, bg = c.bg, hy = bg.horizonY * H, sx = bg.sunX * W, r = bg.sunR * Math.min(W, H) * 1.4;
+      g.beginPath(); g.moveTo(0, hy); g.lineTo(W, hy); c.stroke(GREEN);
+      g.beginPath(); g.arc(sx, hy, r, Math.PI, 2 * Math.PI); c.stroke(GREEN);
+      for (var a = 1; a <= 5; a++) {
+        var ang = Math.PI + a * Math.PI / 6;
+        g.beginPath();
+        g.moveTo(sx + Math.cos(ang) * r * 1.25, hy + Math.sin(ang) * r * 1.25);
+        g.lineTo(sx + Math.cos(ang) * r * 1.55, hy + Math.sin(ang) * r * 1.55);
+        c.stroke(GREEN);
+      }
+      // blue waves below the horizon (the one exception to green)
+      var rows = (bg.detail && bg.detail.rows) || 4;
+      for (var w = 0; w < rows; w++) {
+        var t = (w + 1) / (rows + 0.6);
+        var y = hy + (H - hy) * t * t + 6;
+        var amp = 2 + w * 1.6, len = 26 + w * 16, phase = (w % 2) * len / 2;
+        g.beginPath();
+        for (var xx = -len; xx <= W + len; xx += 4) {
+          var yy = y + Math.sin((xx + phase) / len * Math.PI * 2) * amp;
+          if (xx === -len) g.moveTo(xx, yy); else g.lineTo(xx, yy);
+        }
+        g.globalAlpha = 0.85 - w * 0.1; c.stroke(BLUE); g.globalAlpha = 1;
+      }
+      return { cx: sx, cy: hy - r * 0.5, size: clamp(r * 0.85, 26, 56) };
+    }
+  };
+
+  SCENES.city = {
+    id: 'city', icon: '🌆', name: 'City',
+    setup: function (bg) {
+      bg.horizonY = rnd(0.42, 0.55);
+      var b = [], x = -0.02;
+      while (x < 1) {
+        var w = rnd(0.05, 0.12);
+        b.push({ x: x, w: w, h: rnd(0.08, 0.34), roof: pick(['flat', 'flat', 'spire', 'step']), win: Math.random() < 0.6 });
+        x += w + rnd(0, 0.02);
+      }
+      bg.detail = { buildings: b, vpX: rnd(0.35, 0.65), junction: Math.random() < 0.6 ? rnd(0.68, 0.82) : 0 };
+    },
+    draw: function (c) {
+      var g = c.g, W = c.W, H = c.H, d = c.bg.detail, hy = c.bg.horizonY * H, tall = null;
+      g.beginPath(); g.moveTo(0, hy); g.lineTo(W, hy); c.stroke(GREEN);
+      d.buildings.forEach(function (b) {
+        var x = b.x * W, w = b.w * W, top = hy - b.h * H;
+        g.beginPath(); g.moveTo(x, hy); g.lineTo(x, top);
+        if (b.roof === 'spire') { g.lineTo(x + w / 2, top - b.h * H * 0.25); }
+        else if (b.roof === 'step') { g.lineTo(x + w * 0.25, top); g.lineTo(x + w * 0.25, top - w * 0.3); g.lineTo(x + w * 0.75, top - w * 0.3); g.lineTo(x + w * 0.75, top); }
+        g.lineTo(x + w, top); g.lineTo(x + w, hy); c.stroke(GREEN);
+        if (b.win) {
+          g.beginPath();
+          for (var wy = top + 8; wy < hy - 6; wy += 12) for (var wx = x + 6; wx < x + w - 6; wx += 10) { g.moveTo(wx, wy); g.lineTo(wx + 3, wy); }
+          g.globalAlpha = 0.6; c.stroke(GREEN); g.globalAlpha = 1;
+        }
+        if (!tall || b.h > tall.h) tall = b;
+      });
+      // road in perspective, toward a vanishing point on the horizon
+      var vx = d.vpX * W;
+      g.beginPath(); g.moveTo(vx - W * 0.02, hy); g.lineTo(W * 0.08, H); g.moveTo(vx + W * 0.02, hy); g.lineTo(W * 0.92, H); c.stroke(GREEN);
+      g.beginPath(); g.moveTo(vx, hy); g.lineTo(W * 0.5, H); c.stroke(GREEN, [10, 12]);
+      if (d.junction) {
+        var jy = d.junction * H;
+        g.beginPath(); g.moveTo(0, jy - H * 0.05); g.lineTo(W, jy - H * 0.05); g.moveTo(0, jy + H * 0.06); g.lineTo(W, jy + H * 0.06); c.stroke(GREEN);
+      }
+      return { cx: (tall.x + tall.w / 2) * W, cy: hy - tall.h * H * 0.55, size: 40 };
+    }
+  };
+
+  SCENES.garden = {
+    id: 'garden', icon: '🌷', name: 'Garden',
+    setup: function (bg) {
+      bg.horizonY = rnd(0.45, 0.58);
+      var bushes = [], n = 2 + Math.floor(Math.random() * 3);
+      for (var i = 0; i < n; i++) bushes.push({ x: rnd(0.02, 0.9), r: rnd(0.04, 0.08) });
+      var beds = [], m = 1 + Math.floor(Math.random() * 2);
+      for (var j = 0; j < m; j++) beds.push({ x: rnd(0.08, 0.8), y: rnd(0.7, 0.88), w: rnd(0.14, 0.24), f: 3 + Math.floor(Math.random() * 4) });
+      bg.detail = { posts: Math.floor(rnd(8, 15)), bushes: bushes, beds: beds, pathX: rnd(0.3, 0.7), bend: rnd(-0.15, 0.15),
+        tree: { x: pick([rnd(0.05, 0.25), rnd(0.75, 0.92)]), h: rnd(0.25, 0.38) } };
+    },
+    draw: function (c) {
+      var g = c.g, W = c.W, H = c.H, d = c.bg.detail, hy = c.bg.horizonY * H, fh = H * 0.07;
+      // fence: two rails and posts
+      g.beginPath(); g.moveTo(0, hy); g.lineTo(W, hy); g.moveTo(0, hy - fh * 0.6); g.lineTo(W, hy - fh * 0.6);
+      for (var p = 0; p <= d.posts; p++) { var px = p / d.posts * W; g.moveTo(px, hy + 2); g.lineTo(px, hy - fh); }
+      c.stroke(GREEN);
+      // bushes on the fence line
+      d.bushes.forEach(function (b) {
+        var r = b.r * W, x = b.x * W;
+        g.beginPath(); g.arc(x + r * 0.6, hy, r * 0.7, Math.PI, 0); g.arc(x + r * 1.6, hy, r, Math.PI, 0); g.arc(x + r * 2.6, hy, r * 0.7, Math.PI, 0); c.stroke(GREEN);
+      });
+      // path winding toward the fence
+      var px0 = d.pathX * W, bend = d.bend * W;
+      g.beginPath();
+      g.moveTo(px0 - W * 0.025, hy); g.quadraticCurveTo(px0 + bend - W * 0.06, hy + (H - hy) * 0.5, px0 - W * 0.16, H);
+      g.moveTo(px0 + W * 0.025, hy); g.quadraticCurveTo(px0 + bend + W * 0.06, hy + (H - hy) * 0.5, px0 + W * 0.16, H);
+      c.stroke(GREEN);
+      // flower beds with little flower heads
+      d.beds.forEach(function (b) {
+        var x = b.x * W, y = b.y * H, w = b.w * W;
+        g.beginPath(); g.ellipse(x + w / 2, y, w / 2, w * 0.14, 0, 0, Math.PI * 2); c.stroke(GREEN);
+        g.beginPath();
+        for (var f = 0; f < b.f; f++) { var fx = x + w * (f + 0.5) / b.f; g.moveTo(fx + 4, y - 6); g.arc(fx, y - 6, 4, 0, Math.PI * 2); }
+        c.stroke(GREEN);
+      });
+      // a tree
+      var tx = d.tree.x * W, th = d.tree.h * H, base = hy + H * 0.06, cr = th * 0.42;
+      g.beginPath(); g.moveTo(tx - 5, base); g.lineTo(tx - 5, base - th * 0.55); g.moveTo(tx + 5, base); g.lineTo(tx + 5, base - th * 0.55);
+      g.moveTo(tx + cr, base - th + cr); g.arc(tx, base - th + cr, cr, 0, Math.PI * 2); c.stroke(GREEN);
+      return { cx: tx, cy: base - th + cr, size: clamp(cr * 0.8, 26, 50) };
+    }
+  };
+
+  SCENES.interior = {
+    id: 'interior', icon: '🛋️', name: 'House interior',
+    setup: function (bg) {
+      bg.horizonY = rnd(0.6, 0.7); // the floor line along the back wall
+      var cornerX = rnd(0.3, 0.7);
+      bg.detail = {
+        cornerX: cornerX,
+        win: { side: Math.random() < 0.5 ? 'l' : 'r', w: rnd(0.14, 0.22), h: rnd(0.18, 0.26), top: rnd(0.14, 0.24) },
+        door: Math.random() < 0.75, furn: pick(['table', 'shelf', 'both']), ceiling: Math.random() < 0.6
+      };
+      var wn = bg.detail.win;
+      wn.x = wn.side === 'l' ? rnd(0.05, Math.max(0.06, cornerX - wn.w - 0.05)) : rnd(cornerX + 0.05, Math.max(cornerX + 0.06, 0.95 - wn.w));
+      var ds = wn.side === 'l' ? 'r' : 'l';
+      bg.detail.doorX = ds === 'l' ? rnd(0.04, Math.max(0.05, cornerX - 0.2)) : rnd(cornerX + 0.05, Math.max(cornerX + 0.06, 0.82));
+    },
+    draw: function (c) {
+      var g = c.g, W = c.W, H = c.H, d = c.bg.detail, fy = c.bg.horizonY * H, cx = d.cornerX * W;
+      // room corner: the corner line, floor lines running out to the viewer
+      g.beginPath(); g.moveTo(cx, 0); g.lineTo(cx, fy); g.moveTo(0, fy - H * 0.05); g.lineTo(cx, fy); g.lineTo(W, fy - H * 0.05);
+      g.moveTo(cx, fy); g.lineTo(cx - W * 0.2, H); g.moveTo(cx, fy); g.lineTo(cx + W * 0.2, H);
+      if (d.ceiling) { g.moveTo(0, H * 0.06); g.lineTo(cx, H * 0.1); g.lineTo(W, H * 0.06); }
+      c.stroke(GREEN);
+      // window frame with a cross
+      var wn = d.win, wx = wn.x * W, wy = wn.top * H, ww = wn.w * W, wh = wn.h * H;
+      g.beginPath(); g.rect(wx, wy, ww, wh); g.moveTo(wx + ww / 2, wy); g.lineTo(wx + ww / 2, wy + wh); g.moveTo(wx, wy + wh / 2); g.lineTo(wx + ww, wy + wh / 2);
+      g.moveTo(wx - 6, wy + wh + 4); g.lineTo(wx + ww + 6, wy + wh + 4); c.stroke(GREEN);
+      if (d.door) {
+        var dx = d.doorX * W, dw = W * 0.12, dt = fy - H * 0.42;
+        g.beginPath(); g.moveTo(dx, fy - H * 0.03); g.lineTo(dx, dt); g.lineTo(dx + dw, dt); g.lineTo(dx + dw, fy - H * 0.03);
+        g.moveTo(dx + dw * 0.85 + 3, dt + H * 0.22); g.arc(dx + dw * 0.85, dt + H * 0.22, 3, 0, Math.PI * 2); c.stroke(GREEN);
+      }
+      if (d.furn !== 'shelf') {
+        var tx = wn.side === 'l' ? W * 0.62 : W * 0.12, tw = W * 0.26, ty = fy + (H - fy) * 0.35;
+        g.beginPath(); g.moveTo(tx, ty); g.lineTo(tx + tw, ty); g.moveTo(tx + tw * 0.08, ty); g.lineTo(tx + tw * 0.08, ty + H * 0.14);
+        g.moveTo(tx + tw * 0.92, ty); g.lineTo(tx + tw * 0.92, ty + H * 0.14); c.stroke(GREEN);
+      }
+      if (d.furn !== 'table') {
+        var sx = wn.side === 'l' ? cx + W * 0.06 : W * 0.06, sw = Math.min(W * 0.2, Math.abs(cx - W * 0.1));
+        g.beginPath(); g.moveTo(sx, H * 0.32); g.lineTo(sx + sw, H * 0.32); g.moveTo(sx, H * 0.42); g.lineTo(sx + sw, H * 0.42); c.stroke(GREEN);
+      }
+      return { cx: wx + ww / 2, cy: wy + wh / 2, size: clamp(Math.min(ww, wh) * 0.5, 26, 50) };
+    },
+    // geo-nature indoors: the view through the window, or a pot plant
+    geo: function (it, bg) {
+      var wn = bg.detail.win;
+      if (it.shape === 'tree' && Math.random() < 0.6) {
+        it.shape = 'plant'; it.w = Math.min(it.w, 0.14); it.h = Math.min(it.h, 0.24); it.y = clamp(bg.horizonY + 0.08 - it.h, 0.1, 1 - it.h);
+        it.fixedX = null;
+      } else {
+        it.shape = 'windowview'; it.w = wn.w * 0.8; it.h = wn.h * 0.8; it.y = wn.top + wn.h * 0.1; it.fixedX = wn.x + wn.w * 0.1;
+      }
+    }
+  };
+
+  SCENES.forest = {
+    id: 'forest', icon: '🌲', name: 'Forest',
+    setup: function (bg) {
+      bg.horizonY = rnd(0.48, 0.6);
+      var trees = [], n = 5 + Math.floor(Math.random() * 5), vx = rnd(0.35, 0.65);
+      for (var i = 0; i < n; i++) {
+        var depth = Math.random(); // 0 far … 1 near
+        var x = rnd(0, 1);
+        if (Math.abs(x - vx) < 0.08 + depth * 0.1) x = x < vx ? x - 0.18 : x + 0.18;
+        trees.push({ x: x, depth: depth, kind: Math.random() < 0.55 ? 'pine' : 'round' });
+      }
+      trees.sort(function (a, b) { return a.depth - b.depth; });
+      bg.detail = { trees: trees, vpX: vx };
+    },
+    draw: function (c) {
+      var g = c.g, W = c.W, H = c.H, d = c.bg.detail, hy = c.bg.horizonY * H, near = null;
+      g.beginPath(); g.moveTo(0, hy); g.lineTo(W, hy); g.globalAlpha = 0.6; c.stroke(GREEN); g.globalAlpha = 1;
+      var vx = d.vpX * W;
+      g.beginPath(); g.moveTo(vx - 3, hy); g.lineTo(vx - W * 0.18, H); g.moveTo(vx + 3, hy); g.lineTo(vx + W * 0.18, H); c.stroke(GREEN);
+      d.trees.forEach(function (t) {
+        var s = 0.35 + t.depth * 0.9, x = t.x * W, base = hy + (H - hy) * t.depth * 0.85, th = H * 0.42 * s, tw = Math.max(3, W * 0.012 * s);
+        g.globalAlpha = 0.5 + t.depth * 0.5;
+        g.beginPath(); g.moveTo(x - tw, base); g.lineTo(x - tw, base - th * 0.45); g.moveTo(x + tw, base); g.lineTo(x + tw, base - th * 0.45);
+        if (t.kind === 'pine') { g.moveTo(x - th * 0.28, base - th * 0.42); g.lineTo(x, base - th); g.lineTo(x + th * 0.28, base - th * 0.42); g.closePath(); }
+        else { var r = th * 0.3; g.moveTo(x + r, base - th + r); g.arc(x, base - th + r, r, 0, Math.PI * 2); }
+        c.stroke(GREEN); g.globalAlpha = 1;
+        if (!near || t.depth > near.d) near = { d: t.depth, x: x, y: base - th * 0.7 };
+      });
+      return { cx: vx, cy: hy - H * 0.06, size: 34 };
+    }
+  };
+
+  function sceneById(id) { return SCENES[id] || SCENES.sea; }
+  function sceneLabel(scene) {
+    if (!scene) return '';
+    var bg = scene.background || {};
+    if (bg.mode === 'unified') return '🖼️ Unified';
+    var sd = sceneById(bg.kind);
+    return sd.icon + ' ' + sd.name;
+  }
+  function chooseScene(s) {
+    if (s.scene !== 'random') return s.scene;
+    var on = SCENE_ORDER.filter(function (id) { return s.scenes[id]; });
+    return pick(on.length ? on : SCENE_ORDER);
+  }
+
   // ── Layout: random place + size per type, with the size rules ───────────
   // All boxes are in 0..1 stage units: { x, y, w, h } (x, y = top-left).
   function layout(scene, s) {
     s = sanitize(s || settings);
     var bg = scene.background;
     bg.mode = s.background;
-    bg.horizonY = rnd(0.44, 0.6);
-    bg.sunX = rnd(0.22, 0.78);
-    bg.sunR = rnd(0.09, 0.13);
+    var keep = scene.keepKind && bg.kind && (scene.empty || (s.scene === 'random' ? s.scenes[bg.kind] : s.scene === bg.kind));
+    bg.kind = keep ? bg.kind : chooseScene(s);
+    var sdef = sceneById(bg.kind);
+    sdef.setup(bg);
 
     var minBig = { w: 1, h: 1 }, minMed = { w: 1, h: 1 }, placed = [];
     var order = { big: 0, medium: 1, small: 2, geo: 3 };
@@ -184,13 +421,15 @@
         } else {
           it.y = clamp(rnd(0.45, 0.8) - h, 0.1, 1 - h);
         }
+        it.w = w; it.h = h;
+        if (bg.mode === 'horizon' && sdef.geo) { sdef.geo(it, bg); w = it.w; h = it.h; }
       }
       it.w = w; it.h = h;
       // random x, but try a few spots and keep the one that overlaps the
       // already placed indicators least (so two big objects don't stack)
       var bestX = 0, bestO = Infinity;
       for (var tries = 0; tries < 14; tries++) {
-        var cx = rnd(0.03, Math.max(0.03, 0.97 - w));
+        var cx = it.fixedX != null ? it.fixedX : rnd(0.03, Math.max(0.03, 0.97 - w));
         var o = 0;
         placed.forEach(function (q) {
           var ox = Math.max(0, Math.min(cx + w, q.x + q.w) - Math.max(cx, q.x));
@@ -322,7 +561,8 @@
 
   function relayout(scene, s) {
     if (!scene) return scene;
-    scene.items.forEach(function (it) { it.shape = null; });
+    scene.items.forEach(function (it) { it.shape = null; it.fixedX = null; });
+    scene.keepKind = true; // same scene unless the scene settings rule it out
     return layout(scene, s);
   }
 
@@ -338,7 +578,7 @@
   function describe(scene) {
     if (!scene) return [];
     var out = [{ emoji: scene.background.emoji, type: 'background',
-      text: (scene.background.mode === 'horizon' ? 'horizon background' : 'unified background') }];
+      text: (scene.background.mode === 'horizon' ? sceneLabel(scene) + ' background' : 'unified background') }];
     scene.items.forEach(function (it) {
       out.push({ emoji: it.emoji, type: it.type, unalloc: it.unalloc, illegal: !!it.illegal,
         text: TYPE_LABEL[it.type] + (it.unalloc ? ' · ' + unallocText(it.unalloc) : '') + (it.illegal ? ' · 🚨 illegal' : '') });
@@ -381,9 +621,10 @@
   var emptyScene = null;
   function currentScene() {
     if (view.scene) return view.scene;
-    if (!emptyScene || emptyScene.background.mode !== settings.background) {
-      emptyScene = layout({ background: { mode: settings.background, emoji: null }, items: [], empty: true }, settings);
-      emptyScene.background.horizonY = 0.55; emptyScene.background.sunX = 0.5; emptyScene.background.sunR = 0.11;
+    var want = settings.scene === 'random' ? 'sea' : settings.scene;
+    if (!emptyScene || emptyScene.background.mode !== settings.background || emptyScene.background.kind !== want) {
+      emptyScene = layout({ background: { mode: settings.background, emoji: null, kind: want }, items: [], empty: true, keepKind: true }, settings);
+      if (want === 'sea') { emptyScene.background.horizonY = 0.55; emptyScene.background.sunX = 0.5; emptyScene.background.sunR = 0.11; }
     }
     return emptyScene;
   }
@@ -421,34 +662,9 @@
       g.beginPath(); roundRect(g, m, m, W - 2 * m, H - 2 * m, 10); stroke(GREEN);
       if (bg.emoji) labels.push({ pin: true, cx: W - m - 34, cy: m + 34, size: 40, emoji: bg.emoji, type: 'background', tag: 'unified background', note: '', cls: 'is-bg' });
     } else {
-      var hy = bg.horizonY * H, sx = bg.sunX * W, r = bg.sunR * Math.min(W, H) * 1.4;
-      // green horizon
-      g.beginPath(); g.moveTo(0, hy); g.lineTo(W, hy); stroke(GREEN);
-      // green half-sun above the horizon, with a few short rays
-      g.beginPath(); g.arc(sx, hy, r, Math.PI, 2 * Math.PI); stroke(GREEN);
-      for (var a = 1; a <= 5; a++) {
-        var ang = Math.PI + a * Math.PI / 6;
-        g.beginPath();
-        g.moveTo(sx + Math.cos(ang) * r * 1.25, hy + Math.sin(ang) * r * 1.25);
-        g.lineTo(sx + Math.cos(ang) * r * 1.55, hy + Math.sin(ang) * r * 1.55);
-        stroke(GREEN);
-      }
-      // blue waves below the horizon (the one exception to green)
-      var rows = 4;
-      for (var w = 0; w < rows; w++) {
-        var t = (w + 1) / (rows + 0.6);
-        var y = hy + (H - hy) * t * t + 6;
-        var amp = 2 + w * 1.6, len = 26 + w * 16, phase = (w % 2) * len / 2;
-        g.beginPath();
-        for (var xx = -len; xx <= W + len; xx += 4) {
-          var yy = y + Math.sin((xx + phase) / len * Math.PI * 2) * amp;
-          if (xx === -len) g.moveTo(xx, yy); else g.lineTo(xx, yy);
-        }
-        g.globalAlpha = 0.85 - w * 0.1;
-        stroke(BLUE);
-        g.globalAlpha = 1;
-      }
-      if (bg.emoji) labels.push({ pin: true, cx: sx, cy: hy - r * 0.5, size: clamp(r * 0.85, 26, 56), emoji: bg.emoji, type: 'background', tag: 'horizon background', note: '', cls: 'is-bg' });
+      if (!bg.detail) sceneById(bg.kind).setup(bg);
+      var pinAt = sceneById(bg.kind).draw({ g: g, W: W, H: H, bg: bg, stroke: stroke });
+      if (bg.emoji) labels.push({ pin: true, cx: pinAt.cx, cy: pinAt.cy, size: pinAt.size, emoji: bg.emoji, type: 'background', tag: sceneLabel(sc).replace(/^\S+ /, '').toLowerCase() + ' background', note: '', cls: 'is-bg' });
     }
 
     // Objects
@@ -508,7 +724,7 @@
 
   // Emoji size from its green shape: about half the shape's smaller side
   function pinSize(shape, w, h) {
-    var k = shape === 'mountain' || shape === 'tree' ? 0.42 : shape === 'river' ? 0.36 : 0.55;
+    var k = shape === 'mountain' || shape === 'tree' || shape === 'plant' || shape === 'windowview' ? 0.42 : shape === 'river' ? 0.36 : 0.55;
     return Math.min(w, h) * k;
   }
 
@@ -588,6 +804,17 @@
           }
         }
         break;
+      case 'plant':
+        // pot plant: a pot and a few leaves
+        g.moveTo(x + w * 0.25, y + h * 0.62); g.lineTo(x + w * 0.75, y + h * 0.62); g.lineTo(x + w * 0.66, y + h); g.lineTo(x + w * 0.34, y + h); g.closePath();
+        g.moveTo(x + w / 2, y + h * 0.62); g.quadraticCurveTo(x, y + h * 0.3, x + w * 0.1, y + h * 0.05);
+        g.moveTo(x + w / 2, y + h * 0.62); g.lineTo(x + w / 2, y);
+        g.moveTo(x + w / 2, y + h * 0.62); g.quadraticCurveTo(x + w, y + h * 0.3, x + w * 0.9, y + h * 0.05);
+        break;
+      case 'windowview':
+        // a little mountain view inside the window
+        g.moveTo(x, y + h); g.lineTo(x + w * 0.35, y + h * 0.35); g.lineTo(x + w * 0.55, y + h * 0.6); g.lineTo(x + w * 0.75, y + h * 0.3); g.lineTo(x + w, y + h);
+        break;
       case 'rock':
         g.moveTo(x + w * 0.1, y + h);
         g.lineTo(x, y + h * 0.55);
@@ -628,9 +855,18 @@
     var s = settings;
     var h = '';
     h += '<fieldset class="pix-set-group"><legend>Background</legend>' +
-      '<label class="pix-set-tick"><input type="radio" name="pix-set-bg" value="horizon"' + (s.background === 'horizon' ? ' checked' : '') + '> 🌅 Horizon: sunrise on the sea</label>' +
+      '<label class="pix-set-tick"><input type="radio" name="pix-set-bg" value="horizon"' + (s.background === 'horizon' ? ' checked' : '') + '> 🌅 Horizon scene (sea, city, garden, house, forest)</label>' +
       '<label class="pix-set-tick"><input type="radio" name="pix-set-bg" value="unified"' + (s.background === 'unified' ? ' checked' : '') + '> 🖼️ Unified background: green frame and tint</label>' +
       '</fieldset>';
+    h += '<fieldset class="pix-set-group pix-set-scenes"><legend>Scene</legend>' +
+      '<label class="pix-set-tick">Scene: <select id="pix-set-scene"><option value="random"' + (s.scene === 'random' ? ' selected' : '') + '>🎲 Random every spin</option>' +
+      SCENE_ORDER.map(function (id) { var d = SCENES[id]; return '<option value="' + id + '"' + (s.scene === id ? ' selected' : '') + '>📌 ' + d.icon + ' ' + d.name + '</option>'; }).join('') +
+      '</select></label>' +
+      '<div class="pix-set-scene-ticks">' + SCENE_ORDER.map(function (id) {
+        var d = SCENES[id];
+        return '<label class="pix-set-tick"><input type="checkbox" data-scene="' + id + '"' + (s.scenes[id] ? ' checked' : '') + (s.scene !== 'random' ? ' disabled' : '') + '> ' + d.icon + ' ' + d.name + '</label>';
+      }).join('') + '</div>' +
+      '<p class="pix-opt-note">Ticked scenes can come up on a random spin.</p></fieldset>';
     TYPES.forEach(function (t) {
       h += '<fieldset class="pix-set-group pix-set-type"><legend>' + TYPE_ROW[t] + '</legend>' +
         spectrum('pix-set-count-' + t, 'How many', 0, 3, 1, s.counts[t], String(s.counts[t]), ['0', '1', '2', '3'], ' data-kind="count" data-type="' + t + '"') +
@@ -651,6 +887,19 @@
 
     el.querySelectorAll('input[name="pix-set-bg"]').forEach(function (r) {
       r.addEventListener('change', function () { change({ background: r.value }, 'background'); });
+    });
+    var selS = el.querySelector('#pix-set-scene');
+    if (selS) selS.addEventListener('change', function () {
+      el.querySelectorAll('input[data-scene]').forEach(function (cb) { cb.disabled = selS.value !== 'random'; });
+      change({ scene: selS.value }, 'scene');
+    });
+    el.querySelectorAll('input[data-scene]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        var z = {}; z[cb.getAttribute('data-scene')] = cb.checked;
+        var left = SCENE_ORDER.filter(function (id) { return id === cb.getAttribute('data-scene') ? cb.checked : settings.scenes[id]; });
+        if (!left.length) { cb.checked = true; return; } // keep at least one
+        change({ scenes: z }, 'scene');
+      });
     });
     el.querySelectorAll('input[type=range]').forEach(function (r) {
       r.addEventListener('input', function () {
@@ -681,6 +930,8 @@
   function change(patch, kind) {
     var next = JSON.parse(JSON.stringify(settings));
     if (patch.background) next.background = patch.background;
+    if (patch.scene) next.scene = patch.scene;
+    if (patch.scenes) for (var sc in patch.scenes) next.scenes[sc] = patch.scenes[sc];
     if (patch.counts) for (var a in patch.counts) next.counts[a] = patch.counts[a];
     if (patch.sizes) for (var b in patch.sizes) next.sizes[b] = patch.sizes[b];
     if (patch.unalloc != null) next.unalloc = patch.unalloc;
@@ -699,6 +950,9 @@
   global.PixScene = {
     EXAMPLE: EXAMPLE,
     TYPE_LABEL: TYPE_LABEL,
+    SCENES: SCENES,
+    SCENE_ORDER: SCENE_ORDER,
+    sceneLabel: sceneLabel,
     defaults: defaults,
     getSettings: getSettings,
     setSettings: function (patch) { settings = sanitize(Object.assign(getSettings(), patch || {})); save(); renderSettings(); return getSettings(); },
