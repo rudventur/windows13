@@ -79,6 +79,7 @@
   // ── Settings (saved in localStorage) ────────────────────────────────────
   function defaults() {
     return {
+      sceneVersion: 2,                              // settings format (2 = five scenes)
       background: 'horizon',                        // 'horizon' | 'unified'
       scene: 'random',                              // 'random' | a scene id (pinned)
       scenes: { sea: true, city: true, garden: true, interior: true, forest: true }, // which can come up
@@ -92,7 +93,12 @@
   function sanitize(s) {
     var d = defaults();
     s = s || {};
+    // Migration: settings saved before the five scenes existed (no
+    // sceneVersion) could hold a pinned scene or switched-off scenes from
+    // testing. Bring them back to random over all five scenes, once.
+    var migrate = !s.sceneVersion;
     var out = {
+      sceneVersion: 2,
       background: s.background === 'unified' ? 'unified' : 'horizon',
       scene: (s.scene === 'random' || ['sea', 'city', 'garden', 'interior', 'forest'].indexOf(s.scene) !== -1) ? s.scene : 'random',
       scenes: {},
@@ -100,7 +106,8 @@
       unallocOn: s.unallocOn !== false,
       unalloc: clamp(Math.round(+s.unalloc >= 0 ? +s.unalloc : d.unalloc), 0, 100)
     };
-    for (var sk in d.scenes) out.scenes[sk] = !(s.scenes && s.scenes[sk] === false);
+    for (var sk in d.scenes) out.scenes[sk] = migrate || !(s.scenes && s.scenes[sk] === false);
+    if (migrate) out.scene = 'random';
     TYPES.forEach(function (t) {
       var c = s.counts && s.counts[t] != null ? +s.counts[t] : d.counts[t];
       var z = s.sizes && s.sizes[t] != null ? +s.sizes[t] : d.sizes[t];
@@ -110,7 +117,10 @@
     return out;
   }
   var settings = (function () {
-    try { return sanitize(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch (e) { return defaults(); }
+    var out;
+    try { out = sanitize(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch (e) { out = sanitize(null); }
+    try { localStorage.setItem(KEY, JSON.stringify(out)); } catch (e) {} // store the migrated settings
+    return out;
   })();
   function save() { try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch (e) {} }
 
@@ -617,11 +627,14 @@
     draw();
   }
 
-  // Empty default: sunrise on the sea (or the unified frame), no emojis yet
-  var emptyScene = null;
+  // Empty default before the first spin: a random scene from the allowed
+  // ones (or the pinned one, or the unified frame), no emojis yet
+  var emptyScene = null, emptyKind = null;
   function currentScene() {
     if (view.scene) return view.scene;
-    var want = settings.scene === 'random' ? 'sea' : settings.scene;
+    if (settings.scene !== 'random') emptyKind = settings.scene;
+    else if (!emptyKind || !settings.scenes[emptyKind]) emptyKind = chooseScene(settings);
+    var want = emptyKind;
     if (!emptyScene || emptyScene.background.mode !== settings.background || emptyScene.background.kind !== want) {
       emptyScene = layout({ background: { mode: settings.background, emoji: null, kind: want }, items: [], empty: true, keepKind: true }, settings);
       if (want === 'sea') { emptyScene.background.horizonY = 0.55; emptyScene.background.sunX = 0.5; emptyScene.background.sunR = 0.11; }
