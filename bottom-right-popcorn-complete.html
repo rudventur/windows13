@@ -1509,7 +1509,14 @@ html.embedded #topRightUser { display: none !important; }
 .pl-icon.pl-wallet { --pl-c: var(--gold); }
 .pl-icon.pl-pix { --pl-c: var(--neon-green); }
 .pl-icon.pl-soldat { --pl-c: #ff6b4a; }
-@media (min-width: 461px) { .pl-icon.pl-soldat { grid-column: 2; } } /* sits centred under the first row */
+.pl-icon.pl-golden { --pl-c: #ffd700; }
+/* wide: six columns, each icon two wide, so the second row of two icons sits centred under the first row of three */
+@media (min-width: 461px) {
+  .pl-grid { grid-template-columns: repeat(6, 1fr); }
+  .pl-icon { grid-column: span 2; }
+  .pl-icon.pl-soldat { grid-column: 2 / span 2; }
+  .pl-icon.pl-golden { grid-column: 4 / span 2; }
+}
 .pl-emoji { font-size: 3.1rem; line-height: 1; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pl-c) 70%, transparent)); }
 .pl-icon:hover .pl-emoji, .pl-icon:focus-visible .pl-emoji { animation: plWiggle 0.6s var(--ease); }
 .pl-name { font-weight: bold; font-size: 0.95rem; color: var(--pl-c); letter-spacing: 0.5px; text-align: center; }
@@ -1585,6 +1592,10 @@ html.embedded #topRightUser { display: none !important; }
 .pc-explain b { color: var(--gold); }
 .pc-explain small { color: #8a7a4a; display: block; margin-top: 6px; }
 .pc-wallet-frame { flex: 1; min-height: 420px; width: 100%; border: 0; display: block; background: #050607; }
+
+/* 🏆 Golden Five view: the cartridge shelf page (golden-five.html in the RudVentur.com repository), inside the popcorn window */
+#view-golden.gf-view { padding: 0 !important; display: flex; flex-direction: column; }
+.gf-frame { flex: 1; min-height: 420px; width: 100%; border: 0; display: block; background: #050607; }
 
 /* 🎬 Bunker view: the bunker card, inside the popcorn window */
 #view-bunker { display: flex; align-items: flex-start; justify-content: center; }
@@ -2100,6 +2111,10 @@ html.pp-max #popcorn-trigger { display: none !important; }
           <span class="pl-emoji" aria-hidden="true">🔫</span>
           <span class="pl-text"><span class="pl-name">Soldat Android</span><span class="pl-desc">Making Soldat playable on phones: see the progress</span></span>
         </button>
+        <button type="button" class="pl-icon pl-golden" data-view="golden" onclick="openView('golden')">
+          <span class="pl-emoji" aria-hidden="true">🏆</span>
+          <span class="pl-text"><span class="pl-name">Golden Five</span><span class="pl-desc">A shelf of five classic game cartridges</span></span>
+        </button>
       </div>
       <div class="pl-more-label">MORE POPCORN</div>
       <div class="pl-more">
@@ -2150,6 +2165,13 @@ html.pp-max #popcorn-trigger { display: none !important; }
           <a class="sa-link" href="https://github.com/rudventur/soldat-android/blob/main/PLAN.md" target="_blank" rel="noopener">📋 The plan</a>
         </div>
       </div>
+    </div>
+
+    <!-- 🏆 GOLDEN FIVE: the cartridge shelf (golden-five.html in the RudVentur.com repository root).
+         We host no games: the player loads a file from their own device into an emulator, in the browser only. -->
+    <div class="tab-view gf-view" id="view-golden">
+      <iframe class="gf-frame" id="gf-frame" title="Golden Five cartridge shelf" allow="fullscreen; autoplay; gamepad" allowfullscreen
+        data-src="https://rudventur.github.io/RudVentur.com/golden-five.html?v=20261016-2"></iframe>
     </div>
 
     <!-- POPCORN MAKER TAB -->
@@ -2559,6 +2581,7 @@ const VIEW_TITLES = {
   popcoin: '🍿 popCoin Wallet',
   pix: '📛 PIX PANEL',
   soldat: '🔫 Soldat Android · progress',
+  golden: '🏆 Golden Five · the cartridge shelf',
   maker: '✍️ Describer',
   cookies: '🍪 Cookies',
   launch: '🚀 Tools'
@@ -2590,6 +2613,7 @@ function switchToTab(tabName) {
   if (tabName === 'pix') pixOnShow();
   if (tabName === 'popcoin') walletLoad();
   if (tabName === 'soldat') soldatLoad();
+  if (tabName === 'golden') goldenLoad();
   view.scrollTop = 0;
 }
 function openView(name) {
@@ -2655,6 +2679,15 @@ function soldatRender(data) {
   const note = document.getElementById('sa-note');
   if (data.note) { note.hidden = false; note.textContent = String(data.note); }
   document.getElementById('sa-msg').hidden = true;
+}
+
+// 🏆 Golden Five: the shelf page loads the first time its view opens (from the same site as the shared files)
+function goldenLoad() {
+  const fr = document.getElementById('gf-frame');
+  if (!fr || fr.getAttribute('src')) return;
+  let src = fr.dataset.src;
+  try { src = new URL('../golden-five.html?v=20261016-2', rvEmbedBase()).href; } catch (e) {}
+  fr.src = src;
 }
 
 // the shared wallet loads the first time its view opens
