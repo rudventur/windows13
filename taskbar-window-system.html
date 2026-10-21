@@ -462,32 +462,17 @@ WindowManager.createWindow({
   `
 });
 
-// Global Chat Window
+// Translator Window: translation, Global Chat and the World Keyboards in one (map-merger-venti)
 WindowManager.createWindow({
-  id: 'chat',
-  title: '💬 Global Chat',
-  icon: '💬',
+  id: 'translator',
+  title: '🌐 Translator · Chat · Keyboards',
+  icon: '🌐',
   x: 300,
-  y: 200,
-  width: 450,
-  height: 550,
+  y: 120,
+  width: 900,
+  height: 560,
   noPadding: true,
-  content: `
-    <iframe src="https://rudventur.github.io/global-chat-v5/" title="Global Chat" style="width:100%; height:100%; border:none; display:block;"></iframe>
-  `
-});
-
-// Keyboard Window
-WindowManager.createWindow({
-  id: 'keyboard',
-  title: '⌨️ Keyboards',
-  icon: '⌨️',
-  x: 400,
-  y: 100,
-  width: 850,
-  height: 500,
-  noPadding: true,
-  content: '<iframe src="keyboard-realistic.html" style="width:100%; height:100%; border:none;"></iframe>'
+  content: '<iframe src="https://rudventur.github.io/map-merger-venti/translator_v7.html?keyboard=1" title="Translator, chat and keyboards" allow="clipboard-write" style="width:100%; height:100%; border:none; display:block;"></iframe>'
 });
 
 // Popcorn Hub Window
