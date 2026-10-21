@@ -294,143 +294,12 @@ html, body {
 
 .social-edit:hover { opacity: 1; }
 
-/* ===== R CIRCLE (TOP-RIGHT) ===== */
-#Rcircle {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  width: 56px;
-  height: 56px;
-  background: var(--neon);
-  color: #000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 0 30px rgba(0,255,65,0.4);
-  z-index: 10000;
-  user-select: none;
-  transition: all 0.3s;
-}
-
-#Rcircle:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 0 50px rgba(0,255,65,0.7);
-}
-
-#Rcircle.open { box-shadow: 0 0 0 3px #000, 0 0 30px rgba(0,255,65,0.6); }
-
-/* R notch: slides down from the top-right edge when the capital R opens.
-   It only wraps its own content (no full-width stripe) and never reaches
-   down to the popcorn button. */
-#Rnotch {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 80px;
-  max-width: 100vw;
-  padding: 0 80px 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--neon);
-  color: #000;
-  border-radius: 0 0 0 18px;
-  box-shadow: 0 0 30px rgba(0,255,65,0.3);
-  z-index: 9999;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease;
-  pointer-events: none;
-}
-
-#Rnotch.open { transform: translateY(0); pointer-events: auto; }
-
-.Ricon {
-  flex: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #000;
-  border: 2px solid #000;
-  color: var(--neon);
-  font-size: 20px;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: all 0.2s;
-}
-
-.Ricon:hover { background: #020; transform: scale(1.1); box-shadow: 0 0 12px #000; }
-.Ricon.coins { color: var(--gold); border-color: var(--gold); }
-
-#rnName {
-  min-width: 0;
-  max-width: 30vw;
-  font-weight: 900;
-  font-size: 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.rn-refresh {
-  flex: none;
-  background: none;
-  border: 2px solid #000;
-  border-radius: 8px;
-  width: 34px;
-  height: 34px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.rn-refresh:hover { background: #000; }
-
-/* phones: keep the R notch clear of the RUDVENTUR notch (name stays in the useRbox) */
-@media (max-width: 480px) {
-  #Rnotch { gap: 6px; padding-left: 10px; padding-right: 74px; }
-  .Ricon { width: 36px; height: 36px; font-size: 17px; }
-  #rnName { display: none; }
-}
-
-/* ===== useRbox ===== */
-/* Everything inside is sized in em, so the whole box (text, buttons, icons)
-   scales with the box's font-size — used by the mobile maximized mode. */
-#useRbox {
-  position: fixed;
-  top: 92px;
-  right: 12px;
-  width: min(27em, calc(100vw - 24px));
-  /* stop well above the popcorn button (bottom: 70px + 70px tall) */
-  max-height: calc(100vh - 92px - 160px);
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  background: var(--panel-bg);
-  border: 3px solid var(--neon);
-  border-radius: 14px;
-  box-shadow: 0 0 36px rgba(0,255,65,0.25);
-  backdrop-filter: blur(12px);
-  z-index: 9990;
-}
-
-#useRbox.maximized {
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  max-height: none;
-  border-radius: 0;
-  border-width: 0;
-  z-index: 10001;
-  font-size: clamp(14px, 3.7vw, 22px);
-}
-
-#useRbox.maximized .ubx-body { width: 100%; max-width: 44em; margin: 0 auto; }
-
+/* The R circle, its icons and the profile box are the shared RUDVENTUR useRbox
+   (embed/useRbox.js from RudVentur.com). Windows 13's own part (accounts, coins,
+   social links, sessions, useR file) is its left section: #w13Left below. */
+/* ===== Windows 13 part of the useRbox (left section) ===== */
+#w13Left { font-size: 13px; }
+#w13Left .ubx-body { padding: 0; }
 .ubx-head {
   display: flex;
   justify-content: space-between;
@@ -509,18 +378,7 @@ button.ubx-badge:hover { background: var(--neon); color: #000; }
 
 .ubx-row { display: flex; gap: 0.5em; align-items: center; flex-wrap: wrap; }
 
-#ubxClock {
-  text-align: center;
-  font-size: 1.3em;
-  color: var(--yellow);
-  font-weight: bold;
-  margin: 0.2em 0 0.8em;
-  padding: 0.5em;
-  background: rgba(255,230,0,0.05);
-  border: 1px solid rgba(255,230,0,0.3);
-  border-radius: 0.4em;
-  text-shadow: 0 0 0.6em var(--yellow);
-}
+
 
 .ubx-section {
   margin-top: 1em;
@@ -909,10 +767,11 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" data-service="windows13" data-left="#w13Left" data-left-title="🪟 WINDOWS 13" defer></script>
 </head>
 <body>
 
-<!-- LOGIN SCREEN — 3 entry paths: Email/Phone (cloud), Local (anonymous), Passport (soon) -->
+<!-- LOGIN SCREEN — 2 entry paths: Email/Phone (cloud), Local (anonymous); a useR file can be imported below -->
 <div id="login">
   <h1>WINDOWS 13 🎃</h1>
   <div class="login-card">
@@ -924,7 +783,6 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <div class="login-tabs" role="tablist">
       <button class="login-tab active" data-path="cloud" role="tab" onclick="showLoginPath('cloud')">📧 Email / Phone</button>
       <button class="login-tab" data-path="local" role="tab" onclick="showLoginPath('local')">🕶️ Local</button>
-      <button class="login-tab" data-path="passport" role="tab" onclick="showLoginPath('passport')">🛂 Passport</button>
     </div>
 
     <div class="login-pane" data-pane="cloud">
@@ -943,11 +801,6 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
       <input id="localName" class="login-input" placeholder="Name" autocomplete="username" />
       <input id="localPass" class="login-input" type="password" placeholder="Password" autocomplete="current-password" />
       <button id="enterBtn" onclick="localLogin()">ENTER RUDVENTUR</button>
-    </div>
-
-    <div class="login-pane hidden" data-pane="passport">
-      <p class="login-note">🛂 Passport login is coming soon.<br>It will sync across devices just like Email / Phone.</p>
-      <button class="login-btn" disabled>COMING SOON</button>
     </div>
 
     <div id="loginMsg" class="login-msg" role="status"></div>
@@ -1010,27 +863,15 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
   </div>
 
-  <!-- TOP-RIGHT: R CIRCLE + R MENU NOTCH -->
-  <div id="Rnotch">
-    <button class="Ricon coins hidden" id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
-    <button class="Ricon" onclick="showToast('Translator module coming next! 🌐')" title="Translator">🌐</button>
-    <button class="Ricon" onclick="toggleUseRbox()" title="useRbox">👤</button>
-    <span id="rnName"></span>
-    <button class="rn-refresh" onclick="switchAccount()" title="Switch account">🔄</button>
-  </div>
-  <div id="Rcircle" onclick="toggleRMenu()" title="useR">R</div>
-
-  <!-- useRbox -->
-  <section id="useRbox" class="hidden" aria-label="useRbox">
-    <div class="ubx-head">
-      <strong>👤 useRbox</strong>
-      <div class="ubx-head-btns">
-        <button class="ubx-btn" id="ubxMaxBtn" onclick="toggleUseRboxMax()" title="Maximize">⤢</button>
-        <button class="ubx-btn" onclick="closeUseRbox()" title="Close">✖</button>
-      </div>
+  <!-- TOP-RIGHT: the shared RUDVENTUR useRbox (R circle) is added by embed/useRbox.js.
+       Windows 13's own part goes into its left section: -->
+  <div id="w13Left" hidden>
+    <div class="ubx-row" style="justify-content: space-between; margin-bottom: 0.6em;">
+      <strong id="rnName" style="color: var(--yellow);"></strong>
+      <button class="ubx-btn coins hidden" id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
     </div>
     <div class="ubx-body" id="ubxBody"></div>
-  </section>
+  </div>
 
   <!-- BOTTOM-LEFT: BUTTONS -->
   <div id="bottomButtons">
@@ -1502,14 +1343,12 @@ function signOut() {
   }
 }
 
-/* ===== R MENU (capital R, top-right) ===== */
+/* ===== R MENU: the shared useRbox (capital R, top-right) ===== */
 function toggleRMenu(force) {
-  const notch = document.getElementById('Rnotch');
-  const open = typeof force === 'boolean' ? force : !notch.classList.contains('open');
-  notch.classList.toggle('open', open);
-  document.getElementById('Rcircle').classList.toggle('open', open);
-  if (open) renderCoins();
-  else closeUseRbox();
+  if (!window.rvUserbox) return;
+  if (force === false) { rvUserbox.close(); return; }
+  rvUserbox.open('left');
+  renderCoins();
 }
 
 function popcoinBalance() {
@@ -1573,31 +1412,52 @@ function editSocial(id) {
   renderUbxSocial();
 }
 
-/* ===== useRbox ===== */
+/* ===== useRbox: the shared one; Windows 13 fills its left section ===== */
+function useRboxIsOpen() {
+  const box = document.querySelector('#topRightUser #useRbox');
+  return !!box && !box.classList.contains('hidden');
+}
 function toggleUseRbox() {
-  const box = document.getElementById('useRbox');
-  if (box.classList.contains('hidden')) { renderUseRbox(); box.classList.remove('hidden'); }
-  else closeUseRbox();
+  if (!window.rvUserbox) return;
+  if (useRboxIsOpen()) { closeUseRbox(); return; }
+  renderUseRbox();
+  rvUserbox.open('left');
 }
 
 function closeUseRbox() {
-  document.getElementById('useRbox').classList.add('hidden');
+  if (window.rvUserbox && useRboxIsOpen()) rvUserbox.close();
 }
 
-function toggleUseRboxMax() {
-  const box = document.getElementById('useRbox');
-  const max = box.classList.toggle('maximized');
-  const btn = document.getElementById('ubxMaxBtn');
-  btn.textContent = max ? '⤡' : '⤢';
-  btn.title = max ? 'Restore' : 'Maximize';
+/* The account's name, motto and place are edited in the shared box (right section, Editing).
+   Windows 13 keeps a copy in each account's useR file, so the two are kept in step:
+   signing in / switching account puts the account's profile into the shared box, and
+   saving in the shared box copies it back into the account. */
+function pushProfileToShared() {
+  if (!window.rvUserbox || !Active.user) return;
+  const p = Active.user.profile;
+  rvUserbox.save({ username: p.name || '', psignature: p.psignature || '', currentLoc: p.location || '' });
 }
+function pullProfileFromShared() {
+  if (!window.rvUserbox || !Active.user) return;
+  const f = id => { const el = document.querySelector('#topRightUser #' + id); return el ? el.value : undefined; };
+  const g = rvUserbox.get() || {}, p = Active.user.profile;
+  const s = { username: f('username') ?? g.username, psignature: f('psignature') ?? g.psignature, currentLoc: f('currentLoc') ?? g.currentLoc };
+  const name = String(s.username || '').trim();
+  if (name && name !== p.name) { p.name = name.slice(0, 40); Active.acc.name = p.name; Accounts.put(Active.acc); currentUser = p.name; }
+  p.psignature = String(s.psignature || '');
+  p.location = String(s.currentLoc || '');
+  saveUserFile();
+  document.getElementById('rnName').textContent = currentUser;
+  renderUseRbox();
+}
+document.addEventListener('click', e => { if (e.target && e.target.closest && e.target.closest('#topRightUser #saveUser')) setTimeout(pullProfileFromShared, 0); });
 
 function renderAccountUI() {
   document.getElementById('rnName').textContent = currentUser;
-  document.querySelector('.rn-refresh').title = `Switch account (now: ${currentUser})`;
   renderSocialMenu();
   renderCoins();
-  if (!document.getElementById('useRbox').classList.contains('hidden')) renderUseRbox();
+  pushProfileToShared();
+  renderUseRbox();
 }
 
 function renderUseRbox() {
@@ -1624,27 +1484,7 @@ function renderUseRbox() {
     </div>
     <p class="ubx-hint" style="margin-top: 0.6em;">${esc(syncNote)}</p>
 
-    <div id="ubxClock" style="margin-top: 0.8em;">--:--:--</div>
-
-    <label class="ubx-label" for="ubxName">👤 Name</label>
-    <div class="ubx-row">
-      <input class="ubx-input" id="ubxAvatar" value="${esc(p.avatar || '🎃')}" maxlength="4" style="flex: none; width: 3.2em; text-align: center;" title="Avatar emoji">
-      <input class="ubx-input" id="ubxName" value="${esc(p.name)}" maxlength="40">
-    </div>
-
-    <label class="ubx-label">📡 Channel</label>
-    <input class="ubx-input" value="${esc(currentChannel)}" disabled>
-
-    <label class="ubx-label" for="ubxSig">📝 P.S. (Personal Signature)</label>
-    <textarea class="ubx-input" id="ubxSig" maxlength="500" placeholder="Your personal motto, signature, or note...">${esc(p.psignature)}</textarea>
-
-    <label class="ubx-label" for="ubxLoc">📍 Location</label>
-    <div class="ubx-row">
-      <input class="ubx-input" id="ubxLoc" value="${esc(p.location)}" placeholder="???">
-      <button class="ubx-btn" onclick="ubxGPS(this)">📍 GPS</button>
-    </div>
-
-    <button class="ubx-btn primary wide" style="margin-top: 1em;" onclick="saveProfile()">💾 SAVE PROFILE</button>
+    <p class="ubx-hint" style="margin-top: 0.6em;">✏️ Name, motto and place: edit them in Editing (right) and press 💾 SAVE PROFILE — this account keeps a copy.</p>
 
     <div class="ubx-section">
       <h3>🌐 Social media</h3>
@@ -1673,7 +1513,6 @@ function renderUseRbox() {
   `;
   renderUbxSocial();
   renderSnapshots();
-  updateUbxClock();
 }
 
 function renderUbxSocial() {
@@ -1683,40 +1522,6 @@ function renderUbxSocial() {
   grid.innerHTML = shown.length
     ? shown.map(s => `<a href="${esc(safeUrl(Active.user.social[s.id].url))}" target="_blank" rel="noopener" title="${esc(s.name)}"><span>${s.icon}</span></a>`).join('')
     : '<p class="ubx-hint" style="grid-column: 1 / -1;">None ticked yet — pick them in ☰ RUDVENTUR › 🌐 SOCIAL MEDIA (top left).</p>';
-}
-
-function updateUbxClock() {
-  const el = document.getElementById('ubxClock');
-  if (el) el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
-}
-setInterval(updateUbxClock, 1000);
-
-function ubxGPS(btn) {
-  if (!navigator.geolocation) { showToast('GPS not supported by your browser!'); return; }
-  btn.textContent = '⏳...';
-  navigator.geolocation.getCurrentPosition(pos => {
-    document.getElementById('ubxLoc').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
-    btn.textContent = '✅ GPS';
-    setTimeout(() => { btn.textContent = '📍 GPS'; }, 2000);
-  }, err => {
-    showToast('GPS Error: ' + err.message);
-    btn.textContent = '📍 GPS';
-  });
-}
-
-function saveProfile() {
-  const p = Active.user.profile;
-  p.name = document.getElementById('ubxName').value.trim() || p.name;
-  p.avatar = document.getElementById('ubxAvatar').value.trim() || '🎃';
-  p.psignature = document.getElementById('ubxSig').value;
-  p.location = document.getElementById('ubxLoc').value.trim();
-  Active.acc.name = p.name;
-  Accounts.put(Active.acc);
-  currentUser = p.name;
-  saveUserFile();
-  renderAccountUI();
-  renderUseRbox();
-  showToast('✅ Profile saved', 'gold');
 }
 
 function togglePublic() {
@@ -1731,7 +1536,7 @@ function captureState() {
   return {
     channel: currentChannel,
     windows: Object.keys(WindowManager.windows).filter(id => WINDOW_TYPES.includes(id)),
-    useRboxMaximized: document.getElementById('useRbox').classList.contains('maximized')
+    useRboxOpen: useRboxIsOpen()
   };
 }
 
@@ -1742,8 +1547,7 @@ function restoreState(state) {
     localStorage.setItem('rudventur_channel', currentChannel);
   }
   (state.windows || []).filter(t => WINDOW_TYPES.includes(t)).forEach(openWindow);
-  const box = document.getElementById('useRbox');
-  if (!!state.useRboxMaximized !== box.classList.contains('maximized')) toggleUseRboxMax();
+  if (state.useRboxOpen && !useRboxIsOpen()) toggleUseRbox();
 }
 
 function saveSessionSnapshot() {
@@ -1818,7 +1622,7 @@ function cleanState(state) {
   return {
     channel: String(state.channel || currentChannel).slice(0, 80),
     windows: Array.isArray(state.windows) ? state.windows.filter(t => WINDOW_TYPES.includes(t)) : [],
-    useRboxMaximized: !!state.useRboxMaximized
+    useRboxOpen: !!(state.useRboxOpen || state.useRboxMaximized)
   };
 }
 
@@ -2223,7 +2027,8 @@ function openWindow(type) {
       y: 150,
       width: 850,
       height: 550,
-      content: '<div style="padding: 20px; color: var(--neon);"><h2>⌨️ Keyboards</h2><p>UK 🇬🇧 | Polish 🇵🇱 | German 🇩🇪 | French 🇫🇷 | Spanish 🇪🇸<br>Japanese 🇯🇵 | Korean 🇰🇷 | Arabic 🇸🇦 | Emoji 😀</p><p style="margin-top: 15px;">Replace with keyboard component!</p></div>'
+      noPadding: true,
+      content: '<iframe src="keyboard-realistic.html" title="World keyboards" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     },
     chat: {
       id: 'chat',
@@ -2233,7 +2038,9 @@ function openWindow(type) {
       y: 200,
       width: 450,
       height: 550,
-      content: `<div style="padding: 20px; color: var(--neon);"><h2>💬 Global Chat</h2><p>Channel: <strong style="color: var(--yellow);">${currentChannel}</strong></p><p style="margin-top: 15px;">Firebase-ready! Replace with chat component!</p></div>`
+      noPadding: true,
+      // the real Global Chat v5 (rudventur/global-chat-v5): prompt builder + public chat room
+      content: '<iframe src="https://rudventur.github.io/global-chat-v5/" title="Global Chat" allow="clipboard-write" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     },
     popcorn: {
       id: 'popcorn',
