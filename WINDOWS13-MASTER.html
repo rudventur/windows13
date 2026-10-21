@@ -875,8 +875,8 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
 
   <!-- BOTTOM-LEFT: BUTTONS -->
   <div id="bottomButtons">
-    <div class="bottom-btn" onclick="openWindow('keyboard')" title="Keyboards">⌨️</div>
-    <div class="bottom-btn" onclick="openWindow('chat')" title="Global Chat">💬</div>
+    <div class="bottom-btn" onclick="openWindow('keyboard')" title="Keyboards (in the translator)">⌨️</div>
+    <div class="bottom-btn" onclick="openWindow('chat')" title="Global Chat with translation (in the translator)">💬</div>
   </div>
 
   <!-- BOTTOM-RIGHT: POPCORN -->
@@ -2011,36 +2011,38 @@ if (window.rvView && typeof rvView.addMenuItem === 'function') {
 }
 
 /* ===== OPEN WINDOW SHORTCUTS ===== */
-const WINDOW_TYPES = ['keyboard', 'chat', 'popcorn'];
+const WINDOW_TYPES = ['translator', 'popcorn'];
 
 function openWindow(type) {
+  // ⌨️ and 💬 open the one RUDVENTUR translator (map-merger-venti): keyboard panel or Chat tab
+  let trQuery = '';
+  if (type === 'keyboard' || type === 'chat') {
+    const msg = type === 'chat' ? { tab: 'chat' } : { tab: 'translate', keyboard: true };
+    if (WindowManager.windows.translator) {
+      WindowManager.restore('translator');
+      const f = document.querySelector('#translator iframe');
+      if (f) f.contentWindow.postMessage({ rvTranslator: msg }, '*');
+      return;
+    }
+    let lang = ''; try { lang = localStorage.getItem('rvUserLang') || ''; } catch (e) {}
+    trQuery = '?' + (type === 'chat' ? 'tab=chat' : 'keyboard=1') + (lang ? '&lang=' + encodeURIComponent(lang) : '');
+    type = 'translator';
+  }
   if (WindowManager.windows[type]) {
     WindowManager.restore(type);
     return;
   }
   const windows = {
-    keyboard: {
-      id: 'keyboard',
-      title: '⌨️ World Keyboards',
-      icon: '⌨️',
-      x: 300,
-      y: 150,
-      width: 850,
-      height: 550,
+    translator: {
+      id: 'translator',
+      title: 'Translator · Chat · Keyboards',
+      icon: '🌐',
+      x: 200,
+      y: 90,
+      width: 1000,
+      height: 660,
       noPadding: true,
-      content: '<iframe src="keyboard-realistic.html" title="World keyboards" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
-    },
-    chat: {
-      id: 'chat',
-      title: '💬 Global Chat',
-      icon: '💬',
-      x: 400,
-      y: 200,
-      width: 450,
-      height: 550,
-      noPadding: true,
-      // the real Global Chat v5 (rudventur/global-chat-v5): prompt builder + public chat room
-      content: '<iframe src="https://rudventur.github.io/global-chat-v5/" title="Global Chat" allow="clipboard-write" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
+      content: '<iframe src="https://rudventur.github.io/map-merger-venti/translator_v7.html' + trQuery + '" title="Translator, chat and keyboards" allow="clipboard-write" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     },
     popcorn: {
       id: 'popcorn',
