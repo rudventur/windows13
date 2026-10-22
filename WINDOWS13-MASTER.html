@@ -781,18 +781,18 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <div id="knownAccounts"></div>
 
     <div class="login-tabs" role="tablist">
-      <button class="login-tab active" data-path="cloud" role="tab" onclick="showLoginPath('cloud')">📧 Email / Phone</button>
-      <button class="login-tab" data-path="local" role="tab" onclick="showLoginPath('local')">🕶️ Local</button>
+      <button class="login-tab active" data-path="cloud" role="tab" data-explain="Sign in with your email or phone: a code is sent to you and your useR file is kept in the cloud, on every device." onclick="showLoginPath('cloud')">📧 Email / Phone</button>
+      <button class="login-tab" data-path="local" role="tab" data-explain="Sign in with just a name and password that stay on this device only; nothing goes to the cloud." onclick="showLoginPath('local')">🕶️ Local</button>
     </div>
 
     <div class="login-pane" data-pane="cloud">
       <p class="login-note">☁️ Cloud-backed · your useR file follows you to every device</p>
       <input id="cloudContact" class="login-input" placeholder="email@example.com or +44 7..." autocomplete="username" />
       <input id="cloudName" class="login-input" placeholder="Display name (new accounts)" />
-      <button id="sendCodeBtn" class="login-btn" onclick="cloudSendCode()">SEND CODE</button>
+      <button data-explain="Sends a one-time sign in code to the email or phone number above." id="sendCodeBtn" class="login-btn" onclick="cloudSendCode()">SEND CODE</button>
       <div id="codeStep" class="login-pane hidden">
         <input id="cloudCode" class="login-input" placeholder="6-digit code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
-        <button class="login-btn" onclick="cloudVerify()">VERIFY &amp; ENTER</button>
+        <button class="login-btn" data-explain="Checks the code you received and opens your Windows 13 desktop." onclick="cloudVerify()">VERIFY &amp; ENTER</button>
       </div>
     </div>
 
@@ -800,7 +800,7 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
       <p class="login-note">🔒 Anonymous · just a name + password<br>Stays on this device only — no cloud sync</p>
       <input id="localName" class="login-input" placeholder="Name" autocomplete="username" />
       <input id="localPass" class="login-input" type="password" placeholder="Password" autocomplete="current-password" />
-      <button id="enterBtn" onclick="localLogin()">ENTER RUDVENTUR</button>
+      <button data-explain="Opens your Windows 13 desktop with the local name and password (makes the account if it is new)." id="enterBtn" onclick="localLogin()">ENTER RUDVENTUR</button>
     </div>
 
     <div id="loginMsg" class="login-msg" role="status"></div>
@@ -808,7 +808,7 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <label class="login-link">📥 Import a useR file from another device
       <input type="file" accept=".json,application/json" hidden onchange="importUserFile(this)" />
     </label>
-    <button id="loginCancel" class="login-link hidden" onclick="cancelAddAccount()">↩ Back to the desktop</button>
+    <button data-explain="Stops adding another account and goes back to the desktop you were using." id="loginCancel" class="login-link hidden" onclick="cancelAddAccount()">↩ Back to the desktop</button>
   </div>
   <div class="login-foot" style="color: var(--dash); font-size: 0.9rem; margin-top: 10px;">
     Powered by PumpkinG 🎃 (Claude + Grok)
@@ -819,48 +819,48 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
 <div id="desktop">
   
   <!-- TOP-LEFT: NOTCH MENU -->
-  <div id="notch" onclick="toggleNotch()">RUDVENTUR</div>
+  <div data-explain="Opens or closes the RUDVENTUR menu at the top: maps, tools, games, ChemVentur, social links and the R menu." id="notch" onclick="toggleNotch()">RUDVENTUR</div>
   <div id="notchMenu">
-    <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
+    <div class="menu-item" data-explain="Opens or closes the Maps group: Map Merger Venti full screen, in a window, in a new tab or on GitHub." onclick="toggleSub(this)">🗺️ MAPS</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="openMapMerger('fullscreen')">🖥️ Full Screen</div>
-      <div class="sub-item" onclick="openMapMerger('window')">🪟 Window</div>
-      <div class="sub-item" onclick="openMapMerger('tab')">🔗 New Tab</div>
-      <div class="sub-item" onclick="window.open('https://github.com/rudventur/map-merger-venti','_blank')">📂 GitHub</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti filling the whole screen." onclick="openMapMerger('fullscreen')">🖥️ Full Screen</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti in a window on this desktop." onclick="openMapMerger('window')">🪟 Window</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti in a new browser tab." onclick="openMapMerger('tab')">🔗 New Tab</div>
+      <div class="sub-item" data-explain="Opens the Map Merger Venti source code on GitHub in a new tab." onclick="window.open('https://github.com/rudventur/map-merger-venti','_blank')">📂 GitHub</div>
     </div>
 
-    <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
+    <div class="menu-item" data-explain="Opens or closes the Tools group." onclick="toggleSub(this)">🛠️ TOOLS</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="openMapMerger('tab')">Map Merger</div>
-      <div class="sub-item">Translator</div>
-      <div class="sub-item">AI Chats</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti in a new browser tab." onclick="openMapMerger('tab')">Map Merger</div>
+      <div class="sub-item" data-explain="Opens the RUDVENTUR translator: translate, chat with translation and on-screen keyboards." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html', '_blank')">Translator</div>
+      <div class="sub-item" data-explain="Opens Global Chat with its prompt builder for Claude, Grok, ChatGPT and others, inside the translator." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html?tab=chat', '_blank')">AI Chats</div>
     </div>
 
-    <div class="menu-item" onclick="toggleSub(this)">🎮 GAMES</div>
+    <div class="menu-item" data-explain="Opens or closes the Games group: Cheese Ouiji Empire, ChemVentur and Soldat." onclick="toggleSub(this)">🎮 GAMES</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
-      <div class="sub-item" onclick="openChemVentur('tab')">☢️ ChemVentur</div>
-      <div class="sub-item" onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
+      <div class="sub-item" data-explain="Opens the Cheese Ouiji Empire game (Food Bank Bandit) in a new tab." onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
+      <div class="sub-item" data-explain="Opens ChemVentur in a new browser tab." onclick="openChemVentur('tab')">☢️ ChemVentur</div>
+      <div class="sub-item" data-explain="Opens Soldat.pl, the classic 2D shooter website, in a new tab." onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
     </div>
 
-    <div class="menu-item chemventur" onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
+    <div class="menu-item chemventur" data-explain="Opens or closes the ChemVentur group: full screen, window, new tab or GitHub." onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="openChemVentur('fullscreen')">🖥️ Full Screen</div>
-      <div class="sub-item" onclick="openChemVentur('window')">🪟 Window</div>
-      <div class="sub-item" onclick="openChemVentur('tab')">🔗 New Tab</div>
-      <div class="sub-item" onclick="window.open('https://github.com/rudventur/ChemVentur','_blank')">📂 GitHub</div>
+      <div class="sub-item" data-explain="Opens ChemVentur filling the whole screen." onclick="openChemVentur('fullscreen')">🖥️ Full Screen</div>
+      <div class="sub-item" data-explain="Opens ChemVentur in a window on this desktop." onclick="openChemVentur('window')">🪟 Window</div>
+      <div class="sub-item" data-explain="Opens ChemVentur in a new browser tab." onclick="openChemVentur('tab')">🔗 New Tab</div>
+      <div class="sub-item" data-explain="Opens the ChemVentur source code on GitHub in a new tab." onclick="window.open('https://github.com/rudventur/ChemVentur','_blank')">📂 GitHub</div>
     </div>
 
-    <div class="menu-item" onclick="toggleSub(this)">🌐 SOCIAL MEDIA</div>
+    <div class="menu-item" data-explain="Opens or closes your social links." onclick="toggleSub(this)">🌐 SOCIAL MEDIA</div>
     <div class="sub-menu" id="socialMenu"></div>
 
-    <div class="menu-item" onclick="toggleSub(this)">Ⓡ R MENU</div>
+    <div class="menu-item" data-explain="Opens or closes the R menu settings, such as showing the coins circle next to the R." onclick="toggleSub(this)">Ⓡ R MENU</div>
     <div class="sub-menu">
       <label class="check-row"><input type="checkbox" id="coinsToggle" onchange="setCoinsCircle(this.checked)"> 🪙 Coins circle</label>
       <div class="sub-item" style="cursor: default; font-size: 0.75rem;">Shows next to the R once you've earned PopCOIN.</div>
     </div>
 
-    <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
+    <div class="menu-item electric" data-explain="Supports RUDVENTUR: opens the Ko-fi page to buy the creator a coffee (pays for hosting and electricity)." onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
   </div>
 
   <!-- TOP-RIGHT: the shared RUDVENTUR useRbox (R circle) is added by embed/useRbox.js.
@@ -868,19 +868,19 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
   <div id="w13Left" hidden>
     <div class="ubx-row" style="justify-content: space-between; margin-bottom: 0.6em;">
       <strong id="rnName" style="color: var(--yellow);"></strong>
-      <button class="ubx-btn coins hidden" id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
+      <button class="ubx-btn coins hidden" data-explain="Shows your PopCOIN balance and history for this account." id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
     </div>
     <div class="ubx-body" id="ubxBody"></div>
   </div>
 
   <!-- BOTTOM-LEFT: BUTTONS -->
   <div id="bottomButtons">
-    <div class="bottom-btn" onclick="openWindow('keyboard')" title="Keyboards (in the translator)">⌨️</div>
-    <div class="bottom-btn" onclick="openWindow('chat')" title="Global Chat with translation (in the translator)">💬</div>
+    <div class="bottom-btn" data-explain="Opens the translator with the on-screen keyboards for many languages; it types into the focused text box." onclick="openWindow('keyboard')" title="Keyboards (in the translator)">⌨️</div>
+    <div class="bottom-btn" data-explain="Opens the Chat tab of the translator: the public chat room, with every message translated into your language." onclick="openWindow('chat')" title="Global Chat with translation (in the translator)">💬</div>
   </div>
 
   <!-- BOTTOM-RIGHT: POPCORN -->
-  <div id="popcornBtn" class="pb1-love" role="button" tabindex="0" onclick="pb1Burst(this); openWindow('popcorn')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" title="PB1 · Popcorn Hub — freshly popped with ❤️" aria-label="Open the Popcorn Hub (PB1), made with love">🍿</div>
+  <div data-explain="Opens the Popcorn Hub window: popCoin wallet, PIX camera challenges, the bunker and tools." id="popcornBtn" class="pb1-love" role="button" tabindex="0" onclick="pb1Burst(this); openWindow('popcorn')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" title="PB1 · Popcorn Hub — freshly popped with ❤️" aria-label="Open the Popcorn Hub (PB1), made with love">🍿</div>
 
   <!-- TASKBAR -->
   <div id="taskbar">
@@ -1288,7 +1288,7 @@ function renderKnownAccounts() {
   const ids = Accounts.signedIn().filter(id => !Active.acc || id !== Active.acc.id);
   box.innerHTML = ids.map(id => {
     const a = Accounts.byId(id);
-    return `<button class="known-acc" onclick="continueAs('${a.id}')">▶ ${esc(a.name)} <small>${a.cloud ? '☁️' : '🔒'}</small></button>`;
+    return `<button data-explain="Continues as this account: opens its desktop without signing in again on this device." class="known-acc" onclick="continueAs('${a.id}')">▶ ${esc(a.name)} <small>${a.cloud ? '☁️' : '🔒'}</small></button>`;
   }).join('');
 }
 
@@ -1387,7 +1387,7 @@ function renderSocialMenu() {
     const url = safeUrl(entry.url);
     return `<div class="social-row">
       <a ${url ? `href="${esc(url)}" target="_blank" rel="noopener"` : ''}>${s.icon} ${esc(s.name)}</a>
-      <button class="social-edit" onclick="editSocial('${s.id}')" title="Edit link">✏️</button>
+      <button data-explain="Edits this social link (name and address)." class="social-edit" onclick="editSocial('${s.id}')" title="Edit link">✏️</button>
       <label title="Show in useRbox"><input type="checkbox" ${entry.show ? 'checked' : ''} onchange="setSocialShown('${s.id}', this.checked)"> useRbox</label>
     </div>`;
   }).join('') + '<div class="sub-item" style="cursor: default; font-size: 0.75rem;">☑ = shown in your useRbox</div>';
@@ -1473,14 +1473,14 @@ function renderUseRbox() {
         <div class="name">${esc(p.name)}</div>
         <div class="ubx-badges">
           <span class="ubx-badge">${METHOD_LABEL[acc.method] || acc.method}</span>
-          <button class="ubx-badge" onclick="togglePublic()" title="Who can see your profile online">${u.isPublic ? '🌍 Public' : '🙈 Private'}</button>
+          <button data-explain="Switches who can see your profile online: everyone (public) or nobody (private)." class="ubx-badge" onclick="togglePublic()" title="Who can see your profile online">${u.isPublic ? '🌍 Public' : '🙈 Private'}</button>
         </div>
       </div>
     </div>
     <div class="ubx-row">
-      <button class="ubx-btn" onclick="switchAccount()" title="Switch account">🔄 Switch</button>
-      <button class="ubx-btn" onclick="showLogin(true)">➕ Add account</button>
-      <button class="ubx-btn danger" onclick="signOut()">🚪 Sign out</button>
+      <button class="ubx-btn" data-explain="Switches to another account signed in on this device." onclick="switchAccount()" title="Switch account">🔄 Switch</button>
+      <button class="ubx-btn" data-explain="Signs in one more account on this device, keeping the current one." onclick="showLogin(true)">➕ Add account</button>
+      <button class="ubx-btn danger" data-explain="Signs this account out of Windows 13 on this device." onclick="signOut()">🚪 Sign out</button>
     </div>
     <p class="ubx-hint" style="margin-top: 0.6em;">${esc(syncNote)}</p>
 
@@ -1495,9 +1495,9 @@ function renderUseRbox() {
       <h3>🎁 Sessions</h3>
       <p class="ubx-hint">Snapshots of your channel + open windows. They stay on this device — export one to share or gift it.</p>
       <div class="ubx-row" style="margin-top: 0.6em;">
-        <button class="ubx-btn gold" onclick="saveSessionSnapshot()">💾 Save session</button>
+        <button class="ubx-btn gold" data-explain="Saves a snapshot of this session (open windows, channel and settings) that you can restore later." onclick="saveSessionSnapshot()">💾 Save session</button>
         <label class="ubx-btn ubx-file">📥 Import<input type="file" accept=".json,application/json" onchange="importSessionFile(this)"></label>
-        <button class="ubx-btn" onclick="exportSessionFile()" title="Export the whole session file">📤 All</button>
+        <button class="ubx-btn" data-explain="Downloads the whole session file with every account and snapshot, to move to another device." onclick="exportSessionFile()" title="Export the whole session file">📤 All</button>
       </div>
       <div id="ubxSnaps"></div>
     </div>
@@ -1506,7 +1506,7 @@ function renderUseRbox() {
       <h3>🗂️ useR file</h3>
       <p class="ubx-hint">Your portable identity. ${acc.cloud ? 'Cloud accounts sync it automatically.' : 'Export it to carry this local account to another device — the password still protects it.'}</p>
       <div class="ubx-row" style="margin-top: 0.6em;">
-        <button class="ubx-btn" onclick="exportUserFile()">📤 Export useR</button>
+        <button class="ubx-btn" data-explain="Downloads your useR file for this account, to import on another device." onclick="exportUserFile()">📤 Export useR</button>
         <label class="ubx-btn ubx-file">📥 Import useR<input type="file" accept=".json,application/json" onchange="importUserFile(this)"></label>
       </div>
     </div>
@@ -1575,9 +1575,9 @@ function renderSnapshots() {
         <b>${esc(s.name)}</b>
         <small>${s.from ? '🎁 from ' + esc(s.from) + ' · ' : ''}📡 ${esc(s.state && s.state.channel)} · ${new Date(s.createdAt).toLocaleDateString('en-GB')}</small>
       </div>
-      <button class="ubx-btn" onclick="restoreSnapshot('${esc(s.id)}')" title="Restore">▶</button>
-      <button class="ubx-btn" onclick="exportSnapshot('${esc(s.id)}')" title="Export to share / gift">📤</button>
-      <button class="ubx-btn danger" onclick="deleteSnapshot('${esc(s.id)}')" title="Delete">🗑</button>
+      <button class="ubx-btn" data-explain="Restores this saved snapshot: its windows, channel and settings." onclick="restoreSnapshot('${esc(s.id)}')" title="Restore">▶</button>
+      <button class="ubx-btn" data-explain="Downloads this snapshot as a file to share or give to someone." onclick="exportSnapshot('${esc(s.id)}')" title="Export to share / gift">📤</button>
+      <button class="ubx-btn danger" data-explain="Deletes this saved snapshot from this device." onclick="deleteSnapshot('${esc(s.id)}')" title="Delete">🗑</button>
     </div>`).join('') : '<p class="ubx-hint" style="margin-top: 0.6em;">No saved sessions yet.</p>';
 }
 
@@ -1821,9 +1821,9 @@ const WindowManager = {
           ${options.icon || '🪟'} ${options.title || 'Window'}
         </div>
         <div class="window-controls">
-          <div class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
-          <div class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
-          <div class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
+          <div data-explain="Minimises this window to the taskbar." class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
+          <div data-explain="Makes this window fill the desktop, or back to its size." class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
+          <div data-explain="Closes this window." class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
         </div>
       </div>
       <div class="window-content ${options.noPadding ? 'no-padding' : ''}">
@@ -1934,6 +1934,7 @@ const WindowManager = {
     Object.entries(this.windows).forEach(([id, win]) => {
       const item = document.createElement('div');
       item.className = 'taskbar-item';
+      item.setAttribute('data-explain', 'Brings this window to the front, or back from the taskbar if it was minimised.');
       if (!win.minimized) item.classList.add('active');
       item.innerHTML = `${win.icon || '🪟'} ${win.title || 'Window'}`;
       item.onclick = () => {
@@ -2125,6 +2126,5 @@ console.log('🎃 WINDOWS 13 - READY!');
 console.log('Powered by PumpkinG (Claude + Grok)');
 </script>
 
-<script src="embed/rxplanation.js" defer></script>
 </body>
 </html>
