@@ -857,7 +857,7 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <div class="menu-item" onclick="toggleSub(this)">Ⓡ R MENU</div>
     <div class="sub-menu">
       <label class="check-row"><input type="checkbox" id="coinsToggle" onchange="setCoinsCircle(this.checked)"> 🪙 Coins circle</label>
-      <div class="sub-item" style="cursor: default; font-size: 0.75rem;">Shows next to the R once you've earned PopCOIN.</div>
+      <div class="sub-item" style="cursor: default; font-size: 0.75rem;">Shows next to the R once you've earned FAKE popCornCoin.</div>
     </div>
 
     <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
@@ -868,7 +868,7 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
   <div id="w13Left" hidden>
     <div class="ubx-row" style="justify-content: space-between; margin-bottom: 0.6em;">
       <strong id="rnName" style="color: var(--yellow);"></strong>
-      <button class="ubx-btn coins hidden" id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
+      <button class="ubx-btn coins hidden" id="iconCoins" onclick="showCoins()" title="FAKE popCornCoin">🪙</button>
     </div>
     <div class="ubx-body" id="ubxBody"></div>
   </div>
@@ -1363,7 +1363,7 @@ function renderCoins() {
   const icon = document.getElementById('iconCoins');
   const show = !!(Active.user && Active.user.settings.showCoins && coinsActive());
   icon.classList.toggle('hidden', !show);
-  icon.title = `PopCOIN: ${popcoinBalance().toFixed(2)}`;
+  icon.title = `FAKE popCornCoin: ${popcoinBalance().toFixed(2)}`;
 }
 
 function setCoinsCircle(on) {
@@ -1371,11 +1371,11 @@ function setCoinsCircle(on) {
   Active.user.settings.showCoins = !!on;
   saveUserFile();
   renderCoins();
-  if (on && !coinsActive()) showToast('🪙 The coins circle appears once you earn PopCOIN in the 🍿 Popcorn Hub');
+  if (on && !coinsActive()) showToast('🪙 The coins circle appears once you earn FAKE popCornCoin in the 🍿 Popcorn Hub');
 }
 
 function showCoins() {
-  showToast(`🪙 PopCOIN balance: ${popcoinBalance().toFixed(2)}`, 'gold');
+  showToast(`🪙 FAKE popCornCoin balance: ${popcoinBalance().toFixed(2)}`, 'gold');
 }
 
 /* ===== TOP-LEFT MENU: SOCIAL MEDIA ===== */
@@ -2055,7 +2055,7 @@ function openWindow(type) {
       height: popcornFits() ? window.innerHeight - 100 : 760,
       noPadding: true,
       // PB1 opens the main popcorn window: a launcher with 🎬 Bunker, 🍿 popCoin Wallet and 📛 PIX (bottom-right-popcorn-complete.html)
-      content: '<iframe src="bottom-right-popcorn-complete.html?v=20261016-2" title="Popcorn Hub" allow="camera; microphone; clipboard-write; fullscreen" allowfullscreen loading="eager" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
+      content: '<iframe src="bottom-right-popcorn-complete.html?v=20261022-1" title="Popcorn Hub" allow="camera; microphone; clipboard-write; fullscreen" allowfullscreen loading="eager" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     }
   };
   

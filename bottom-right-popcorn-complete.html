@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🍿 Popcorn Hub - Accessibility + Cookies + PopCOIN Wallet</title>
+<title>🍿 Popcorn Hub - Accessibility + Cookies + FAKE popCornCoin Wallet</title>
 
 <style>
 :root {
@@ -1444,7 +1444,7 @@ html.embedded body { overflow: hidden; min-height: 100%; }
 /* ===== POPCORN LAUNCHER — the main popcorn window =====
    PB1 opens this window on its launcher: a few big friendly icons, each one
    opening its own view inside the window, with a clear back button.
-   Views: 🎬 Bunker (secret movie making) · 🍿 popCoin Wallet · 📛 PIX PANEL.
+   Views: 🎬 Bunker (secret movie making) · 🍿 FAKE popCornCoin Wallet · 📛 PIX PANEL.
    The old tab strip is kept in the markup (switchToTab still uses the views)
    but hidden; its extra views are small icons under the big three. */
 .pp-tabs { display: none !important; }
@@ -2039,9 +2039,9 @@ html.pp-max #popcorn-trigger { display: none !important; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
-<script src="embed/pix-bandits.js?v=20261012-1"></script>
-<script src="embed/pix-scene.js?v=20261012-1"></script>
-<script src="embed/pix-moods.js?v=20261012-1"></script>
+<script src="embed/pix-bandits.js?v=20261022-1"></script>
+<script src="embed/pix-scene.js?v=20261022-1"></script>
+<script src="embed/pix-moods.js?v=20261022-1"></script>
 </head>
 
 <body>
@@ -2081,7 +2081,7 @@ html.pp-max #popcorn-trigger { display: none !important; }
     <div class="pp-tab active" data-tab="maker">🍿 MAKER</div>
     <div class="pp-tab" data-tab="pix">📛 PIX PANEL</div>
     <div class="pp-tab" data-tab="cookies">🍪 COOKIES</div>
-    <div class="pp-tab" data-tab="popcoin">🍿 PopCOIN</div>
+    <div class="pp-tab" data-tab="popcoin">🍿 FAKE popCornCoin</div>
     <div class="pp-tab" data-tab="launch">🚀 LAUNCH</div>
   </div>
 
@@ -2101,7 +2101,7 @@ html.pp-max #popcorn-trigger { display: none !important; }
         </button>
         <button type="button" class="pl-icon pl-wallet" data-view="popcoin" onclick="openView('popcoin')">
           <span class="pl-emoji" aria-hidden="true">🍿</span>
-          <span class="pl-text"><span class="pl-name">popCoin Wallet</span><span class="pl-desc">Your coins and how to earn them</span></span>
+          <span class="pl-text"><span class="pl-name">FAKE popCornCoin Wallet</span><span class="pl-desc">Your coins and how to earn them</span></span>
         </button>
         <button type="button" class="pl-icon pl-pix" data-view="pix" onclick="openView('pix')">
           <span class="pl-emoji" aria-hidden="true">📛</span>
@@ -2171,7 +2171,7 @@ html.pp-max #popcorn-trigger { display: none !important; }
          We host no games: the player loads a file from their own device into an emulator, in the browser only. -->
     <div class="tab-view gf-view" id="view-golden">
       <iframe class="gf-frame" id="gf-frame" title="Golden Five cartridge shelf" allow="fullscreen; autoplay; gamepad" allowfullscreen
-        data-src="https://rudventur.github.io/RudVentur.com/golden-five.html?v=20261016-2"></iframe>
+        data-src="https://rudventur.github.io/RudVentur.com/golden-five.html?v=20261022-1"></iframe>
     </div>
 
     <!-- POPCORN MAKER TAB -->
@@ -2218,7 +2218,7 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
            PIX PANEL settings) sits in the tucked-away panel behind 🎰⚙️. -->
       <div class="pix-head">
         <h3>📛 PIX</h3>
-        <span class="pix-head-coins" title="popCoins from your “I took it” photos (1–200 each)">📸 <strong id="pix-earned-mini">0</strong></span>
+        <span class="pix-head-coins" title="FAKE popCornCoins from your “I took it” photos (1–200 each)">📸 <strong id="pix-earned-mini">0</strong></span>
         <button type="button" class="pix-adv-btn" id="pix-adv-btn" onclick="pixAdvToggle()" aria-controls="pix-adv" aria-expanded="false" title="Bandits, casino and settings" aria-label="Open the bandits, casino and settings">🎰⚙️</button>
       </div>
       <p class="pix-lead">Spin → emojis land on your camera → go and take that photo, in that mood.</p>
@@ -2260,7 +2260,7 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       </div>
 
       <!-- TUCKED-AWAY PANEL (hidden by default, opened by 🎰⚙️): the long
-           how-it-works, spins / photo / casino popCoins, the nested bandit
+           how-it-works, spins / photo / casino FAKE popCornCoins, the nested bandit
            window (bandits, casino winnings breakdown, mini reel, the illegal
            bandit, bandit options) and the PIX PANEL settings. All of it still
            runs on every spin, it is just out of sight. -->
@@ -2270,12 +2270,12 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
         </div>
         <div class="pix-adv-body" id="pix-adv-body">
           <p class="pix-hint">
-            The emoji bandits pick your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size), and every spin also rolls one mood word for the feel of the photo. Frame the scene, then tap “I took it” for random photo popCoins (1–200). A jackpot on the bandits makes the picture easier, but if all three hit a jackpot the illegal bandit pops out and the picture gets super extra hard. Each spin costs 1 casino popCoin; jackpots and the mini reel pay into your casino balance.
+            The emoji bandits pick your photo targets. Each target gets a green shape on the camera feed showing roughly where it goes and how big it is (dashed = any place or any size), and every spin also rolls one mood word for the feel of the photo. Frame the scene, then tap “I took it” for random photo FAKE popCornCoins (1–200). A jackpot on the bandits makes the picture easier, but if all three hit a jackpot the illegal bandit pops out and the picture gets super extra hard. Each spin costs 1 casino FAKE popCornCoin; jackpots and the mini reel pay into your casino balance.
           </p>
           <div class="pix-meta">
             <span>Spins <strong id="pix-challenge-num">0</strong> · Challenge <span id="pix-challenge-total">emoji</span></span>
-            <span title="popCoins from the “I took it” photo award (1–200 each)">📸 Photo popCoins <strong id="pix-earned">0</strong></span>
-            <span title="Bandit winnings minus spin costs; may go below zero (later: bank credit)">🎰 Casino popCoins <strong id="pix-casino">0</strong></span>
+            <span title="FAKE popCornCoins from the “I took it” photo award (1–200 each)">📸 Photo FAKE popCornCoins <strong id="pix-earned">0</strong></span>
+            <span title="Bandit winnings minus spin costs; may go below zero (later: bank credit)">🎰 Casino FAKE popCornCoins <strong id="pix-casino">0</strong></span>
           </div>
 
           <!-- Nested bandit window (window-in-window). Open while the player has
@@ -2350,7 +2350,7 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
     <!-- MINNER TAB -->
     <div class="tab-view" id="view-miner">
       <div class="miner-explain">
-        <div style="color:var(--gold);font-size:1rem;font-weight:bold;margin-bottom:6px;">⛏️ HOW POPCOIN MINING WORKS</div>
+        <div style="color:var(--gold);font-size:1rem;font-weight:bold;margin-bottom:6px;">⛏️ HOW FAKE POPCORNCOIN MINING WORKS</div>
         <div style="color:var(--text-muted);font-size:.78rem;line-height:1.6;">
           Like real Bitcoin (shoutout Veritasium) — your browser hashes random data through <span style="color:var(--neon-green)">SHA-256</span> thousands of times, hunting for a hash that starts with <span style="color:var(--gold)">leading zeros</span>.<br>
           More zeros = harder to find = rarer block = bigger reward.<br>
@@ -2372,7 +2372,7 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       </div>
 
       <button class="pp-btn" id="mine-btn" onclick="startMining()">
-        ⛏️ START MINING POPCOIN
+        ⛏️ START MINING FAKE POPCORNCOIN
       </button>
 
       <div id="mining-status" class="mining-status">
@@ -2387,7 +2387,7 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       </div>
 
       <div style="text-align:center;margin-top:10px;font-size:.78rem;color:var(--gold);">
-        1 POPCOIN = <span id="joke-rate">priceless (probably)</span>
+        1 FAKE POPCORNCOIN = <span id="joke-rate">priceless (probably)</span>
       </div>
       <div style="text-align:center;font-size:.6rem;color:#334433;margin-top:2px;">fictional &middot; not real money &middot; for fun only</div>
 
@@ -2400,9 +2400,9 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
       <div class="wallet-hero">
         <div class="currency-label">YOUR BALANCE</div>
         <div class="popcoin-balance" id="wallet-balance">0.00</div>
-        <div style="font-size: 1.8rem; position: relative; z-index: 1;">🍿 POPCOIN</div>
+        <div style="font-size: 1.8rem; position: relative; z-index: 1;">🍿 FAKE POPCORNCOIN</div>
         <div style="font-size: 0.75rem; color: #557755; margin-top: 8px; position: relative; z-index: 1;">
-          Popcoin is a fictional currency mined for fun.<br>Real crypto links open external sites.
+          FAKE popCornCoin is a fictional currency mined for fun.<br>Real crypto links open external sites.
         </div>
       </div>
 
@@ -2441,18 +2441,18 @@ Example: 'A chemistry tutorial showing how atoms bond together with colorful 3D 
            popcoin/README.md, embed/popcoin.js and embed/popcoin-reward.js;
            change this text when those rules change. -->
       <details class="pc-explain" id="pc-explain" open>
-        <summary>How do I get popCoins?</summary>
+        <summary>How do I get FAKE popCornCoins?</summary>
         <ul>
-          <li><b>Welcome gift:</b> a new wallet starts with 10 PopCOIN.</li>
-          <li><b>Mining:</b> open the ⛏️ Fun Mining tab in the wallet. It mines about 1.2 PopCOIN a minute while you wait, and you collect up to 6 at a time.</li>
-          <li><b>Photo challenges:</b> in 📛 PIX, every “I took it” gives 1 to 200 popCoins (that is 0.01 to 2 PopCOIN, because 100 popCoins make 1 PopCOIN).</li>
+          <li><b>Welcome gift:</b> a new wallet starts with 10 FAKE popCornCoins.</li>
+          <li><b>Mining:</b> open the ⛏️ Fun Mining tab in the wallet. It mines about 1.2 FAKE popCornCoin a minute while you wait, and you collect up to 6 at a time.</li>
+          <li><b>Photo challenges:</b> in 📛 PIX, every “I took it” gives 1 to 200 FAKE popCornCoins.</li>
           <li><b>Games and tools:</b> the typing game and the translator pay small rewards too.</li>
-          <li><b>Paid out slowly and safely:</b> rewards wait in a queue on this device and drop into the wallet at up to 3 PopCOIN every 30 seconds, and up to 50 a day. Nothing is lost if you close the page.</li>
+          <li><b>Paid out slowly and safely:</b> rewards wait in a queue on this device and drop into the wallet at up to 3 FAKE popCornCoin every 30 seconds, and up to 50 a day. Nothing is lost if you close the page.</li>
           <li><b>Casino winnings:</b> the 🎰 bandit winnings in PIX (minus 1 per spin) are a separate casino balance on this device. They do not go into the wallet yet.</li>
         </ul>
-        <small>PopCOIN is RUDVENTUR site credit for fun, not real money.</small>
+        <small>These are FAKE popCornCoins, just for fun and not real money. A separate REAL popCoin will come later.</small>
       </details>
-      <iframe class="pc-wallet-frame" id="pc-wallet-frame" title="PopCOIN Wallet" allow="clipboard-write"
+      <iframe class="pc-wallet-frame" id="pc-wallet-frame" title="FAKE popCornCoin Wallet" allow="clipboard-write"
         data-src="https://rudventur.github.io/RudVentur.com/popcoin/"></iframe>
     </div>
 
@@ -2578,7 +2578,7 @@ document.getElementById('pp-close').onclick = () => {
    'home' is the launcher. Every other view gets the back bar. */
 const VIEW_TITLES = {
   bunker: '🎬 Bunker · secret movie making',
-  popcoin: '🍿 popCoin Wallet',
+  popcoin: '🍿 FAKE popCornCoin Wallet',
   pix: '📛 PIX PANEL',
   soldat: '🔫 Soldat Android · progress',
   golden: '🏆 Golden Five · the cartridge shelf',
@@ -2686,7 +2686,7 @@ function goldenLoad() {
   const fr = document.getElementById('gf-frame');
   if (!fr || fr.getAttribute('src')) return;
   let src = fr.dataset.src;
-  try { src = new URL('../golden-five.html?v=20261016-2', rvEmbedBase()).href; } catch (e) {}
+  try { src = new URL('../golden-five.html?v=20261022-1', rvEmbedBase()).href; } catch (e) {}
   fr.src = src;
 }
 
@@ -2928,7 +2928,7 @@ async function startMining() {
         saveMineBlock({ hash, nonce, attempts, zeros, reward, elapsed, time: Date.now() });
 
         btn.classList.remove('mining');
-        btn.textContent = '⛏️ START MINING POPCOIN';
+        btn.textContent = '⛏️ START MINING FAKE POPCORNCOIN';
         statusDiv.style.display = 'none';
         progressBar.style.width = '0%';
         State.mining = false;
@@ -2945,7 +2945,7 @@ async function startMining() {
     } else {
       if (liveHashEl) liveHashEl.innerHTML = '<span style="color:var(--danger)">no block found — try again or lower difficulty</span>';
       btn.classList.remove('mining');
-      btn.textContent = '⛏️ START MINING POPCOIN';
+      btn.textContent = '⛏️ START MINING FAKE POPCORNCOIN';
       statusDiv.style.display = 'none';
       progressBar.style.width = '0%';
       State.mining = false;
@@ -3137,7 +3137,7 @@ function toggleBunker() {
    jackpot) → green shapes on the camera feed → "I took it" → popCoins.
 
    FUTURE (comments only, nothing built yet):
-   · popCoins will later come from other users' judgements of your pix
+   · FAKE popCornCoins will later come from other users' judgements of your pix
      (people rate how well the photo matches the scene), not a random roll.
    · popcorn window 0 — a gallery of other users' pix.
    · a face stage (for the 😀 Emotions / Faces kingdom).
@@ -3492,7 +3492,7 @@ function pixRender() {
   const took = document.getElementById('pix-submit-btn');
   if (took) {
     took.classList.toggle('is-idle', !has);
-    took.title = has ? 'Took the photo? Get 1–200 popCoins' : 'Spin first, then take the photo';
+    took.title = has ? 'Took the photo? Get 1–200 FAKE popCornCoins' : 'Spin first, then take the photo';
   }
   pixRenderCasino();
 }
@@ -3578,7 +3578,7 @@ function pixNextChallenge() {
     showToast('🚨 3 jackpots! The illegal bandit popped out — super extra hard picture', 'gold');
   } else if (Pix.advOpen && c && c.total !== '0') {
     // casino winnings only shout while the bandits panel is open
-    showToast('💰 +' + c.totalText + ' casino popCoins!', 'gold');
+    showToast('💰 +' + c.totalText + ' casino FAKE popCornCoins!', 'gold');
   }
   // (a normal spin needs no toast: the mood word and the emojis land on the feed)
 }
@@ -3608,7 +3608,7 @@ function awardPixPopCoins(reason) {
   if (earned) earned.textContent = String(Pix.earned);
   const mini = document.getElementById('pix-earned-mini');
   if (mini) mini.textContent = String(Pix.earned);
-  showToast('📛 +' + coins + ' popCoins! Nice shot!', 'gold');
+  showToast('📛 +' + coins + ' FAKE popCornCoins! Nice shot!', 'gold');
   return coins;
 }
 
@@ -3910,6 +3910,6 @@ startTicker();
 <script src="https://rudventur.github.io/RudVentur.com/embed/popcoin-reward.js" defer></script>
 
 <script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" data-service="windows13" defer></script>
-<script src="embed/rxplanation.js?v=20261012-1" defer></script>
+<script src="embed/rxplanation.js?v=20261022-1" defer></script>
 </body>
 </html>
