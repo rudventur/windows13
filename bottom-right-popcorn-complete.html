@@ -2177,7 +2177,7 @@ html.pp-max #popcorn-trigger { display: none !important; }
     <!-- ⚖️ UNIT COMPARISON: coins, world economies, watch-only wallet (unit-comparison.html in the RudVentur.com repository root) -->
     <div class="tab-view gf-view" id="view-units">
       <iframe class="gf-frame" id="uc-frame" title="Unit Comparison" allow="clipboard-write; fullscreen" allowfullscreen
-        data-src="https://rudventur.github.io/RudVentur.com/unit-comparison.html?v=20261022-2"></iframe>
+        data-src="https://rudventur.github.io/RudVentur.com/unit-comparison.html?v=20261022-3"></iframe>
     </div>
 
     <!-- 🏆 GOLDEN FIVE: the cartridge shelf (golden-five.html in the RudVentur.com repository root).
@@ -2702,7 +2702,7 @@ function unitsLoad() {
   if (!fr || fr.getAttribute('src')) return;
   let src = fr.dataset.src;
   if (location.hostname.endsWith('rudventur.com') || location.pathname.includes('/RudVentur.com/')) {
-    try { src = new URL('../unit-comparison.html?v=20261022-2', rvEmbedBase()).href; } catch (e) {}
+    try { src = new URL('../unit-comparison.html?v=20261022-3', rvEmbedBase()).href; } catch (e) {}
   }
   fr.src = src;
 }
