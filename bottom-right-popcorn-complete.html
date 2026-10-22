@@ -1510,12 +1510,14 @@ html.embedded #topRightUser { display: none !important; }
 .pl-icon.pl-pix { --pl-c: var(--neon-green); }
 .pl-icon.pl-soldat { --pl-c: #ff6b4a; }
 .pl-icon.pl-golden { --pl-c: #ffd700; }
+.pl-icon.pl-units { --pl-c: #7ee0c3; }
 /* wide: six columns, each icon two wide, so the second row of two icons sits centred under the first row of three */
 @media (min-width: 461px) {
   .pl-grid { grid-template-columns: repeat(6, 1fr); }
   .pl-icon { grid-column: span 2; }
   .pl-icon.pl-soldat { grid-column: 2 / span 2; }
   .pl-icon.pl-golden { grid-column: 4 / span 2; }
+  .pl-icon.pl-units { grid-column: 3 / span 2; }
 }
 .pl-emoji { font-size: 3.1rem; line-height: 1; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pl-c) 70%, transparent)); }
 .pl-icon:hover .pl-emoji, .pl-icon:focus-visible .pl-emoji { animation: plWiggle 0.6s var(--ease); }
@@ -1594,6 +1596,7 @@ html.embedded #topRightUser { display: none !important; }
 .pc-wallet-frame { flex: 1; min-height: 420px; width: 100%; border: 0; display: block; background: #050607; }
 
 /* 🏆 Golden Five view: the cartridge shelf page (golden-five.html in the RudVentur.com repository), inside the popcorn window */
+#view-units.gf-view { padding: 0 !important; display: flex; flex-direction: column; }
 #view-golden.gf-view { padding: 0 !important; display: flex; flex-direction: column; }
 .gf-frame { flex: 1; min-height: 420px; width: 100%; border: 0; display: block; background: #050607; }
 
@@ -2039,9 +2042,9 @@ html.pp-max #popcorn-trigger { display: none !important; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
-<script src="embed/pix-bandits.js?v=20261022-1"></script>
-<script src="embed/pix-scene.js?v=20261022-1"></script>
-<script src="embed/pix-moods.js?v=20261022-1"></script>
+<script src="embed/pix-bandits.js?v=20261022-2"></script>
+<script src="embed/pix-scene.js?v=20261022-2"></script>
+<script src="embed/pix-moods.js?v=20261022-2"></script>
 </head>
 
 <body>
@@ -2115,6 +2118,10 @@ html.pp-max #popcorn-trigger { display: none !important; }
           <span class="pl-emoji" aria-hidden="true">🏆</span>
           <span class="pl-text"><span class="pl-name">Golden Five</span><span class="pl-desc">A shelf of five classic game cartridges</span></span>
         </button>
+        <button type="button" class="pl-icon pl-units" data-view="units" onclick="openView('units')">
+          <span class="pl-emoji" aria-hidden="true">⚖️</span>
+          <span class="pl-text"><span class="pl-name">Unit Comparison</span><span class="pl-desc">Real coins, world economies and a look-only wallet</span></span>
+        </button>
       </div>
       <div class="pl-more-label">MORE POPCORN</div>
       <div class="pl-more">
@@ -2167,11 +2174,17 @@ html.pp-max #popcorn-trigger { display: none !important; }
       </div>
     </div>
 
+    <!-- ⚖️ UNIT COMPARISON: coins, world economies, watch-only wallet (unit-comparison.html in the RudVentur.com repository root) -->
+    <div class="tab-view gf-view" id="view-units">
+      <iframe class="gf-frame" id="uc-frame" title="Unit Comparison" allow="clipboard-write; fullscreen" allowfullscreen
+        data-src="https://rudventur.github.io/RudVentur.com/unit-comparison.html?v=20261022-2"></iframe>
+    </div>
+
     <!-- 🏆 GOLDEN FIVE: the cartridge shelf (golden-five.html in the RudVentur.com repository root).
          We host no games: the player loads a file from their own device into an emulator, in the browser only. -->
     <div class="tab-view gf-view" id="view-golden">
       <iframe class="gf-frame" id="gf-frame" title="Golden Five cartridge shelf" allow="fullscreen; autoplay; gamepad" allowfullscreen
-        data-src="https://rudventur.github.io/RudVentur.com/golden-five.html?v=20261022-1"></iframe>
+        data-src="https://rudventur.github.io/RudVentur.com/golden-five.html?v=20261022-2"></iframe>
     </div>
 
     <!-- POPCORN MAKER TAB -->
@@ -2582,6 +2595,7 @@ const VIEW_TITLES = {
   pix: '📛 PIX PANEL',
   soldat: '🔫 Soldat Android · progress',
   golden: '🏆 Golden Five · the cartridge shelf',
+  units: '⚖️ Unit Comparison · coins, countries, watch wallet',
   maker: '✍️ Describer',
   cookies: '🍪 Cookies',
   launch: '🚀 Tools'
@@ -2614,6 +2628,7 @@ function switchToTab(tabName) {
   if (tabName === 'popcoin') walletLoad();
   if (tabName === 'soldat') soldatLoad();
   if (tabName === 'golden') goldenLoad();
+  if (tabName === 'units') unitsLoad();
   view.scrollTop = 0;
 }
 function openView(name) {
@@ -2682,11 +2697,20 @@ function soldatRender(data) {
 }
 
 // 🏆 Golden Five: the shelf page loads the first time its view opens (from the same site as the shared files)
+function unitsLoad() {
+  const fr = document.getElementById('uc-frame');
+  if (!fr || fr.getAttribute('src')) return;
+  let src = fr.dataset.src;
+  if (location.hostname.endsWith('rudventur.com') || location.pathname.includes('/RudVentur.com/')) {
+    try { src = new URL('../unit-comparison.html?v=20261022-2', rvEmbedBase()).href; } catch (e) {}
+  }
+  fr.src = src;
+}
 function goldenLoad() {
   const fr = document.getElementById('gf-frame');
   if (!fr || fr.getAttribute('src')) return;
   let src = fr.dataset.src;
-  try { src = new URL('../golden-five.html?v=20261022-1', rvEmbedBase()).href; } catch (e) {}
+  try { src = new URL('../golden-five.html?v=20261022-2', rvEmbedBase()).href; } catch (e) {}
   fr.src = src;
 }
 
@@ -3910,6 +3934,6 @@ startTicker();
 <script src="https://rudventur.github.io/RudVentur.com/embed/popcoin-reward.js" defer></script>
 
 <script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" data-service="windows13" defer></script>
-<script src="embed/rxplanation.js?v=20261022-1" defer></script>
+<script src="embed/rxplanation.js?v=20261022-2" defer></script>
 </body>
 </html>
