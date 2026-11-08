@@ -279,9 +279,9 @@ const WindowManager = {
           ${options.icon || '🪟'} ${options.title || 'Window'}
         </div>
         <div class="window-controls">
-          <div class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
-          <div class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
-          <div class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
+          <div data-explain="Minimises this window to the taskbar." class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
+          <div data-explain="Makes this window fill the desktop, or back to its size." class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
+          <div data-explain="Closes this window." class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
         </div>
       </div>
       <div class="window-content ${options.noPadding ? 'no-padding' : ''}">
@@ -456,8 +456,8 @@ WindowManager.createWindow({
     <div class="demo-content">
       <h2>⚡ useRbox</h2>
       <p>The one RUDVENTUR useRbox: name, P.S. signature, GPS bookmarks, live clock, restaurant and the PopCOIN shop.</p>
-      <p style="margin-top: 15px;"><button class="demo-btn" onclick="rvUserbox.open('mid')">👤 Open the useRbox</button>
-      <button class="demo-btn" onclick="rvUserbox.open('right')">✏️ Edit my profile</button></p>
+      <p style="margin-top: 15px;"><button class="demo-btn" data-explain="Opens the useRbox: your profile, places, rooms and the PopCOIN shop." onclick="rvUserbox.open('mid')">👤 Open the useRbox</button>
+      <button class="demo-btn" data-explain="Opens the useRbox at the profile builder, to edit your name, avatar and languages." onclick="rvUserbox.open('right')">✏️ Edit my profile</button></p>
     </div>
   `
 });
@@ -513,6 +513,5 @@ console.log('  Alt+W - Close active window');
 console.log('  Alt+M - Minimize active window');
 </script>
 
-<script src="embed/rxplanation.js" defer></script>
 </body>
 </html>
