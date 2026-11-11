@@ -179,55 +179,55 @@
 </head>
 <body>
 
-<div id="notch" onclick="toggleMenu()">RUDVENTUR</div>
+<div data-explain="Opens or closes the RUDVENTUR menu: maps, tools, radio, games, ChemVentur and view choices." id="notch" onclick="toggleMenu()">RUDVENTUR</div>
 
 <div id="notch-menu">
-  <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
+  <div class="menu-item" data-explain="Opens or closes the Maps group." onclick="toggleSub(this)">🗺️ MAPS</div>
   <div class="sub-menu">
-    <div class="sub-item" onclick="launchMapMerger('fullscreen')">🖥️ Full Screen</div>
-    <div class="sub-item" onclick="launchMapMerger('window')">🪟 Window</div>
-    <div class="sub-item" onclick="launchMapMerger('tab')">🔗 New Tab</div>
-    <div class="sub-item" onclick="window.open('https://github.com/rudventur/map-merger-venti', '_blank')">📂 GitHub Source</div>
+    <div class="sub-item" data-explain="Opens Map Merger Venti filling the whole screen." onclick="launchMapMerger('fullscreen')">🖥️ Full Screen</div>
+    <div class="sub-item" data-explain="Opens Map Merger Venti in a window." onclick="launchMapMerger('window')">🪟 Window</div>
+    <div class="sub-item" data-explain="Opens Map Merger Venti in a new browser tab." onclick="launchMapMerger('tab')">🔗 New Tab</div>
+    <div class="sub-item" data-explain="Opens the Map Merger Venti source code on GitHub." onclick="window.open('https://github.com/rudventur/map-merger-venti', '_blank')">📂 GitHub Source</div>
   </div>
 
-  <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
+  <div class="menu-item" data-explain="Opens or closes the Tools group." onclick="toggleSub(this)">🛠️ TOOLS</div>
   <div class="sub-menu">
-    <div class="sub-item" onclick="launchMapMerger('tab')">Map Merger</div>
-    <div class="sub-item">AI Chats</div>
-    <div class="sub-item">Translator</div>
-    <div class="sub-item">Global Chat</div>
+    <div class="sub-item" data-explain="Opens Map Merger Venti in a new browser tab." onclick="launchMapMerger('tab')">Map Merger</div>
+    <div class="sub-item" data-explain="Opens Global Chat with its prompt builder for Claude, Grok, ChatGPT and others, inside the translator." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html?tab=chat', '_blank')">AI Chats</div>
+    <div class="sub-item" data-explain="Opens the RUDVENTUR translator: translate, chat with translation and on-screen keyboards." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html', '_blank')">Translator</div>
+    <div class="sub-item" data-explain="Opens the public chat room with every message translated into your language." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html?tab=chat', '_blank')">Global Chat</div>
   </div>
 
-  <div class="menu-item" onclick="toggleSub(this)">📻 RADIO</div>
+  <div class="menu-item" data-explain="Opens or closes the Radio group." onclick="toggleSub(this)">📻 RADIO</div>
   <div class="sub-menu">
-    <div class="sub-item">Radio Garden</div>
+    <div class="sub-item" data-explain="Opens Radio Garden: turn the globe and listen to live radio stations from every country." onclick="window.open('https://radio.garden/', '_blank')">Radio Garden</div>
   </div>
 
-  <div class="menu-item" onclick="toggleSub(this)">🎮 GAMES</div>
+  <div class="menu-item" data-explain="Opens or closes the Games group." onclick="toggleSub(this)">🎮 GAMES</div>
   <div class="sub-menu">
-    <div class="sub-item" onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
-    <div class="sub-item" onclick="launchChemVentur('tab')">☢️ ChemVentur</div>
-    <div class="sub-item" onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
+    <div class="sub-item" data-explain="Opens the Cheese Ouiji Empire game in a new tab." onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
+    <div class="sub-item" data-explain="Opens ChemVentur in a new browser tab." onclick="launchChemVentur('tab')">☢️ ChemVentur</div>
+    <div class="sub-item" data-explain="Opens Soldat.pl in a new tab." onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
   </div>
 
-  <div class="menu-item chemventur" onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
+  <div class="menu-item chemventur" data-explain="Opens or closes the ChemVentur group." onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
   <div class="sub-menu">
-    <div class="sub-item" onclick="launchChemVentur('fullscreen')">🖥️ Full Screen</div>
-    <div class="sub-item" onclick="launchChemVentur('window')">🪟 Window</div>
-    <div class="sub-item" onclick="launchChemVentur('tab')">🔗 New Tab</div>
-    <div class="sub-item" onclick="window.open('https://github.com/rudventur/ChemVentur', '_blank')">📂 GitHub Source</div>
+    <div class="sub-item" data-explain="Opens ChemVentur filling the whole screen." onclick="launchChemVentur('fullscreen')">🖥️ Full Screen</div>
+    <div class="sub-item" data-explain="Opens ChemVentur in a window." onclick="launchChemVentur('window')">🪟 Window</div>
+    <div class="sub-item" data-explain="Opens ChemVentur in a new browser tab." onclick="launchChemVentur('tab')">🔗 New Tab</div>
+    <div class="sub-item" data-explain="Opens the ChemVentur source code on GitHub." onclick="window.open('https://github.com/rudventur/ChemVentur', '_blank')">📂 GitHub Source</div>
   </div>
 
   <!-- VIEW — shared RUDVENTUR view modes (rvView.js), same as the hub's logo menu -->
-  <div class="menu-item" onclick="toggleSub(this)">🖥️ VIEW</div>
+  <div class="menu-item" data-explain="Opens or closes the view choices." onclick="toggleSub(this)">🖥️ VIEW</div>
   <div class="sub-menu">
-    <div class="sub-item" onclick="rvView.set('horizontal')">Full Screen Horizontal</div>
-    <div class="sub-item" onclick="rvView.set('panoramic')">Full Screen Panoramic</div>
-    <div class="sub-item" onclick="rvView.set('vertical')">Full Screen Vertical</div>
-    <div class="sub-item" onclick="rvView.set('normal')">Normal / Default Browser</div>
+    <div class="sub-item" data-explain="Fills the screen in landscape orientation." onclick="rvView.set('horizontal')">Full Screen Horizontal</div>
+    <div class="sub-item" data-explain="Fills the screen in a wide panoramic layout." onclick="rvView.set('panoramic')">Full Screen Panoramic</div>
+    <div class="sub-item" data-explain="Fills the screen in portrait orientation." onclick="rvView.set('vertical')">Full Screen Vertical</div>
+    <div class="sub-item" data-explain="Back to the normal browser view." onclick="rvView.set('normal')">Normal / Default Browser</div>
   </div>
 
-  <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
+  <div class="menu-item electric" data-explain="Supports RUDVENTUR on Ko-fi (pays for hosting and electricity)." onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
 
   <div class="menu-item">🌐 CUSTOM URL</div>
 </div>
@@ -332,6 +332,5 @@ function buyElectricity() {
 }
 </script>
 
-<script src="embed/rxplanation.js" defer></script>
 </body>
 </html>
