@@ -294,143 +294,12 @@ html, body {
 
 .social-edit:hover { opacity: 1; }
 
-/* ===== R CIRCLE (TOP-RIGHT) ===== */
-#Rcircle {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  width: 56px;
-  height: 56px;
-  background: var(--neon);
-  color: #000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 0 30px rgba(0,255,65,0.4);
-  z-index: 10000;
-  user-select: none;
-  transition: all 0.3s;
-}
-
-#Rcircle:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 0 50px rgba(0,255,65,0.7);
-}
-
-#Rcircle.open { box-shadow: 0 0 0 3px #000, 0 0 30px rgba(0,255,65,0.6); }
-
-/* R notch: slides down from the top-right edge when the capital R opens.
-   It only wraps its own content (no full-width stripe) and never reaches
-   down to the popcorn button. */
-#Rnotch {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 80px;
-  max-width: 100vw;
-  padding: 0 80px 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--neon);
-  color: #000;
-  border-radius: 0 0 0 18px;
-  box-shadow: 0 0 30px rgba(0,255,65,0.3);
-  z-index: 9999;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease;
-  pointer-events: none;
-}
-
-#Rnotch.open { transform: translateY(0); pointer-events: auto; }
-
-.Ricon {
-  flex: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #000;
-  border: 2px solid #000;
-  color: var(--neon);
-  font-size: 20px;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: all 0.2s;
-}
-
-.Ricon:hover { background: #020; transform: scale(1.1); box-shadow: 0 0 12px #000; }
-.Ricon.coins { color: var(--gold); border-color: var(--gold); }
-
-#rnName {
-  min-width: 0;
-  max-width: 30vw;
-  font-weight: 900;
-  font-size: 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.rn-refresh {
-  flex: none;
-  background: none;
-  border: 2px solid #000;
-  border-radius: 8px;
-  width: 34px;
-  height: 34px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.rn-refresh:hover { background: #000; }
-
-/* phones: keep the R notch clear of the RUDVENTUR notch (name stays in the useRbox) */
-@media (max-width: 480px) {
-  #Rnotch { gap: 6px; padding-left: 10px; padding-right: 74px; }
-  .Ricon { width: 36px; height: 36px; font-size: 17px; }
-  #rnName { display: none; }
-}
-
-/* ===== useRbox ===== */
-/* Everything inside is sized in em, so the whole box (text, buttons, icons)
-   scales with the box's font-size — used by the mobile maximized mode. */
-#useRbox {
-  position: fixed;
-  top: 92px;
-  right: 12px;
-  width: min(27em, calc(100vw - 24px));
-  /* stop well above the popcorn button (bottom: 70px + 70px tall) */
-  max-height: calc(100vh - 92px - 160px);
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  background: var(--panel-bg);
-  border: 3px solid var(--neon);
-  border-radius: 14px;
-  box-shadow: 0 0 36px rgba(0,255,65,0.25);
-  backdrop-filter: blur(12px);
-  z-index: 9990;
-}
-
-#useRbox.maximized {
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  max-height: none;
-  border-radius: 0;
-  border-width: 0;
-  z-index: 10001;
-  font-size: clamp(14px, 3.7vw, 22px);
-}
-
-#useRbox.maximized .ubx-body { width: 100%; max-width: 44em; margin: 0 auto; }
-
+/* The R circle, its icons and the profile box are the shared RUDVENTUR useRbox
+   (embed/useRbox.js from RudVentur.com). Windows 13's own part (accounts, coins,
+   social links, sessions, useR file) is its left section: #w13Left below. */
+/* ===== Windows 13 part of the useRbox (left section) ===== */
+#w13Left { font-size: 13px; }
+#w13Left .ubx-body { padding: 0; }
 .ubx-head {
   display: flex;
   justify-content: space-between;
@@ -509,18 +378,7 @@ button.ubx-badge:hover { background: var(--neon); color: #000; }
 
 .ubx-row { display: flex; gap: 0.5em; align-items: center; flex-wrap: wrap; }
 
-#ubxClock {
-  text-align: center;
-  font-size: 1.3em;
-  color: var(--yellow);
-  font-weight: bold;
-  margin: 0.2em 0 0.8em;
-  padding: 0.5em;
-  background: rgba(255,230,0,0.05);
-  border: 1px solid rgba(255,230,0,0.3);
-  border-radius: 0.4em;
-  text-shadow: 0 0 0.6em var(--yellow);
-}
+
 
 .ubx-section {
   margin-top: 1em;
@@ -650,6 +508,64 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
   align-items: center;
   justify-content: center;
   animation: breathe 4s infinite ease-in-out;
+}
+
+/* PB1 — popped with love ❤️: butter-gold glow, soft lub-dub heartbeat
+   (animates `scale` so hover can tilt with `rotate`), tiny beating ❤ badge,
+   hearts + kernels float up on tap. Respects reduced motion. */
+#popcornBtn.pb1-love {
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 243, 214, 0.22), transparent 42%),
+    radial-gradient(circle at 50% 60%, #3a2100 0%, #160800 72%);
+  border-color: #ffcf5a;
+  color: #fff3d6;
+  box-shadow: 0 0 16px rgba(255, 190, 80, 0.5), 0 0 34px rgba(255, 77, 125, 0.18), inset 0 0 14px rgba(255, 207, 90, 0.25);
+  animation: pb1Beat 2.8s infinite ease-in-out;
+  transition: rotate 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), translate 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+  user-select: none;
+}
+#popcornBtn.pb1-love::after {
+  content: '❤';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: #ff4d7d;
+  text-shadow: 0 0 6px rgba(255, 77, 125, 0.85);
+  animation: pb1Beat 2.8s infinite ease-in-out;
+  pointer-events: none;
+}
+#popcornBtn.pb1-love:hover,
+#popcornBtn.pb1-love:focus-visible {
+  rotate: -10deg;
+  translate: 0 -4px;
+  outline: none;
+  box-shadow: 0 0 26px rgba(255, 207, 90, 0.85), 0 0 48px rgba(255, 77, 125, 0.4), inset 0 0 16px rgba(255, 207, 90, 0.35);
+}
+@keyframes pb1Beat {
+  0%, 100% { scale: 1; }
+  10% { scale: 1.09; }
+  20% { scale: 0.98; }
+  30% { scale: 1.06; }
+  44% { scale: 1; }
+}
+.pb1-float {
+  position: fixed;
+  z-index: 10001;
+  pointer-events: none;
+  font-size: 18px;
+  line-height: 1;
+  animation: pb1Float 1.1s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes pb1Float {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -70px))) scale(1.1) rotate(var(--rot, 0deg)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #popcornBtn.pb1-love, #popcornBtn.pb1-love::after { animation: none; }
+  .pb1-float { display: none; }
 }
 
 @keyframes breathe {
@@ -800,6 +716,16 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
   border: none;
 }
 
+/* ===== SHORT SCREENS (panoramic, phones on their side) =====
+   slimmer window title bars so the popcorn window keeps its height */
+@media (max-height: 560px) {
+  .window-header { padding: 4px 10px; }
+  .window-title { font-size: 0.85rem; }
+  .window-btn { width: 26px; height: 26px; }
+  #notch { padding: 6px 14px; font-size: 1rem; }
+}
+.window:fullscreen { border-width: 0; border-radius: 0; }
+
 /* ===== TOAST ===== */
 #toast {
   position: fixed;
@@ -841,10 +767,11 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" data-service="windows13" data-left="#w13Left" data-left-title="🪟 WINDOWS 13" defer></script>
 </head>
 <body>
 
-<!-- LOGIN SCREEN — 3 entry paths: Email/Phone (cloud), Local (anonymous), Passport (soon) -->
+<!-- LOGIN SCREEN — 2 entry paths: Email/Phone (cloud), Local (anonymous); a useR file can be imported below -->
 <div id="login">
   <h1>WINDOWS 13 🎃</h1>
   <div class="login-card">
@@ -854,19 +781,18 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <div id="knownAccounts"></div>
 
     <div class="login-tabs" role="tablist">
-      <button class="login-tab active" data-path="cloud" role="tab" onclick="showLoginPath('cloud')">📧 Email / Phone</button>
-      <button class="login-tab" data-path="local" role="tab" onclick="showLoginPath('local')">🕶️ Local</button>
-      <button class="login-tab" data-path="passport" role="tab" onclick="showLoginPath('passport')">🛂 Passport</button>
+      <button class="login-tab active" data-path="cloud" role="tab" data-explain="Sign in with your email or phone: a code is sent to you and your useR file is kept in the cloud, on every device." onclick="showLoginPath('cloud')">📧 Email / Phone</button>
+      <button class="login-tab" data-path="local" role="tab" data-explain="Sign in with just a name and password that stay on this device only; nothing goes to the cloud." onclick="showLoginPath('local')">🕶️ Local</button>
     </div>
 
     <div class="login-pane" data-pane="cloud">
       <p class="login-note">☁️ Cloud-backed · your useR file follows you to every device</p>
       <input id="cloudContact" class="login-input" placeholder="email@example.com or +44 7..." autocomplete="username" />
       <input id="cloudName" class="login-input" placeholder="Display name (new accounts)" />
-      <button id="sendCodeBtn" class="login-btn" onclick="cloudSendCode()">SEND CODE</button>
+      <button data-explain="Sends a one-time sign in code to the email or phone number above." id="sendCodeBtn" class="login-btn" onclick="cloudSendCode()">SEND CODE</button>
       <div id="codeStep" class="login-pane hidden">
         <input id="cloudCode" class="login-input" placeholder="6-digit code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
-        <button class="login-btn" onclick="cloudVerify()">VERIFY &amp; ENTER</button>
+        <button class="login-btn" data-explain="Checks the code you received and opens your Windows 13 desktop." onclick="cloudVerify()">VERIFY &amp; ENTER</button>
       </div>
     </div>
 
@@ -874,12 +800,7 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
       <p class="login-note">🔒 Anonymous · just a name + password<br>Stays on this device only — no cloud sync</p>
       <input id="localName" class="login-input" placeholder="Name" autocomplete="username" />
       <input id="localPass" class="login-input" type="password" placeholder="Password" autocomplete="current-password" />
-      <button id="enterBtn" onclick="localLogin()">ENTER RUDVENTUR</button>
-    </div>
-
-    <div class="login-pane hidden" data-pane="passport">
-      <p class="login-note">🛂 Passport login is coming soon.<br>It will sync across devices just like Email / Phone.</p>
-      <button class="login-btn" disabled>COMING SOON</button>
+      <button data-explain="Opens your Windows 13 desktop with the local name and password (makes the account if it is new)." id="enterBtn" onclick="localLogin()">ENTER RUDVENTUR</button>
     </div>
 
     <div id="loginMsg" class="login-msg" role="status"></div>
@@ -887,7 +808,7 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
     <label class="login-link">📥 Import a useR file from another device
       <input type="file" accept=".json,application/json" hidden onchange="importUserFile(this)" />
     </label>
-    <button id="loginCancel" class="login-link hidden" onclick="cancelAddAccount()">↩ Back to the desktop</button>
+    <button data-explain="Stops adding another account and goes back to the desktop you were using." id="loginCancel" class="login-link hidden" onclick="cancelAddAccount()">↩ Back to the desktop</button>
   </div>
   <div class="login-foot" style="color: var(--dash); font-size: 0.9rem; margin-top: 10px;">
     Powered by PumpkinG 🎃 (Claude + Grok)
@@ -898,80 +819,68 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
 <div id="desktop">
   
   <!-- TOP-LEFT: NOTCH MENU -->
-  <div id="notch" onclick="toggleNotch()">RUDVENTUR</div>
+  <div data-explain="Opens or closes the RUDVENTUR menu at the top: maps, tools, games, ChemVentur, social links and the R menu." id="notch" onclick="toggleNotch()">RUDVENTUR</div>
   <div id="notchMenu">
-    <div class="menu-item" onclick="toggleSub(this)">🗺️ MAPS</div>
+    <div class="menu-item" data-explain="Opens or closes the Maps group: Map Merger Venti full screen, in a window, in a new tab or on GitHub." onclick="toggleSub(this)">🗺️ MAPS</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="openMapMerger('fullscreen')">🖥️ Full Screen</div>
-      <div class="sub-item" onclick="openMapMerger('window')">🪟 Window</div>
-      <div class="sub-item" onclick="openMapMerger('tab')">🔗 New Tab</div>
-      <div class="sub-item" onclick="window.open('https://github.com/rudventur/map-merger-venti','_blank')">📂 GitHub</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti filling the whole screen." onclick="openMapMerger('fullscreen')">🖥️ Full Screen</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti in a window on this desktop." onclick="openMapMerger('window')">🪟 Window</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti in a new browser tab." onclick="openMapMerger('tab')">🔗 New Tab</div>
+      <div class="sub-item" data-explain="Opens the Map Merger Venti source code on GitHub in a new tab." onclick="window.open('https://github.com/rudventur/map-merger-venti','_blank')">📂 GitHub</div>
     </div>
 
-    <div class="menu-item" onclick="toggleSub(this)">🛠️ TOOLS</div>
+    <div class="menu-item" data-explain="Opens or closes the Tools group." onclick="toggleSub(this)">🛠️ TOOLS</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="openMapMerger('tab')">Map Merger</div>
-      <div class="sub-item">Translator</div>
-      <div class="sub-item">AI Chats</div>
+      <div class="sub-item" data-explain="Opens Map Merger Venti in a new browser tab." onclick="openMapMerger('tab')">Map Merger</div>
+      <div class="sub-item" data-explain="Opens the RUDVENTUR translator: translate, chat with translation and on-screen keyboards." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html', '_blank')">Translator</div>
+      <div class="sub-item" data-explain="Opens Global Chat with its prompt builder for Claude, Grok, ChatGPT and others, inside the translator." onclick="window.open('https://rudventur.github.io/map-merger-venti/translator_v7.html?tab=chat', '_blank')">AI Chats</div>
     </div>
 
-    <div class="menu-item" onclick="toggleSub(this)">🎮 GAMES</div>
+    <div class="menu-item" data-explain="Opens or closes the Games group: Cheese Ouiji Empire, ChemVentur and Soldat." onclick="toggleSub(this)">🎮 GAMES</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
-      <div class="sub-item" onclick="openChemVentur('tab')">☢️ ChemVentur</div>
-      <div class="sub-item" onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
+      <div class="sub-item" data-explain="Opens the Cheese Ouiji Empire game (Food Bank Bandit) in a new tab." onclick="window.open('https://rudventur.github.io/cheese-ouiji-empire/', '_blank')">🧀 Cheese Ouiji Empire</div>
+      <div class="sub-item" data-explain="Opens ChemVentur in a new browser tab." onclick="openChemVentur('tab')">☢️ ChemVentur</div>
+      <div class="sub-item" data-explain="Opens Soldat.pl, the classic 2D shooter website, in a new tab." onclick="window.open('https://www.soldat.pl', '_blank')">🔫 Soldat.pl</div>
     </div>
 
-    <div class="menu-item chemventur" onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
+    <div class="menu-item chemventur" data-explain="Opens or closes the ChemVentur group: full screen, window, new tab or GitHub." onclick="toggleSub(this)">☢️ CHEMVENTUR</div>
     <div class="sub-menu">
-      <div class="sub-item" onclick="openChemVentur('fullscreen')">🖥️ Full Screen</div>
-      <div class="sub-item" onclick="openChemVentur('window')">🪟 Window</div>
-      <div class="sub-item" onclick="openChemVentur('tab')">🔗 New Tab</div>
-      <div class="sub-item" onclick="window.open('https://github.com/rudventur/ChemVentur','_blank')">📂 GitHub</div>
+      <div class="sub-item" data-explain="Opens ChemVentur filling the whole screen." onclick="openChemVentur('fullscreen')">🖥️ Full Screen</div>
+      <div class="sub-item" data-explain="Opens ChemVentur in a window on this desktop." onclick="openChemVentur('window')">🪟 Window</div>
+      <div class="sub-item" data-explain="Opens ChemVentur in a new browser tab." onclick="openChemVentur('tab')">🔗 New Tab</div>
+      <div class="sub-item" data-explain="Opens the ChemVentur source code on GitHub in a new tab." onclick="window.open('https://github.com/rudventur/ChemVentur','_blank')">📂 GitHub</div>
     </div>
 
-    <div class="menu-item" onclick="toggleSub(this)">🌐 SOCIAL MEDIA</div>
+    <div class="menu-item" data-explain="Opens or closes your social links." onclick="toggleSub(this)">🌐 SOCIAL MEDIA</div>
     <div class="sub-menu" id="socialMenu"></div>
 
-    <div class="menu-item" onclick="toggleSub(this)">Ⓡ R MENU</div>
+    <div class="menu-item" data-explain="Opens or closes the R menu settings, such as showing the coins circle next to the R." onclick="toggleSub(this)">Ⓡ R MENU</div>
     <div class="sub-menu">
       <label class="check-row"><input type="checkbox" id="coinsToggle" onchange="setCoinsCircle(this.checked)"> 🪙 Coins circle</label>
-      <div class="sub-item" style="cursor: default; font-size: 0.75rem;">Shows next to the R once you've earned PopCOIN.</div>
+      <div class="sub-item" style="cursor: default; font-size: 0.75rem;">Shows next to the R once you've earned FAKE popCornCoin.</div>
     </div>
 
-    <div class="menu-item electric" onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
+    <div class="menu-item electric" data-explain="Supports RUDVENTUR: opens the Ko-fi page to buy the creator a coffee (pays for hosting and electricity)." onclick="buyElectricity()">⚡ Buy Pumpkin Electricity! 🎃</div>
   </div>
 
-  <!-- TOP-RIGHT: R CIRCLE + R MENU NOTCH -->
-  <div id="Rnotch">
-    <button class="Ricon coins hidden" id="iconCoins" onclick="showCoins()" title="PopCOIN">🪙</button>
-    <button class="Ricon" onclick="showToast('Translator module coming next! 🌐')" title="Translator">🌐</button>
-    <button class="Ricon" onclick="toggleUseRbox()" title="useRbox">👤</button>
-    <span id="rnName"></span>
-    <button class="rn-refresh" onclick="switchAccount()" title="Switch account">🔄</button>
-  </div>
-  <div id="Rcircle" onclick="toggleRMenu()" title="useR">R</div>
-
-  <!-- useRbox -->
-  <section id="useRbox" class="hidden" aria-label="useRbox">
-    <div class="ubx-head">
-      <strong>👤 useRbox</strong>
-      <div class="ubx-head-btns">
-        <button class="ubx-btn" id="ubxMaxBtn" onclick="toggleUseRboxMax()" title="Maximize">⤢</button>
-        <button class="ubx-btn" onclick="closeUseRbox()" title="Close">✖</button>
-      </div>
+  <!-- TOP-RIGHT: the shared RUDVENTUR useRbox (R circle) is added by embed/useRbox.js.
+       Windows 13's own part goes into its left section: -->
+  <div id="w13Left" hidden>
+    <div class="ubx-row" style="justify-content: space-between; margin-bottom: 0.6em;">
+      <strong id="rnName" style="color: var(--yellow);"></strong>
+      <button class="ubx-btn coins hidden" data-explain="Shows your FAKE popCornCoin balance and history for this account." id="iconCoins" onclick="showCoins()" title="FAKE popCornCoin">🪙</button>
     </div>
     <div class="ubx-body" id="ubxBody"></div>
-  </section>
+  </div>
 
   <!-- BOTTOM-LEFT: BUTTONS -->
   <div id="bottomButtons">
-    <div class="bottom-btn" onclick="openWindow('keyboard')" title="Keyboards">⌨️</div>
-    <div class="bottom-btn" onclick="openWindow('chat')" title="Global Chat">💬</div>
+    <div class="bottom-btn" data-explain="Opens the translator with the on-screen keyboards for many languages; it types into the focused text box." onclick="openWindow('keyboard')" title="Keyboards (in the translator)">⌨️</div>
+    <div class="bottom-btn" data-explain="Opens the Chat tab of the translator: the public chat room, with every message translated into your language." onclick="openWindow('chat')" title="Global Chat with translation (in the translator)">💬</div>
   </div>
 
   <!-- BOTTOM-RIGHT: POPCORN -->
-  <div id="popcornBtn" onclick="openWindow('popcorn')" title="Popcorn Hub">🍿</div>
+  <div data-explain="Opens the Popcorn Hub window: popCoin wallet, PIX camera challenges, the bunker and tools." id="popcornBtn" class="pb1-love" role="button" tabindex="0" onclick="pb1Burst(this); openWindow('popcorn')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" title="PB1 · Popcorn Hub — freshly popped with ❤️" aria-label="Open the Popcorn Hub (PB1), made with love">🍿</div>
 
   <!-- TASKBAR -->
   <div id="taskbar">
@@ -984,6 +893,25 @@ textarea.ubx-input { resize: vertical; min-height: 4.3em; }
 <div id="toast"></div>
 
 <script>
+/* PB1 love: a few hearts + kernels drift up from the 🍿 when it is tapped */
+function pb1Burst(btn) {
+  if (!btn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const r = btn.getBoundingClientRect();
+  ['❤️', '🍿', '💛', '🍿', '❤️'].forEach(function (ch, i) {
+    const s = document.createElement('span');
+    s.className = 'pb1-float';
+    s.textContent = ch;
+    s.style.left = (r.left + r.width / 2) + 'px';
+    s.style.top = (r.top + r.height / 2) + 'px';
+    s.style.setProperty('--dx', Math.round((i - 2) * 22 + (Math.random() * 14 - 7)) + 'px');
+    s.style.setProperty('--dy', Math.round(-60 - Math.random() * 50) + 'px');
+    s.style.setProperty('--rot', Math.round(Math.random() * 50 - 25) + 'deg');
+    s.style.animationDelay = (i * 45) + 'ms';
+    document.body.appendChild(s);
+    setTimeout(function () { s.remove(); }, 1400 + i * 45);
+  });
+}
+
 /* ===== GLOBAL STATE ===== */
 let currentChannel = 'main';
 let currentUser = 'Traveler';
@@ -1360,7 +1288,7 @@ function renderKnownAccounts() {
   const ids = Accounts.signedIn().filter(id => !Active.acc || id !== Active.acc.id);
   box.innerHTML = ids.map(id => {
     const a = Accounts.byId(id);
-    return `<button class="known-acc" onclick="continueAs('${a.id}')">▶ ${esc(a.name)} <small>${a.cloud ? '☁️' : '🔒'}</small></button>`;
+    return `<button data-explain="Continues as this account: opens its desktop without signing in again on this device." class="known-acc" onclick="continueAs('${a.id}')">▶ ${esc(a.name)} <small>${a.cloud ? '☁️' : '🔒'}</small></button>`;
   }).join('');
 }
 
@@ -1415,14 +1343,12 @@ function signOut() {
   }
 }
 
-/* ===== R MENU (capital R, top-right) ===== */
+/* ===== R MENU: the shared useRbox (capital R, top-right) ===== */
 function toggleRMenu(force) {
-  const notch = document.getElementById('Rnotch');
-  const open = typeof force === 'boolean' ? force : !notch.classList.contains('open');
-  notch.classList.toggle('open', open);
-  document.getElementById('Rcircle').classList.toggle('open', open);
-  if (open) renderCoins();
-  else closeUseRbox();
+  if (!window.rvUserbox) return;
+  if (force === false) { rvUserbox.close(); return; }
+  rvUserbox.open('left');
+  renderCoins();
 }
 
 function popcoinBalance() {
@@ -1437,7 +1363,7 @@ function renderCoins() {
   const icon = document.getElementById('iconCoins');
   const show = !!(Active.user && Active.user.settings.showCoins && coinsActive());
   icon.classList.toggle('hidden', !show);
-  icon.title = `PopCOIN: ${popcoinBalance().toFixed(2)}`;
+  icon.title = `FAKE popCornCoin: ${popcoinBalance().toFixed(2)}`;
 }
 
 function setCoinsCircle(on) {
@@ -1445,11 +1371,11 @@ function setCoinsCircle(on) {
   Active.user.settings.showCoins = !!on;
   saveUserFile();
   renderCoins();
-  if (on && !coinsActive()) showToast('🪙 The coins circle appears once you earn PopCOIN in the 🍿 Popcorn Hub');
+  if (on && !coinsActive()) showToast('🪙 The coins circle appears once you earn FAKE popCornCoin in the 🍿 Popcorn Hub');
 }
 
 function showCoins() {
-  showToast(`🪙 PopCOIN balance: ${popcoinBalance().toFixed(2)}`, 'gold');
+  showToast(`🪙 FAKE popCornCoin balance: ${popcoinBalance().toFixed(2)}`, 'gold');
 }
 
 /* ===== TOP-LEFT MENU: SOCIAL MEDIA ===== */
@@ -1461,7 +1387,7 @@ function renderSocialMenu() {
     const url = safeUrl(entry.url);
     return `<div class="social-row">
       <a ${url ? `href="${esc(url)}" target="_blank" rel="noopener"` : ''}>${s.icon} ${esc(s.name)}</a>
-      <button class="social-edit" onclick="editSocial('${s.id}')" title="Edit link">✏️</button>
+      <button data-explain="Edits this social link (name and address)." class="social-edit" onclick="editSocial('${s.id}')" title="Edit link">✏️</button>
       <label title="Show in useRbox"><input type="checkbox" ${entry.show ? 'checked' : ''} onchange="setSocialShown('${s.id}', this.checked)"> useRbox</label>
     </div>`;
   }).join('') + '<div class="sub-item" style="cursor: default; font-size: 0.75rem;">☑ = shown in your useRbox</div>';
@@ -1486,31 +1412,52 @@ function editSocial(id) {
   renderUbxSocial();
 }
 
-/* ===== useRbox ===== */
+/* ===== useRbox: the shared one; Windows 13 fills its left section ===== */
+function useRboxIsOpen() {
+  const box = document.querySelector('#topRightUser #useRbox');
+  return !!box && !box.classList.contains('hidden');
+}
 function toggleUseRbox() {
-  const box = document.getElementById('useRbox');
-  if (box.classList.contains('hidden')) { renderUseRbox(); box.classList.remove('hidden'); }
-  else closeUseRbox();
+  if (!window.rvUserbox) return;
+  if (useRboxIsOpen()) { closeUseRbox(); return; }
+  renderUseRbox();
+  rvUserbox.open('left');
 }
 
 function closeUseRbox() {
-  document.getElementById('useRbox').classList.add('hidden');
+  if (window.rvUserbox && useRboxIsOpen()) rvUserbox.close();
 }
 
-function toggleUseRboxMax() {
-  const box = document.getElementById('useRbox');
-  const max = box.classList.toggle('maximized');
-  const btn = document.getElementById('ubxMaxBtn');
-  btn.textContent = max ? '⤡' : '⤢';
-  btn.title = max ? 'Restore' : 'Maximize';
+/* The account's name, motto and place are edited in the shared box (right section, Editing).
+   Windows 13 keeps a copy in each account's useR file, so the two are kept in step:
+   signing in / switching account puts the account's profile into the shared box, and
+   saving in the shared box copies it back into the account. */
+function pushProfileToShared() {
+  if (!window.rvUserbox || !Active.user) return;
+  const p = Active.user.profile;
+  rvUserbox.save({ username: p.name || '', psignature: p.psignature || '', currentLoc: p.location || '' });
 }
+function pullProfileFromShared() {
+  if (!window.rvUserbox || !Active.user) return;
+  const f = id => { const el = document.querySelector('#topRightUser #' + id); return el ? el.value : undefined; };
+  const g = rvUserbox.get() || {}, p = Active.user.profile;
+  const s = { username: f('username') ?? g.username, psignature: f('psignature') ?? g.psignature, currentLoc: f('currentLoc') ?? g.currentLoc };
+  const name = String(s.username || '').trim();
+  if (name && name !== p.name) { p.name = name.slice(0, 40); Active.acc.name = p.name; Accounts.put(Active.acc); currentUser = p.name; }
+  p.psignature = String(s.psignature || '');
+  p.location = String(s.currentLoc || '');
+  saveUserFile();
+  document.getElementById('rnName').textContent = currentUser;
+  renderUseRbox();
+}
+document.addEventListener('click', e => { if (e.target && e.target.closest && e.target.closest('#topRightUser #saveUser')) setTimeout(pullProfileFromShared, 0); });
 
 function renderAccountUI() {
   document.getElementById('rnName').textContent = currentUser;
-  document.querySelector('.rn-refresh').title = `Switch account (now: ${currentUser})`;
   renderSocialMenu();
   renderCoins();
-  if (!document.getElementById('useRbox').classList.contains('hidden')) renderUseRbox();
+  pushProfileToShared();
+  renderUseRbox();
 }
 
 function renderUseRbox() {
@@ -1526,38 +1473,18 @@ function renderUseRbox() {
         <div class="name">${esc(p.name)}</div>
         <div class="ubx-badges">
           <span class="ubx-badge">${METHOD_LABEL[acc.method] || acc.method}</span>
-          <button class="ubx-badge" onclick="togglePublic()" title="Who can see your profile online">${u.isPublic ? '🌍 Public' : '🙈 Private'}</button>
+          <button data-explain="Switches who can see your profile online: everyone (public) or nobody (private)." class="ubx-badge" onclick="togglePublic()" title="Who can see your profile online">${u.isPublic ? '🌍 Public' : '🙈 Private'}</button>
         </div>
       </div>
     </div>
     <div class="ubx-row">
-      <button class="ubx-btn" onclick="switchAccount()" title="Switch account">🔄 Switch</button>
-      <button class="ubx-btn" onclick="showLogin(true)">➕ Add account</button>
-      <button class="ubx-btn danger" onclick="signOut()">🚪 Sign out</button>
+      <button class="ubx-btn" data-explain="Switches to another account signed in on this device." onclick="switchAccount()" title="Switch account">🔄 Switch</button>
+      <button class="ubx-btn" data-explain="Signs in one more account on this device, keeping the current one." onclick="showLogin(true)">➕ Add account</button>
+      <button class="ubx-btn danger" data-explain="Signs this account out of Windows 13 on this device." onclick="signOut()">🚪 Sign out</button>
     </div>
     <p class="ubx-hint" style="margin-top: 0.6em;">${esc(syncNote)}</p>
 
-    <div id="ubxClock" style="margin-top: 0.8em;">--:--:--</div>
-
-    <label class="ubx-label" for="ubxName">👤 Name</label>
-    <div class="ubx-row">
-      <input class="ubx-input" id="ubxAvatar" value="${esc(p.avatar || '🎃')}" maxlength="4" style="flex: none; width: 3.2em; text-align: center;" title="Avatar emoji">
-      <input class="ubx-input" id="ubxName" value="${esc(p.name)}" maxlength="40">
-    </div>
-
-    <label class="ubx-label">📡 Channel</label>
-    <input class="ubx-input" value="${esc(currentChannel)}" disabled>
-
-    <label class="ubx-label" for="ubxSig">📝 P.S. (Personal Signature)</label>
-    <textarea class="ubx-input" id="ubxSig" maxlength="500" placeholder="Your personal motto, signature, or note...">${esc(p.psignature)}</textarea>
-
-    <label class="ubx-label" for="ubxLoc">📍 Location</label>
-    <div class="ubx-row">
-      <input class="ubx-input" id="ubxLoc" value="${esc(p.location)}" placeholder="???">
-      <button class="ubx-btn" onclick="ubxGPS(this)">📍 GPS</button>
-    </div>
-
-    <button class="ubx-btn primary wide" style="margin-top: 1em;" onclick="saveProfile()">💾 SAVE PROFILE</button>
+    <p class="ubx-hint" style="margin-top: 0.6em;">✏️ Name, motto and place: edit them in Editing (right) and press 💾 SAVE PROFILE — this account keeps a copy.</p>
 
     <div class="ubx-section">
       <h3>🌐 Social media</h3>
@@ -1568,9 +1495,9 @@ function renderUseRbox() {
       <h3>🎁 Sessions</h3>
       <p class="ubx-hint">Snapshots of your channel + open windows. They stay on this device — export one to share or gift it.</p>
       <div class="ubx-row" style="margin-top: 0.6em;">
-        <button class="ubx-btn gold" onclick="saveSessionSnapshot()">💾 Save session</button>
+        <button class="ubx-btn gold" data-explain="Saves a snapshot of this session (open windows, channel and settings) that you can restore later." onclick="saveSessionSnapshot()">💾 Save session</button>
         <label class="ubx-btn ubx-file">📥 Import<input type="file" accept=".json,application/json" onchange="importSessionFile(this)"></label>
-        <button class="ubx-btn" onclick="exportSessionFile()" title="Export the whole session file">📤 All</button>
+        <button class="ubx-btn" data-explain="Downloads the whole session file with every account and snapshot, to move to another device." onclick="exportSessionFile()" title="Export the whole session file">📤 All</button>
       </div>
       <div id="ubxSnaps"></div>
     </div>
@@ -1579,14 +1506,13 @@ function renderUseRbox() {
       <h3>🗂️ useR file</h3>
       <p class="ubx-hint">Your portable identity. ${acc.cloud ? 'Cloud accounts sync it automatically.' : 'Export it to carry this local account to another device — the password still protects it.'}</p>
       <div class="ubx-row" style="margin-top: 0.6em;">
-        <button class="ubx-btn" onclick="exportUserFile()">📤 Export useR</button>
+        <button class="ubx-btn" data-explain="Downloads your useR file for this account, to import on another device." onclick="exportUserFile()">📤 Export useR</button>
         <label class="ubx-btn ubx-file">📥 Import useR<input type="file" accept=".json,application/json" onchange="importUserFile(this)"></label>
       </div>
     </div>
   `;
   renderUbxSocial();
   renderSnapshots();
-  updateUbxClock();
 }
 
 function renderUbxSocial() {
@@ -1596,40 +1522,6 @@ function renderUbxSocial() {
   grid.innerHTML = shown.length
     ? shown.map(s => `<a href="${esc(safeUrl(Active.user.social[s.id].url))}" target="_blank" rel="noopener" title="${esc(s.name)}"><span>${s.icon}</span></a>`).join('')
     : '<p class="ubx-hint" style="grid-column: 1 / -1;">None ticked yet — pick them in ☰ RUDVENTUR › 🌐 SOCIAL MEDIA (top left).</p>';
-}
-
-function updateUbxClock() {
-  const el = document.getElementById('ubxClock');
-  if (el) el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
-}
-setInterval(updateUbxClock, 1000);
-
-function ubxGPS(btn) {
-  if (!navigator.geolocation) { showToast('GPS not supported by your browser!'); return; }
-  btn.textContent = '⏳...';
-  navigator.geolocation.getCurrentPosition(pos => {
-    document.getElementById('ubxLoc').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
-    btn.textContent = '✅ GPS';
-    setTimeout(() => { btn.textContent = '📍 GPS'; }, 2000);
-  }, err => {
-    showToast('GPS Error: ' + err.message);
-    btn.textContent = '📍 GPS';
-  });
-}
-
-function saveProfile() {
-  const p = Active.user.profile;
-  p.name = document.getElementById('ubxName').value.trim() || p.name;
-  p.avatar = document.getElementById('ubxAvatar').value.trim() || '🎃';
-  p.psignature = document.getElementById('ubxSig').value;
-  p.location = document.getElementById('ubxLoc').value.trim();
-  Active.acc.name = p.name;
-  Accounts.put(Active.acc);
-  currentUser = p.name;
-  saveUserFile();
-  renderAccountUI();
-  renderUseRbox();
-  showToast('✅ Profile saved', 'gold');
 }
 
 function togglePublic() {
@@ -1644,7 +1536,7 @@ function captureState() {
   return {
     channel: currentChannel,
     windows: Object.keys(WindowManager.windows).filter(id => WINDOW_TYPES.includes(id)),
-    useRboxMaximized: document.getElementById('useRbox').classList.contains('maximized')
+    useRboxOpen: useRboxIsOpen()
   };
 }
 
@@ -1655,8 +1547,7 @@ function restoreState(state) {
     localStorage.setItem('rudventur_channel', currentChannel);
   }
   (state.windows || []).filter(t => WINDOW_TYPES.includes(t)).forEach(openWindow);
-  const box = document.getElementById('useRbox');
-  if (!!state.useRboxMaximized !== box.classList.contains('maximized')) toggleUseRboxMax();
+  if (state.useRboxOpen && !useRboxIsOpen()) toggleUseRbox();
 }
 
 function saveSessionSnapshot() {
@@ -1684,9 +1575,9 @@ function renderSnapshots() {
         <b>${esc(s.name)}</b>
         <small>${s.from ? '🎁 from ' + esc(s.from) + ' · ' : ''}📡 ${esc(s.state && s.state.channel)} · ${new Date(s.createdAt).toLocaleDateString('en-GB')}</small>
       </div>
-      <button class="ubx-btn" onclick="restoreSnapshot('${esc(s.id)}')" title="Restore">▶</button>
-      <button class="ubx-btn" onclick="exportSnapshot('${esc(s.id)}')" title="Export to share / gift">📤</button>
-      <button class="ubx-btn danger" onclick="deleteSnapshot('${esc(s.id)}')" title="Delete">🗑</button>
+      <button class="ubx-btn" data-explain="Restores this saved snapshot: its windows, channel and settings." onclick="restoreSnapshot('${esc(s.id)}')" title="Restore">▶</button>
+      <button class="ubx-btn" data-explain="Downloads this snapshot as a file to share or give to someone." onclick="exportSnapshot('${esc(s.id)}')" title="Export to share / gift">📤</button>
+      <button class="ubx-btn danger" data-explain="Deletes this saved snapshot from this device." onclick="deleteSnapshot('${esc(s.id)}')" title="Delete">🗑</button>
     </div>`).join('') : '<p class="ubx-hint" style="margin-top: 0.6em;">No saved sessions yet.</p>';
 }
 
@@ -1731,7 +1622,7 @@ function cleanState(state) {
   return {
     channel: String(state.channel || currentChannel).slice(0, 80),
     windows: Array.isArray(state.windows) ? state.windows.filter(t => WINDOW_TYPES.includes(t)) : [],
-    useRboxMaximized: !!state.useRboxMaximized
+    useRboxOpen: !!(state.useRboxOpen || state.useRboxMaximized)
   };
 }
 
@@ -1930,9 +1821,9 @@ const WindowManager = {
           ${options.icon || '🪟'} ${options.title || 'Window'}
         </div>
         <div class="window-controls">
-          <div class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
-          <div class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
-          <div class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
+          <div data-explain="Minimises this window to the taskbar." class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
+          <div data-explain="Makes this window fill the desktop, or back to its size." class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
+          <div data-explain="Closes this window." class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
         </div>
       </div>
       <div class="window-content ${options.noPadding ? 'no-padding' : ''}">
@@ -2043,6 +1934,7 @@ const WindowManager = {
     Object.entries(this.windows).forEach(([id, win]) => {
       const item = document.createElement('div');
       item.className = 'taskbar-item';
+      item.setAttribute('data-explain', 'Brings this window to the front, or back from the taskbar if it was minimised.');
       if (!win.minimized) item.classList.add('active');
       item.innerHTML = `${win.icon || '🪟'} ${win.title || 'Window'}`;
       item.onclick = () => {
@@ -2054,46 +1946,119 @@ const WindowManager = {
   }
 };
 
+/* ===== POPCORN WINDOW: panoramic fit + full screen choices =====
+   popcornView('max' | 'fullscreen' | 'camera' | 'normal'), also in the
+   WINDOWS 13 logo menu. The Popcorn Hub inside asks for 'max' / 'normal'
+   itself with a message { type: 'rudventur-popcorn-view', mode } (same site). */
+function popcornFits() {
+  return window.innerHeight - 60 < 640 && window.innerWidth > window.innerHeight;
+}
+function popcornFsEl() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+function popcornSetMax(on) {
+  const w = WindowManager.windows.popcorn;
+  if (w && !!w.maximized !== !!on) WindowManager.toggleMaximize('popcorn');
+}
+function popcornExitFS(el) {
+  if (!el || popcornFsEl() !== el) return;
+  const fn = document.exitFullscreen || document.webkitExitFullscreen;
+  try { if (fn) Promise.resolve(fn.call(document)).catch(() => {}); } catch (e) {}
+}
+function popcornFrameCmd(cmd) {
+  const w = WindowManager.windows.popcorn;
+  const fr = w && w.element.querySelector('iframe');
+  if (!fr) return;
+  const send = () => { try { fr.contentWindow.postMessage({ type: 'rudventur-popcorn-cmd', cmd: cmd }, location.origin); } catch (e) {} };
+  let ready = false;
+  try { const d = fr.contentDocument; ready = !!d && d.readyState === 'complete' && d.URL !== 'about:blank'; } catch (e) {}
+  if (ready) send(); else fr.addEventListener('load', () => setTimeout(send, 300), { once: true });
+}
+// only ever called from a tap or click (browsers need one for full screen)
+function popcornView(mode) {
+  let w = WindowManager.windows.popcorn;
+  if (mode === 'normal') {
+    if (!w) return;
+    popcornExitFS(w.element);
+    popcornSetMax(false);
+    popcornFrameCmd('normal');
+    return;
+  }
+  if (!w) openWindow('popcorn'); else if (w.minimized) WindowManager.restore('popcorn');
+  w = WindowManager.windows.popcorn;
+  if (!w) return;
+  WindowManager.bringToFront('popcorn');
+  popcornSetMax(true);
+  if (mode === 'fullscreen' || mode === 'camera') {
+    const el = w.element, fn = el.requestFullscreen || el.webkitRequestFullscreen;
+    try { if (fn) Promise.resolve(fn.call(el)).catch(() => {}); } catch (e) {}
+  }
+  if (mode === 'camera') popcornFrameCmd('camera-fill');
+}
+window.addEventListener('message', (ev) => {
+  if (ev.origin !== location.origin) return;
+  const d = ev.data || {};
+  if (d.type !== 'rudventur-popcorn-view') return;
+  const w = WindowManager.windows.popcorn;
+  const fr = w && w.element.querySelector('iframe');
+  if (!fr || fr.contentWindow !== ev.source) return;
+  if (d.mode === 'max') { if (w.minimized) WindowManager.restore('popcorn'); popcornSetMax(true); WindowManager.bringToFront('popcorn'); }
+  else if (d.mode === 'normal') { popcornExitFS(w.element); popcornSetMax(false); }
+});
+// the WINDOWS 13 logo menu (shared view menu) gets the popcorn choices too
+if (window.rvView && typeof rvView.addMenuItem === 'function') {
+  [['max', '🍿 Popcorn — Fill the Screen'], ['fullscreen', '🍿 Popcorn — True Full Screen'],
+   ['camera', '📷 Popcorn — Full Screen Camera'], ['normal', '🍿 Popcorn — Normal Size']].forEach(([m, label]) => {
+    rvView.addMenuItem({ id: 'w13-popcorn-' + m, label: label, onClick: () => popcornView(m) });
+  });
+}
+
 /* ===== OPEN WINDOW SHORTCUTS ===== */
-const WINDOW_TYPES = ['keyboard', 'chat', 'popcorn'];
+const WINDOW_TYPES = ['translator', 'popcorn'];
 
 function openWindow(type) {
+  // ⌨️ and 💬 open the one RUDVENTUR translator (map-merger-venti): keyboard panel or Chat tab
+  let trQuery = '';
+  if (type === 'keyboard' || type === 'chat') {
+    const msg = type === 'chat' ? { tab: 'chat' } : { tab: 'translate', keyboard: true };
+    if (WindowManager.windows.translator) {
+      WindowManager.restore('translator');
+      const f = document.querySelector('#translator iframe');
+      if (f) f.contentWindow.postMessage({ rvTranslator: msg }, '*');
+      return;
+    }
+    let lang = ''; try { lang = localStorage.getItem('rvUserLang') || ''; } catch (e) {}
+    trQuery = '?' + (type === 'chat' ? 'tab=chat' : 'keyboard=1') + (lang ? '&lang=' + encodeURIComponent(lang) : '');
+    type = 'translator';
+  }
   if (WindowManager.windows[type]) {
     WindowManager.restore(type);
     return;
   }
   const windows = {
-    keyboard: {
-      id: 'keyboard',
-      title: '⌨️ World Keyboards',
-      icon: '⌨️',
-      x: 300,
-      y: 150,
-      width: 850,
-      height: 550,
-      content: '<div style="padding: 20px; color: var(--neon);"><h2>⌨️ Keyboards</h2><p>UK 🇬🇧 | Polish 🇵🇱 | German 🇩🇪 | French 🇫🇷 | Spanish 🇪🇸<br>Japanese 🇯🇵 | Korean 🇰🇷 | Arabic 🇸🇦 | Emoji 😀</p><p style="margin-top: 15px;">Replace with keyboard component!</p></div>'
-    },
-    chat: {
-      id: 'chat',
-      title: '💬 Global Chat',
-      icon: '💬',
-      x: 400,
-      y: 200,
-      width: 450,
-      height: 550,
-      content: `<div style="padding: 20px; color: var(--neon);"><h2>💬 Global Chat</h2><p>Channel: <strong style="color: var(--yellow);">${currentChannel}</strong></p><p style="margin-top: 15px;">Firebase-ready! Replace with chat component!</p></div>`
+    translator: {
+      id: 'translator',
+      title: 'Translator · Chat · Keyboards',
+      icon: '🌐',
+      x: 200,
+      y: 90,
+      width: 1000,
+      height: 660,
+      noPadding: true,
+      content: '<iframe src="https://rudventur.github.io/map-merger-venti/translator_v7.html' + trQuery + '" title="Translator, chat and keyboards" allow="clipboard-write" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     },
     popcorn: {
       id: 'popcorn',
       title: '🍿 Popcorn Hub',
       icon: '🍿',
-      x: 120,
-      y: 60,
-      width: 600,
-      height: 760,
+      // wide, short screens (panoramic): fill the height and widen, so the
+      // popcorn title and PIX (camera left, SPIN right) fit without scrolling
+      // (it starts under the slimmed RUDVENTUR notch, about 34px tall)
+      x: popcornFits() ? Math.round((window.innerWidth - Math.min(window.innerWidth - 16, Math.max(600, Math.round((window.innerHeight - 100) * 2.1)))) / 2) : 120,
+      y: popcornFits() ? 36 : 60,
+      width: popcornFits() ? Math.max(600, Math.round((window.innerHeight - 100) * 2.1)) : 600,
+      height: popcornFits() ? window.innerHeight - 100 : 760,
       noPadding: true,
-      // PB1 opens this hub; PB2 + PIX describer live inside bottom-right-popcorn-complete.html
-      content: '<iframe src="bottom-right-popcorn-complete.html" title="Popcorn Hub" allow="camera; microphone; clipboard-write; fullscreen" allowfullscreen loading="eager" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
+      // PB1 opens the main popcorn window: a launcher with 🎬 Bunker, 🍿 popCoin Wallet and 📛 PIX (bottom-right-popcorn-complete.html)
+      content: '<iframe src="bottom-right-popcorn-complete.html?v=20261022-2" title="Popcorn Hub" allow="camera; microphone; clipboard-write; fullscreen" allowfullscreen loading="eager" style="width:100%;height:100%;border:0;background:#000;display:block"></iframe>'
     }
   };
   

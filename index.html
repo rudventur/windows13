@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RUDVENTUR - Windows 13 OS 🎃</title>
 <meta name="description" content="Complete browser-based operating system with ChemVentur game, accessibility tools, and social integration. Powered by PumpkinG.">
-<meta name="keywords" content="Windows 13, RUDVENTUR, ChemVentur, browser OS, accessibility, Popcoin, keyboards">
+<meta name="keywords" content="Windows 13, RUDVENTUR, ChemVentur, browser OS, accessibility, FAKE popCornCoin, keyboards">
 
 <style>
 :root {
@@ -43,7 +43,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
+  padding: 0 96px 0 40px; /* the right side stays clear for the useRbox R circle */
   z-index: 10000;
 }
 
@@ -326,7 +326,10 @@ html, body {
   .logo { font-size: 1.8rem; }
   .component-grid { grid-template-columns: 1fr; }
   .os-frame { height: 600px; }
-  #header { padding: 0 20px; }
+  /* on a phone the header wraps onto several lines and scrolls away with the page,
+     instead of a fixed 80 pixel bar that cut off the title and sat under the R circle */
+  #header { position: relative; height: auto; flex-wrap: wrap; gap: 10px; padding: 12px 84px 12px 16px; }
+  #main { margin-top: 0; }
 }
 
 /* ===== SCROLL INDICATOR ===== */
@@ -377,8 +380,9 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="https://rudventur.github.io/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" data-service="windows13" defer></script>
 </head>
 
 <body>
@@ -418,7 +422,7 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
   <section class="component-grid">
     
     <!-- WINDOWS 13 MASTER -->
-    <div class="component-card" onclick="scrollToOS()">
+    <div data-explain="Scrolls down to the live Windows 13 desktop you can try on this page." class="component-card" onclick="scrollToOS()">
       <div class="component-icon">🪟</div>
       <div class="component-title">Windows 13 - Complete OS</div>
       <div class="component-desc">
@@ -434,13 +438,13 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
     <!-- USERBOX -->
     <div class="component-card">
       <div class="component-icon">👤</div>
-      <div class="component-title">useRbox v2.0 Ultimate</div>
+      <div class="component-title">useRbox (the shared RUDVENTUR one)</div>
       <div class="component-desc">
         User profile with live clock, GPS bookmarks, personal signature, and 16 social media integrations. Complete localStorage system.
       </div>
       <div class="component-links">
-        <a href="https://github.com/rudventur/windows13/blob/main/userbox-v2-ultimate.html" target="_blank" class="comp-link">📂 View Code</a>
-        <a href="https://rudventur.github.io/windows13/userbox-v2-ultimate.html" target="_blank" class="comp-link">▶️ Demo</a>
+        <a href="https://github.com/rudventur/RudVentur.com/blob/main/embed/useRbox.js" target="_blank" class="comp-link">📂 View Code</a>
+        <a href="#" onclick="event.preventDefault(); rvUserbox.open('mid')" class="comp-link">▶️ Demo</a>
       </div>
     </div>
 
@@ -457,12 +461,25 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
       </div>
     </div>
 
+    <!-- TRANSLATOR: KEYBOARDS + CHAT -->
+    <div class="component-card">
+      <div class="component-icon">⌨️</div>
+      <div class="component-title">Translator, Keyboards + Global Chat</div>
+      <div class="component-desc">
+        One translator: translate on a map of the world's languages, chat with translation, and type with on-screen keyboards for many languages. Lives in map-merger-venti.
+      </div>
+      <div class="component-links">
+        <a href="https://github.com/rudventur/map-merger-venti/blob/main/translator_v7.html" target="_blank" class="comp-link">📂 View Code</a>
+        <a href="https://rudventur.github.io/map-merger-venti/translator_v7.html?keyboard=1" target="_blank" class="comp-link">▶️ Demo</a>
+      </div>
+    </div>
+
     <!-- POPCORN HUB -->
     <div class="component-card">
       <div class="component-icon">🍿</div>
       <div class="component-title">Popcorn Hub</div>
       <div class="component-desc">
-        Accessibility descriptions (URL→Popcorn), cookies inspector, and real SHA-256 Popcoin mining! Educational crypto mining in your browser.
+        Accessibility descriptions (URL→Popcorn), cookies inspector, and real SHA-256 FAKE popCornCoin mining! Educational crypto mining in your browser.
       </div>
       <div class="component-links">
         <a href="https://github.com/rudventur/windows13/blob/main/bottom-right-popcorn-complete.html" target="_blank" class="comp-link">📂 View Code</a>
@@ -480,19 +497,6 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
       <div class="component-links">
         <a href="https://github.com/rudventur/windows13/blob/main/taskbar-window-system.html" target="_blank" class="comp-link">📂 View Code</a>
         <a href="https://rudventur.github.io/windows13/taskbar-window-system.html" target="_blank" class="comp-link">▶️ Demo</a>
-      </div>
-    </div>
-
-    <!-- KEYBOARDS + CHAT -->
-    <div class="component-card">
-      <div class="component-icon">💬</div>
-      <div class="component-title">Keyboards + Global Chat</div>
-      <div class="component-desc">
-        Combined keyboards and Firebase-ready chat system. Channel-based messaging with timestamps. Draggable windows.
-      </div>
-      <div class="component-links">
-        <a href="https://github.com/rudventur/windows13/blob/main/bottom-left-keyboards-chat.html" target="_blank" class="comp-link">📂 View Code</a>
-        <a href="https://rudventur.github.io/windows13/bottom-left-keyboards-chat.html" target="_blank" class="comp-link">▶️ Demo</a>
       </div>
     </div>
 
@@ -531,7 +535,7 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
       </div>
       <div class="component-links">
         <a href="https://github.com/rudventur/windows13/blob/main/README.md" target="_blank" class="comp-link">📖 README</a>
-        <a href="https://github.com/rudventur/windows13/blob/main/FILE-INDEX.txt" target="_blank" class="comp-link">📋 Index</a>
+        <a href="https://github.com/rudventur/windows13/blob/main/README.md" target="_blank" class="comp-link">📋 Index</a>
       </div>
     </div>
 
@@ -540,11 +544,11 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
   <!-- OS EMBED SECTION -->
   <section class="os-embed-section" id="os-embed">
     <h2>🪟 Try Windows 13 Live!</h2>
-    <div class="os-frame-container">
-      <iframe src="https://rudventur.github.io/windows13/WINDOWS13-MASTER.html" class="os-frame" title="Windows 13 Operating System" allowfullscreen></iframe>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="WINDOWS13-MASTER.html" class="comp-link" style="font-size: 1.4rem; padding: 14px 28px;">▶️ Open Windows 13</a>
     </div>
     <div style="text-align: center; margin-top: 20px; color: var(--neon);">
-      ⬆️ Enter a channel (e.g., "main"), then sign in with Email / Phone or a Local name + password! ⬆️
+      Enter a channel (e.g., "main"), then sign in with Email / Phone or a Local name + password.
     </div>
   </section>
 
@@ -567,7 +571,7 @@ body.sf-hidden-header .sf-ptab.header-tab { transform: none; }
       <a href="https://discord.gg/rudventur" target="_blank" class="social-icon" title="Discord">💬</a>
       <a href="https://twitter.com/rudventur" target="_blank" class="social-icon" title="Twitter">𝕏</a>
       <a href="https://instagram.com/rudventur" target="_blank" class="social-icon" title="Instagram">📷</a>
-      <a href="https://youtube.com/@rudventur" target="_blank" class="social-icon" title="YouTube">▶️</a>
+      <a href="https://www.youtube.com/results?search_query=RudVentur" target="_blank" class="social-icon" title="YouTube">▶️</a>
       <a href="https://ko-fi.com/rudventur" target="_blank" class="social-icon" title="Ko-fi">☕</a>
     </div>
 

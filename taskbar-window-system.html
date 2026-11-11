@@ -234,6 +234,7 @@ iframe {
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/RudVentur.com/embed/apple-touch-icon.png">
 <script src="https://rudventur.github.io/RudVentur.com/embed/rvView.js"></script>
+<script src="https://rudventur.github.io/RudVentur.com/embed/useRbox.js" data-service="windows13" defer></script>
 </head>
 
 <body>
@@ -282,9 +283,9 @@ const WindowManager = {
           ${options.icon || '🪟'} ${options.title || 'Window'}
         </div>
         <div class="window-controls">
-          <div class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
-          <div class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
-          <div class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
+          <div data-explain="Minimises this window to the taskbar." class="window-btn minimize" onclick="WindowManager.minimize('${id}')">_</div>
+          <div data-explain="Makes this window fill the desktop, or back to its size." class="window-btn maximize" onclick="WindowManager.toggleMaximize('${id}')">□</div>
+          <div data-explain="Closes this window." class="window-btn close" onclick="WindowManager.close('${id}')">✕</div>
         </div>
       </div>
       <div class="window-content ${options.noPadding ? 'no-padding' : ''}">
@@ -457,53 +458,25 @@ WindowManager.createWindow({
   height: 600,
   content: `
     <div class="demo-content">
-      <h2>⚡ useRbox v2.0</h2>
-      <p>This would contain your useRbox interface with:</p>
-      <ul style="margin-left: 20px; margin-top: 10px;">
-        <li>Username field</li>
-        <li>GPS bookmarks</li>
-        <li>P.S. signature</li>
-        <li>Live clock</li>
-      </ul>
-      <p style="margin-top: 15px; color: var(--yellow);">
-        📝 Replace this content with your actual useRbox HTML!
-      </p>
+      <h2>⚡ useRbox</h2>
+      <p>The one RUDVENTUR useRbox: name, P.S. signature, GPS bookmarks, live clock, restaurant and the FAKE popCornCoin shop.</p>
+      <p style="margin-top: 15px;"><button class="demo-btn" data-explain="Opens the useRbox: your profile, places, rooms and the FAKE popCornCoin shop." onclick="rvUserbox.open('mid')">👤 Open the useRbox</button>
+      <button class="demo-btn" data-explain="Opens the useRbox at the profile builder, to edit your name, avatar and languages." onclick="rvUserbox.open('right')">✏️ Edit my profile</button></p>
     </div>
   `
 });
 
-// Global Chat Window
+// Translator Window: translation, Global Chat and the World Keyboards in one (map-merger-venti)
 WindowManager.createWindow({
-  id: 'chat',
-  title: '💬 Global Chat',
-  icon: '💬',
+  id: 'translator',
+  title: '🌐 Translator · Chat · Keyboards',
+  icon: '🌐',
   x: 300,
-  y: 200,
-  width: 450,
-  height: 550,
-  content: `
-    <div class="demo-content">
-      <h2>💬 Global Chat</h2>
-      <p>Channel: <strong style="color: var(--yellow);">main</strong></p>
-      <p style="margin-top: 15px; opacity: 0.7;">No messages yet. Say hi! 👋</p>
-      <p style="margin-top: 15px; color: var(--yellow);">
-        📝 Replace with your actual chat interface!
-      </p>
-    </div>
-  `
-});
-
-// Keyboard Window
-WindowManager.createWindow({
-  id: 'keyboard',
-  title: '⌨️ Keyboards',
-  icon: '⌨️',
-  x: 400,
-  y: 100,
-  width: 850,
-  height: 500,
+  y: 120,
+  width: 900,
+  height: 560,
   noPadding: true,
-  content: '<iframe src="keyboard-realistic.html" style="width:100%; height:100%; border:none;"></iframe>'
+  content: '<iframe src="https://rudventur.github.io/map-merger-venti/translator_v7.html?keyboard=1" title="Translator, chat and keyboards" allow="clipboard-write" style="width:100%; height:100%; border:none; display:block;"></iframe>'
 });
 
 // Popcorn Hub Window
@@ -515,14 +488,9 @@ WindowManager.createWindow({
   y: 80,
   width: 550,
   height: 700,
+  noPadding: true,
   content: `
-    <div class="demo-content">
-      <h2>🍿 Popcorn Hub</h2>
-      <p>Accessibility descriptions, cookies inspector, and Popcoin mining!</p>
-      <p style="margin-top: 15px; color: var(--yellow);">
-        📝 Replace with your actual Popcorn Hub interface!
-      </p>
-    </div>
+    <iframe src="bottom-right-popcorn-complete.html" title="Popcorn Hub" style="width:100%; height:100%; border:none; display:block;"></iframe>
   `
 });
 
