@@ -152,9 +152,9 @@
   var TRIPLE_CHANCE = 0.03;          // normal reels: share of slots with 3 emojis
   var ILLEGAL_DOUBLE_CHANCE = 0.5;   // illegal reels: about half are doubles
   var ILLEGAL_TRIPLE_CHANCE = 0.33;  // illegal reels: about a third are triples
-  var SPIN_COST = 1;                 // popCoins per "Spin all"
+  var SPIN_COST = 1;                 // FAKE popCornCoins per "Spin all"
   var JACKPOT_MIN_TIER = 2;          // a bandit jackpot = win line tier ≥ this
-  var BASE_WIN = [0, 0, 25, 100];    // base popCoins per jackpot tier
+  var BASE_WIN = [0, 0, 25, 100];    // base FAKE popCornCoins per jackpot tier
   var MULTI_JACKPOT = [1, 1, 20, 420]; // by number of bandits that jackpot
   var MINI_STEP = 1000;              // n mini wins in a row → ×(n · MINI_STEP)
   var MINI_WIN_CHANCE = 0.5;         // 2 emojis on the mini reel → ½ per spin
@@ -690,7 +690,7 @@
     var jp = round.bandits.map(function (r, i) { return { r: r, id: BANDIT_META[i].id }; })
       .filter(function (x) { return x.r.jackpot; });
     if (!round.baseUsed) {
-      return 'No win this spin · spin cost −' + fmt(round.cost) + ' popCoin' + (round.cost === 1 ? '' : 's');
+      return 'No win this spin · spin cost −' + fmt(round.cost) + ' FAKE popCornCoin' + (round.cost === 1 ? '' : 's');
     }
     if (round.miniOnly) {
       parts.push('spin stake ' + fmt(round.baseUsed) + ' (no jackpot)');
@@ -704,7 +704,7 @@
       if (!m.streak) return;
       s += ' × ' + fmt(m.mult) + ' (mini reel ' + m.target + ' · ' + m.streak + ' win' + (m.streak === 1 ? '' : 's in a row') + ')';
     });
-    s += ' = ' + fmt(round.total) + ' popCoins · spin cost −' + fmt(round.cost) + ' · net ' + (round.net < BigInt(0) ? '' : '+') + fmt(round.net);
+    s += ' = ' + fmt(round.total) + ' FAKE popCornCoins · spin cost −' + fmt(round.cost) + ' · net ' + (round.net < BigInt(0) ? '' : '+') + fmt(round.net);
     return s;
   }
 
@@ -847,8 +847,8 @@
   function casinoHtml() {
     var neg = casino.balance < BigInt(0);
     return '<div class="pix-casino">' +
-      '<span class="pix-casino-bal">🎰 Casino balance <b class="' + (neg ? 'is-neg' : '') + '" id="pix-casino-bal">' + fmt(casino.balance) + '</b> popCoins</span>' +
-      '<span class="pix-casino-cost">Spin costs ' + fmt(SPIN_COST) + ' popCoin' + (SPIN_COST === 1 ? '' : 's') + '</span>' +
+      '<span class="pix-casino-bal">🎰 Casino balance <b class="' + (neg ? 'is-neg' : '') + '" id="pix-casino-bal">' + fmt(casino.balance) + '</b> FAKE popCornCoins</span>' +
+      '<span class="pix-casino-cost">Spin costs ' + fmt(SPIN_COST) + ' FAKE popCornCoin' + (SPIN_COST === 1 ? '' : 's') + '</span>' +
       (neg ? '<span class="pix-casino-note">Below zero — later this needs bank credit</span>' : '') +
       '</div>';
   }
@@ -857,7 +857,7 @@
     if (!round) return '<div class="pix-win is-idle">📊 Winnings: spin to play. Jackpots pay 25 (kingdom triple) or 100 (exact match); 2 jackpots ×20, 3 jackpots ×420; a triple slot spins the mini reel for ×1,000 per win in a row.</div>';
     var cls = round.total > BigInt(0) ? 'is-win' : 'is-none';
     return '<div class="pix-win ' + cls + (pending ? ' is-pending' : '') + '" id="pix-win">' +
-      (round.total > BigInt(0) ? '<strong>💰 +' + fmt(round.total) + ' popCoins</strong> ' : '') +
+      (round.total > BigInt(0) ? '<strong>💰 +' + fmt(round.total) + ' FAKE popCornCoins</strong> ' : '') +
       '<span class="pix-win-math">📊 ' + escapeAttr(breakdownText(round)) + '</span></div>';
   }
 
@@ -918,7 +918,7 @@
 
     html += jackpotHtml(ch);
     html += winHtml(round, live);
-    html += '<button type="button" class="pp-btn pix-bandits-spin-all" id="pix-bandits-spin-all">🎰 Spin all bandits · ' + fmt(SPIN_COST) + ' popCoin</button>';
+    html += '<button type="button" class="pp-btn pix-bandits-spin-all" id="pix-bandits-spin-all">🎰 Spin all bandits · ' + fmt(SPIN_COST) + ' FAKE popCornCoin</button>';
     html += statsHookHtml();
     html += '</div>';
 
