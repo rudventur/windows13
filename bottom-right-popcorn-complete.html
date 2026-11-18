@@ -1511,13 +1511,12 @@ html.embedded #topRightUser { display: none !important; }
 .pl-icon.pl-soldat { --pl-c: #ff6b4a; }
 .pl-icon.pl-golden { --pl-c: #ffd700; }
 .pl-icon.pl-units { --pl-c: #7ee0c3; }
+.pl-icon.pl-alpha { --pl-c: #ffcc66; }
 /* wide: six columns, each icon two wide, so the second row of two icons sits centred under the first row of three */
 @media (min-width: 461px) {
   .pl-grid { grid-template-columns: repeat(6, 1fr); }
   .pl-icon { grid-column: span 2; }
-  .pl-icon.pl-soldat { grid-column: 2 / span 2; }
-  .pl-icon.pl-golden { grid-column: 4 / span 2; }
-  .pl-icon.pl-units { grid-column: 3 / span 2; }
+  .pl-icon.pl-alpha { grid-column: 3 / span 2; }
 }
 .pl-emoji { font-size: 3.1rem; line-height: 1; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--pl-c) 70%, transparent)); }
 .pl-icon:hover .pl-emoji, .pl-icon:focus-visible .pl-emoji { animation: plWiggle 0.6s var(--ease); }
@@ -2122,6 +2121,10 @@ html.pp-max #popcorn-trigger { display: none !important; }
           <span class="pl-emoji" aria-hidden="true">⚖️</span>
           <span class="pl-text"><span class="pl-name">Unit Comparison</span><span class="pl-desc">Real coins, world economies and a look-only wallet</span></span>
         </button>
+        <button type="button" class="pl-icon pl-alpha" data-view="alpha" onclick="openView('alpha')">
+          <span class="pl-emoji" aria-hidden="true">🔤</span>
+          <span class="pl-text"><span class="pl-name">World Alphabets</span><span class="pl-desc">The main writing systems used around the world</span></span>
+        </button>
       </div>
       <div class="pl-more-label">MORE POPCORN</div>
       <div class="pl-more">
@@ -2186,6 +2189,13 @@ html.pp-max #popcorn-trigger { display: none !important; }
       <iframe class="gf-frame" id="gf-frame" title="Golden Five cartridge shelf" allow="fullscreen; autoplay; gamepad" allowfullscreen
         data-src="https://rudventur.github.io/RudVentur.com/golden-five.html?v=20261022-2"></iframe>
     </div>
+
+    <!-- 🔤 WORLD ALPHABETS: the main writing systems used around the world (world-alphabets.html in the RudVentur.com repository root) -->
+    <div class="tab-view gf-view" id="view-alpha">
+      <iframe class="gf-frame" id="alpha-frame" title="World Alphabets" allow="fullscreen" allowfullscreen
+        data-src="https://rudventur.github.io/RudVentur.com/world-alphabets.html?v=20261118-1&amp;embed=1"></iframe>
+    </div>
+
 
     <!-- POPCORN MAKER TAB -->
     <div class="tab-view" id="view-maker">
@@ -2596,6 +2606,7 @@ const VIEW_TITLES = {
   soldat: '🔫 Soldat Android · progress',
   golden: '🏆 Golden Five · the cartridge shelf',
   units: '⚖️ Unit Comparison · coins, countries, watch wallet',
+  alpha: '🔤 World Alphabets · writing systems of the world',
   maker: '✍️ Describer',
   cookies: '🍪 Cookies',
   launch: '🚀 Tools'
@@ -2629,6 +2640,7 @@ function switchToTab(tabName) {
   if (tabName === 'soldat') soldatLoad();
   if (tabName === 'golden') goldenLoad();
   if (tabName === 'units') unitsLoad();
+  if (tabName === 'alpha') alphaLoad();
   view.scrollTop = 0;
 }
 function openView(name) {
@@ -2711,6 +2723,17 @@ function goldenLoad() {
   if (!fr || fr.getAttribute('src')) return;
   let src = fr.dataset.src;
   try { src = new URL('../golden-five.html?v=20261022-2', rvEmbedBase()).href; } catch (e) {}
+  fr.src = src;
+}
+
+
+function alphaLoad() {
+  const fr = document.getElementById('alpha-frame');
+  if (!fr || fr.getAttribute('src')) return;
+  let src = fr.dataset.src;
+  if (location.hostname.endsWith('rudventur.com') || location.pathname.includes('/RudVentur.com/')) {
+    try { src = new URL('../world-alphabets.html?v=20261118-1&embed=1', rvEmbedBase()).href; } catch (e) {}
+  }
   fr.src = src;
 }
 
